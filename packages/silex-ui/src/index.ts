@@ -2,6 +2,8 @@
  * Silex UI - Design tokens and theme engine
  */
 
+export type ThemeMode = "light" | "dark";
+
 export interface ColorToken {
   name: string;
   hex: string;
@@ -9,6 +11,7 @@ export interface ColorToken {
 
 export interface SilexTheme {
   name: string;
+  mode: ThemeMode;
   background: string;
   surface: string;
   primary: string;
@@ -18,8 +21,10 @@ export interface SilexTheme {
 }
 
 export const themes: Record<string, SilexTheme> = {
-  obsidian: {
-    name: "Obsidian",
+  // Dark Themes
+  obsidian_dark: {
+    name: "Obsidian Dark",
+    mode: "dark",
     background: "#0d0f12",
     surface: "#161a1f",
     primary: "#d4a373",
@@ -27,8 +32,41 @@ export const themes: Record<string, SilexTheme> = {
     text: "#f4f4f5",
     muted: "#8892b0",
   },
-  pumice: {
-    name: "Pumice",
+  slate_dark: {
+    name: "Slate Dark",
+    mode: "dark",
+    background: "#020817",
+    surface: "#0f172a",
+    primary: "#38bdf8",
+    border: "#1e293b",
+    text: "#f8fafc",
+    muted: "#94a3b8",
+  },
+  zinc_dark: {
+    name: "Zinc Dark",
+    mode: "dark",
+    background: "#09090b",
+    surface: "#121215",
+    primary: "#fafafa",
+    border: "#27272a",
+    text: "#fafafa",
+    muted: "#a1a1aa",
+  },
+  stone_dark: {
+    name: "Stone Dark",
+    mode: "dark",
+    background: "#0c0a09",
+    surface: "#1c1917",
+    primary: "#d97706",
+    border: "#292524",
+    text: "#fafaf9",
+    muted: "#a8a29e",
+  },
+
+  // Light Themes
+  pumice_light: {
+    name: "Pumice Light",
+    mode: "light",
     background: "#faf9f6",
     surface: "#f0eee9",
     primary: "#c87d55",
@@ -36,23 +74,35 @@ export const themes: Record<string, SilexTheme> = {
     text: "#1c1917",
     muted: "#78716c",
   },
-  slate: {
-    name: "Slate",
-    background: "#0f172a",
-    surface: "#1e293b",
-    primary: "#38bdf8",
-    border: "#334155",
-    text: "#f8fafc",
-    muted: "#94a3b8",
+  slate_light: {
+    name: "Slate Light",
+    mode: "light",
+    background: "#f8fafc",
+    surface: "#ffffff",
+    primary: "#0284c7",
+    border: "#e2e8f0",
+    text: "#0f172a",
+    muted: "#64748b",
   },
-  ochre: {
-    name: "Ochre",
-    background: "#1c1917",
-    surface: "#292524",
-    primary: "#eab308",
-    border: "#44403c",
-    text: "#fafaf9",
-    muted: "#a8a29e",
+  zinc_light: {
+    name: "Zinc Light",
+    mode: "light",
+    background: "#ffffff",
+    surface: "#ffffff",
+    primary: "#18181b",
+    border: "#e4e4e7",
+    text: "#09090b",
+    muted: "#71717a",
+  },
+  stone_light: {
+    name: "Stone Light",
+    mode: "light",
+    background: "#fafaf9",
+    surface: "#ffffff",
+    primary: "#b45309",
+    border: "#e7e5e4",
+    text: "#1c1917",
+    muted: "#78716c",
   },
 };
 

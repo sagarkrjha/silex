@@ -45,6 +45,10 @@ impl SheetState {
         self.is_open = false;
     }
 
+    pub fn side(&self) -> SheetSide {
+        self.side
+    }
+
     pub fn toggle(&mut self) -> bool {
         self.is_open = !self.is_open;
         self.is_open

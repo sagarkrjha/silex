@@ -132,6 +132,29 @@ pub fn calculate_contrast_ratio(lum1: f32, lum2: f32) -> f32 {
     (brightest + 0.05) / (darkest + 0.05)
 }
 
+/// Convenience helper to calculate WCAG contrast ratio directly from two hex colors.
+pub fn contrast_ratio(hex1: &str, hex2: &str) -> f32 {
+    let parse_hex = |hex: &str| -> Option<(f32, f32, f32)> {
+        let clean = hex.trim().trim_start_matches('#');
+        if clean.len() != 6 {
+            return None;
+        }
+        let r = u8::from_str_radix(&clean[0..2], 16).ok()?;
+        let g = u8::from_str_radix(&clean[2..4], 16).ok()?;
+        let b = u8::from_str_radix(&clean[4..6], 16).ok()?;
+        Some((r as f32, g as f32, b as f32))
+    };
+
+    match (parse_hex(hex1), parse_hex(hex2)) {
+        (Some((r1, g1, b1)), Some((r2, g2, b2))) => {
+            let l1 = calculate_luminance(r1, g1, b1);
+            let l2 = calculate_luminance(r2, g2, b2);
+            calculate_contrast_ratio(l1, l2)
+        }
+        _ => 1.0,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
