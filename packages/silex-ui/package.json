@@ -1,0 +1,42 @@
+{
+  "name": "silex-ui",
+  "version": "0.1.0",
+  "description": "Framework-independent UI component engine and CLI scaffolding tool",
+  "author": "Sagar Kumar Jha <devsagarkumarjha@gmail.com>",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "bin": {
+    "silex": "./bin/silex.js",
+    "silex-ui": "./bin/silex.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "ui",
+    "components",
+    "design-system",
+    "cli",
+    "react",
+    "tailwind",
+    "silex"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sagarkrjha/silex.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sagarkrjha/silex/issues"
+  },
+  "homepage": "https://github.com/sagarkrjha/silex#readme",
+  "type": "module",
+  "scripts": {
+    "build": "tsc"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0"
+  }
+}
