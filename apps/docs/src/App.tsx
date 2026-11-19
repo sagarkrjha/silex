@@ -41,7 +41,8 @@ import {
   AlertTriangle,
   Cpu,
   BadgeAlert,
-  Minus
+  Minus,
+  Menu
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import Prism from 'prismjs';
@@ -64,6 +65,18 @@ export type ThemeKey =
   | 'forest' 
   | 'catppuccin';
 
+export type ThemeMode = 'light' | 'dark' | 'system';
+
+export interface ThemeColors {
+  bg: string;
+  surface: string;
+  border: string;
+  text: string;
+  textMuted: string;
+  accent: string;
+  accentText: string;
+}
+
 export interface ThemeConfig {
   id: ThemeKey;
   name: string;
@@ -76,6 +89,10 @@ export interface ThemeConfig {
   lightSurface: string;
   darkBorder: string;
   lightBorder: string;
+  darkText: string;
+  lightText: string;
+  darkTextMuted: string;
+  lightTextMuted: string;
 }
 
 export const THEMES: ThemeConfig[] = [
@@ -90,7 +107,11 @@ export const THEMES: ThemeConfig[] = [
     darkSurface: '#121215',
     lightSurface: '#f4f4f5',
     darkBorder: '#27272a',
-    lightBorder: '#e4e4e7'
+    lightBorder: '#e4e4e7',
+    darkText: '#fafafa',
+    lightText: '#09090b',
+    darkTextMuted: '#a1a1aa',
+    lightTextMuted: '#52525b'
   },
   { 
     id: 'slate', 
@@ -103,7 +124,11 @@ export const THEMES: ThemeConfig[] = [
     darkSurface: '#0f172a',
     lightSurface: '#ffffff',
     darkBorder: '#1e293b',
-    lightBorder: '#e2e8f0'
+    lightBorder: '#e2e8f0',
+    darkText: '#f8fafc',
+    lightText: '#0f172a',
+    darkTextMuted: '#94a3b8',
+    lightTextMuted: '#475569'
   },
   { 
     id: 'stone', 
@@ -116,7 +141,11 @@ export const THEMES: ThemeConfig[] = [
     darkSurface: '#1c1917',
     lightSurface: '#ffffff',
     darkBorder: '#292524',
-    lightBorder: '#e7e5e4'
+    lightBorder: '#e7e5e4',
+    darkText: '#fafaf9',
+    lightText: '#1c1917',
+    darkTextMuted: '#a8a29e',
+    lightTextMuted: '#57534e'
   },
   { 
     id: 'nordic', 
@@ -129,7 +158,11 @@ export const THEMES: ThemeConfig[] = [
     darkSurface: '#242933',
     lightSurface: '#ffffff',
     darkBorder: '#3b4252',
-    lightBorder: '#d8dee9'
+    lightBorder: '#d8dee9',
+    darkText: '#eceff4',
+    lightText: '#2e3440',
+    darkTextMuted: '#d8dee9',
+    lightTextMuted: '#4c566a'
   },
   { 
     id: 'rose-pine', 
@@ -142,7 +175,11 @@ export const THEMES: ThemeConfig[] = [
     darkSurface: '#1f1d2e',
     lightSurface: '#ffffff',
     darkBorder: '#26233a',
-    lightBorder: '#cecacd'
+    lightBorder: '#cecacd',
+    darkText: '#e0def4',
+    lightText: '#575279',
+    darkTextMuted: '#908caa',
+    lightTextMuted: '#797593'
   },
   { 
     id: 'tokyo-night', 
@@ -155,7 +192,11 @@ export const THEMES: ThemeConfig[] = [
     darkSurface: '#24283b',
     lightSurface: '#ffffff',
     darkBorder: '#292e42',
-    lightBorder: '#c4c8d4'
+    lightBorder: '#c4c8d4',
+    darkText: '#c0caf5',
+    lightText: '#343b58',
+    darkTextMuted: '#7aa2f7',
+    lightTextMuted: '#565a6e'
   },
   { 
     id: 'forest', 
@@ -168,7 +209,11 @@ export const THEMES: ThemeConfig[] = [
     darkSurface: '#14251e',
     lightSurface: '#ffffff',
     darkBorder: '#1d362c',
-    lightBorder: '#cfe2d7'
+    lightBorder: '#cfe2d7',
+    darkText: '#e2ede8',
+    lightText: '#132a21',
+    darkTextMuted: '#84a99b',
+    lightTextMuted: '#4d6b5e'
   },
   { 
     id: 'catppuccin', 
@@ -181,7 +226,11 @@ export const THEMES: ThemeConfig[] = [
     darkSurface: '#181825',
     lightSurface: '#ffffff',
     darkBorder: '#313244',
-    lightBorder: '#ccd0da'
+    lightBorder: '#ccd0da',
+    darkText: '#cdd6f4',
+    lightText: '#4c4f69',
+    darkTextMuted: '#a6adc8',
+    lightTextMuted: '#7c7f93'
   },
 ];
 
@@ -248,14 +297,16 @@ function useActiveTheme() {
     if (isDark) {
       root.classList.add('dark');
       root.style.setProperty('--bg-page', active.darkBg);
-      root.style.setProperty('--text-page', '#fafafa');
+      root.style.setProperty('--text-page', active.darkText);
+      root.style.setProperty('--text-muted', active.darkTextMuted);
       root.style.setProperty('--border-subtle', active.darkBorder);
       root.style.setProperty('--card-surface', active.darkSurface);
       localStorage.setItem('silex-theme-mode', 'dark');
     } else {
       root.classList.remove('dark');
       root.style.setProperty('--bg-page', active.lightBg);
-      root.style.setProperty('--text-page', '#09090b');
+      root.style.setProperty('--text-page', active.lightText);
+      root.style.setProperty('--text-muted', active.lightTextMuted);
       root.style.setProperty('--border-subtle', active.lightBorder);
       root.style.setProperty('--card-surface', active.lightSurface);
       localStorage.setItem('silex-theme-mode', 'light');
@@ -303,30 +354,44 @@ function NavigationBar({
   isDark, 
   onToggleTheme, 
   selectedTheme, 
-  onSelectTheme 
+  onSelectTheme,
+  mobileNavOpen,
+  onToggleMobileNav
 }: { 
   isDark: boolean; 
   onToggleTheme: () => void; 
   selectedTheme: ThemeKey; 
   onSelectTheme: (k: ThemeKey) => void; 
+  mobileNavOpen: boolean;
+  onToggleMobileNav: () => void;
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const active = THEMES.find(t => t.id === selectedTheme) || THEMES[0];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 transition-colors">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-3 group" aria-label="Silex Home">
+    <header className="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-4 sm:gap-8">
+          {/* Mobile navigation hamburger toggle */}
+          <button
+            type="button"
+            onClick={onToggleMobileNav}
+            aria-label={mobileNavOpen ? "Close mobile menu" : "Open mobile menu"}
+            className="md:hidden p-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition"
+          >
+            {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group" aria-label="Silex Home">
             <div 
-              className="h-9 w-9 rounded-lg flex items-center justify-center shadow-sm transition-transform group-hover:scale-105"
+              className="h-8 w-8 sm:h-9 sm:w-9 rounded-lg flex items-center justify-center shadow-sm transition-transform group-hover:scale-105"
               style={{ backgroundColor: active.accentHex, color: active.accentTextHex }}
             >
-              <Flame className="h-5 w-5" />
+              <Flame className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <span className="font-bold text-lg tracking-tight text-zinc-950 dark:text-white">Silex</span>
+            <span className="font-bold text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white">Silex</span>
             <span 
-              className="text-[10px] px-2 py-0.5 rounded-full font-mono font-medium border"
+              className="hidden xs:inline-block text-[10px] px-2 py-0.5 rounded-full font-mono font-medium border"
               style={{ color: active.accentHex, borderColor: active.accentHex }}
             >
               Polyglot
@@ -344,15 +409,15 @@ function NavigationBar({
           </nav>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           {/* Creative Theme Selector Dropdown */}
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               aria-label="Select Palette Theme"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:border-zinc-500 transition cursor-pointer"
+              className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:border-zinc-500 transition cursor-pointer"
             >
-              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: active.accentHex }} />
+              <span className="h-2.5 w-2.5 rounded-full shrink-0" style={{ backgroundColor: active.accentHex }} />
               <span className="hidden sm:inline">{active.name}</span>
               <Palette className="h-3.5 w-3.5 text-zinc-400" />
             </button>
@@ -399,13 +464,59 @@ function NavigationBar({
 
           <Link
             to="/docs/components/button"
-            className="px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-sm transition"
+            className="hidden sm:inline-flex px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-sm transition"
             style={{ backgroundColor: active.accentHex, color: active.accentTextHex }}
           >
             Explore Library
           </Link>
         </div>
       </div>
+
+      {/* Mobile Dropdown Menu Drawer */}
+      {mobileNavOpen && (
+        <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-4 space-y-3">
+          <nav className="flex flex-col space-y-2 text-sm font-medium">
+            <NavLink 
+              to="/" 
+              end 
+              onClick={onToggleMobileNav}
+              className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
+            >
+              Story
+            </NavLink>
+            <NavLink 
+              to="/docs/components/button" 
+              onClick={onToggleMobileNav}
+              className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
+            >
+              Components
+            </NavLink>
+            <NavLink 
+              to="/docs/installation" 
+              onClick={onToggleMobileNav}
+              className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
+            >
+              Installation
+            </NavLink>
+            <NavLink 
+              to="/docs/theming" 
+              onClick={onToggleMobileNav}
+              className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
+            >
+              Theming
+            </NavLink>
+            <a 
+              href="https://github.com/sagarkrjha/silex" 
+              target="_blank" 
+              rel="noreferrer" 
+              className="px-3 py-2 rounded-lg text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 flex items-center justify-between"
+            >
+              <span>GitHub</span>
+              <ExternalLink className="h-4 w-4 text-zinc-400" />
+            </a>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }
@@ -1692,9 +1803,18 @@ function ConfigurationDoc() {
 // 3-Column Documentation Page
 // ----------------------------------------------------------------------------
 
-function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
+function DocsLayout({ 
+  activeTheme,
+  mobileNavOpen,
+  onCloseMobileNav
+}: { 
+  activeTheme: ThemeConfig;
+  mobileNavOpen?: boolean;
+  onCloseMobileNav?: () => void;
+}) {
   const { docSlug, componentId } = useParams<{ docSlug?: string; componentId?: string }>();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileDocsDrawerOpen, setMobileDocsDrawerOpen] = useState(false);
   const [activeFramework, setActiveFramework] = useState<FrameworkType>('react');
   const [installPm, setInstallPm] = useState<'pnpm' | 'npm' | 'bun' | 'cargo'>('pnpm');
   const [searchQuery, setSearchQuery] = useState('');
@@ -1722,9 +1842,148 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
     { id: 'overview', title: 'Overview' },
   ];
 
+  const sidebarContent = (
+    <div className="space-y-4 text-sm">
+      {/* Search */}
+      <div className="relative">
+        <Search className="h-4 w-4 absolute left-3 top-2.5 text-zinc-400" />
+        <input
+          type="text"
+          aria-label="Search documentation and components"
+          placeholder="Search docs & components..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md text-xs text-zinc-900 dark:text-white focus:outline-none transition"
+        />
+      </div>
+
+      {/* Getting Started Category */}
+      <div>
+        <button
+          type="button"
+          onClick={() => setGettingStartedOpen(!gettingStartedOpen)}
+          className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1"
+        >
+          <div className="flex items-center gap-2">
+            <FileText className="h-3.5 w-3.5" />
+            <span>Getting Started</span>
+          </div>
+          {gettingStartedOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+        </button>
+
+        {gettingStartedOpen && (
+          <div className="space-y-1 mt-1 pl-2">
+            {[
+              { name: 'Introduction', path: '/docs/introduction' },
+              { name: 'Installation', path: '/docs/installation' },
+              { name: 'Theming & Tokens', path: '/docs/theming' },
+              { name: 'Configuration', path: '/docs/configuration' },
+            ].map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={() => setMobileDocsDrawerOpen(false)}
+                className={({ isActive }) => `block px-2.5 py-1.5 rounded-md text-xs transition ${
+                  isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
+                }`}
+              >
+                {item.name}
+              </NavLink>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Component Primitives Category */}
+      <div>
+        <button
+          type="button"
+          onClick={() => setPrimitivesOpen(!primitivesOpen)}
+          className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1"
+        >
+          <div className="flex items-center gap-2">
+            <Boxes className="h-3.5 w-3.5" />
+            <span>Components ({Object.keys(COMPONENTS_DATA).length})</span>
+          </div>
+          {primitivesOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+        </button>
+
+        {primitivesOpen && (
+          <div className="space-y-1 mt-1 pl-2">
+            {Object.values(COMPONENTS_DATA)
+              .filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
+              .map((c) => (
+                <NavLink
+                  key={c.id}
+                  to={`/docs/components/${c.id}`}
+                  onClick={() => setMobileDocsDrawerOpen(false)}
+                  className={({ isActive }) => `flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs transition ${
+                    isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
+                  }`}
+                >
+                  <span className="flex items-center gap-2">
+                    {c.icon}
+                    <span>{c.name}</span>
+                  </span>
+                  <span className="text-[10px] text-zinc-400 font-mono">{c.category}</span>
+                </NavLink>
+              ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   return (
-    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 flex-1 w-full flex gap-8 py-8">
-      {/* 1. Left Collapsible Sidebar */}
+    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 flex-1 w-full flex flex-col md:flex-row gap-6 md:gap-8 py-6 md:py-8">
+      {/* Mobile docs navigation toggle button */}
+      <div className="md:hidden flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+        <button
+          type="button"
+          onClick={() => setMobileDocsDrawerOpen(true)}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-xs font-semibold text-zinc-800 dark:text-zinc-200"
+        >
+          <PanelLeft className="h-4 w-4" />
+          <span>Documentation Index</span>
+        </button>
+        <span className="text-xs font-mono text-zinc-500">
+          {currentComponent ? currentComponent.name : docSlug ? docSlug.toUpperCase() : 'Docs'}
+        </span>
+      </div>
+
+      {/* Mobile Drawer Modal for Navigation */}
+      {mobileDocsDrawerOpen && (
+        <div 
+          role="dialog" 
+          aria-modal="true" 
+          aria-label="Mobile Documentation Index" 
+          className="fixed inset-0 z-50 bg-black/60 md:hidden flex"
+        >
+          <div className="w-4/5 max-w-xs h-full bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 p-5 overflow-y-auto space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                Documentation
+              </span>
+              <button
+                type="button"
+                aria-label="Close navigation"
+                onClick={() => setMobileDocsDrawerOpen(false)}
+                className="p-1 rounded-md text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            {sidebarContent}
+          </div>
+          <div 
+            className="flex-1" 
+            onClick={() => setMobileDocsDrawerOpen(false)} 
+            aria-hidden="true" 
+          />
+        </div>
+      )}
+
+      {/* 1. Left Desktop Collapsible Sidebar */}
       <aside 
         aria-label="Documentation Navigation"
         className={`shrink-0 transition-all duration-300 ${
@@ -1748,94 +2007,7 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
           </button>
         </div>
 
-        {!sidebarCollapsed && (
-          <div className="relative">
-            <Search className="h-4 w-4 absolute left-3 top-2.5 text-zinc-400" />
-            <input
-              type="text"
-              aria-label="Search documentation and components"
-              placeholder="Search docs & components..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md text-xs text-zinc-900 dark:text-white focus:outline-none transition"
-            />
-          </div>
-        )}
-
-        <div className="space-y-4 text-sm">
-          {/* Getting Started Category */}
-          <div>
-            <button
-              type="button"
-              onClick={() => !sidebarCollapsed && setGettingStartedOpen(!gettingStartedOpen)}
-              className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1"
-            >
-              <div className="flex items-center gap-2">
-                <FileText className="h-3.5 w-3.5" />
-                {!sidebarCollapsed && <span>Getting Started</span>}
-              </div>
-              {!sidebarCollapsed && (gettingStartedOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />)}
-            </button>
-
-            {(!sidebarCollapsed && gettingStartedOpen) && (
-              <div className="space-y-1 mt-1 pl-2">
-                {[
-                  { name: 'Introduction', path: '/docs/introduction' },
-                  { name: 'Installation', path: '/docs/installation' },
-                  { name: 'Theming & Tokens', path: '/docs/theming' },
-                  { name: 'Configuration', path: '/docs/configuration' },
-                ].map((item) => (
-                  <NavLink
-                    key={item.path}
-                    to={item.path}
-                    className={({ isActive }) => `block px-2.5 py-1.5 rounded-md text-xs transition ${
-                      isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
-                    }`}
-                  >
-                    {item.name}
-                  </NavLink>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Component Primitives Category */}
-          <div>
-            <button
-              type="button"
-              onClick={() => !sidebarCollapsed && setPrimitivesOpen(!primitivesOpen)}
-              className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1"
-            >
-              <div className="flex items-center gap-2">
-                <Boxes className="h-3.5 w-3.5" />
-                {!sidebarCollapsed && <span>Components</span>}
-              </div>
-              {!sidebarCollapsed && (primitivesOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />)}
-            </button>
-
-            {(!sidebarCollapsed && primitivesOpen) && (
-              <div className="space-y-1 mt-1 pl-2">
-                {Object.values(COMPONENTS_DATA)
-                  .filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                  .map((c) => (
-                    <NavLink
-                      key={c.id}
-                      to={`/docs/components/${c.id}`}
-                      className={({ isActive }) => `flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs transition ${
-                        isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        {c.icon}
-                        <span>{c.name}</span>
-                      </span>
-                      <span className="text-[10px] text-zinc-400 font-mono">{c.category}</span>
-                    </NavLink>
-                  ))}
-              </div>
-            )}
-          </div>
-        </div>
+        {!sidebarCollapsed && sidebarContent}
       </aside>
 
       {/* 2. Middle Main Documentation Area */}
@@ -2011,13 +2183,14 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
 
 export function App() {
   const { isDark, toggleMode, selectedTheme, setTheme, activeTheme } = useActiveTheme();
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   return (
     <div 
       className="min-h-screen font-sans antialiased selection:bg-orange-500 selection:text-white flex flex-col transition-colors duration-200"
       style={{
         backgroundColor: isDark ? activeTheme.darkBg : activeTheme.lightBg,
-        color: isDark ? '#fafafa' : '#09090b',
+        color: isDark ? activeTheme.darkText : activeTheme.lightText,
       }}
     >
       <NavigationBar 
@@ -2025,12 +2198,41 @@ export function App() {
         onToggleTheme={toggleMode} 
         selectedTheme={selectedTheme} 
         onSelectTheme={setTheme} 
+        mobileNavOpen={mobileNavOpen}
+        onToggleMobileNav={() => setMobileNavOpen(prev => !prev)}
       />
       <Routes>
         <Route path="/" element={<LandingPage activeTheme={activeTheme} />} />
-        <Route path="/docs" element={<DocsLayout activeTheme={activeTheme} />} />
-        <Route path="/docs/:docSlug" element={<DocsLayout activeTheme={activeTheme} />} />
-        <Route path="/docs/components/:componentId" element={<DocsLayout activeTheme={activeTheme} />} />
+        <Route 
+          path="/docs" 
+          element={
+            <DocsLayout 
+              activeTheme={activeTheme} 
+              mobileNavOpen={mobileNavOpen}
+              onCloseMobileNav={() => setMobileNavOpen(false)}
+            />
+          } 
+        />
+        <Route 
+          path="/docs/:docSlug" 
+          element={
+            <DocsLayout 
+              activeTheme={activeTheme} 
+              mobileNavOpen={mobileNavOpen}
+              onCloseMobileNav={() => setMobileNavOpen(false)}
+            />
+          } 
+        />
+        <Route 
+          path="/docs/components/:componentId" 
+          element={
+            <DocsLayout 
+              activeTheme={activeTheme} 
+              mobileNavOpen={mobileNavOpen}
+              onCloseMobileNav={() => setMobileNavOpen(false)}
+            />
+          } 
+        />
       </Routes>
     </div>
   );
