@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "crates/silex-core",
+    "crates/silex-cli"
+]
+resolver = "2"
