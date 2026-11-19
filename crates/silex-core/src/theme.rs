@@ -7,9 +7,49 @@ pub enum ThemeMode {
     Dark,
 }
 
+/// Strongly typed identifiers for all professional & creative Silex themes
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum ThemeId {
+    Zinc,
+    Slate,
+    Stone,
+    Nordic,
+    RosePine,
+    TokyoNight,
+    Forest,
+    Catppuccin,
+}
+
+impl ThemeId {
+    pub const ALL: [ThemeId; 8] = [
+        ThemeId::Zinc,
+        ThemeId::Slate,
+        ThemeId::Stone,
+        ThemeId::Nordic,
+        ThemeId::RosePine,
+        ThemeId::TokyoNight,
+        ThemeId::Forest,
+        ThemeId::Catppuccin,
+    ];
+
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            ThemeId::Zinc => "zinc",
+            ThemeId::Slate => "slate",
+            ThemeId::Stone => "stone",
+            ThemeId::Nordic => "nordic",
+            ThemeId::RosePine => "rose-pine",
+            ThemeId::TokyoNight => "tokyo-night",
+            ThemeId::Forest => "forest",
+            ThemeId::Catppuccin => "catppuccin",
+        }
+    }
+}
+
 /// Human-designed, organic color palette with balanced contrast.
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ThemeTokens {
+    pub id: ThemeId,
     pub name: String,
     pub mode: ThemeMode,
     pub background: String,
@@ -35,9 +75,12 @@ pub struct ThemeTokens {
 }
 
 impl ThemeTokens {
-    /// Zinc Dark Theme (Clean, industrial monochrome with high editorial contrast)
+    // ------------------------------------------------------------------------
+    // 1. Zinc (Editorial Monochrome)
+    // ------------------------------------------------------------------------
     pub fn zinc_dark() -> Self {
         Self {
+            id: ThemeId::Zinc,
             name: "Zinc Dark".into(),
             mode: ThemeMode::Dark,
             background: "#09090b".into(),
@@ -63,9 +106,9 @@ impl ThemeTokens {
         }
     }
 
-    /// Zinc Light Theme (Crisp, clean white paper canvas with charcoal contrast)
     pub fn zinc_light() -> Self {
         Self {
+            id: ThemeId::Zinc,
             name: "Zinc Light".into(),
             mode: ThemeMode::Light,
             background: "#ffffff".into(),
@@ -91,9 +134,12 @@ impl ThemeTokens {
         }
     }
 
-    /// Slate Dark Theme (Subtle cool stone tone with balanced warmth)
+    // ------------------------------------------------------------------------
+    // 2. Slate (Technical Blue-Grey)
+    // ------------------------------------------------------------------------
     pub fn slate_dark() -> Self {
         Self {
+            id: ThemeId::Slate,
             name: "Slate Dark".into(),
             mode: ThemeMode::Dark,
             background: "#020817".into(),
@@ -119,9 +165,9 @@ impl ThemeTokens {
         }
     }
 
-    /// Slate Light Theme
     pub fn slate_light() -> Self {
         Self {
+            id: ThemeId::Slate,
             name: "Slate Light".into(),
             mode: ThemeMode::Light,
             background: "#f8fafc".into(),
@@ -147,9 +193,12 @@ impl ThemeTokens {
         }
     }
 
-    /// Warm Stone Dark Theme (Earthy, tactile editorial palette)
+    // ------------------------------------------------------------------------
+    // 3. Warm Stone (Tactile & Organic)
+    // ------------------------------------------------------------------------
     pub fn stone_dark() -> Self {
         Self {
+            id: ThemeId::Stone,
             name: "Stone Dark".into(),
             mode: ThemeMode::Dark,
             background: "#0c0a09".into(),
@@ -175,9 +224,9 @@ impl ThemeTokens {
         }
     }
 
-    /// Warm Stone Light Theme
     pub fn stone_light() -> Self {
         Self {
+            id: ThemeId::Stone,
             name: "Stone Light".into(),
             mode: ThemeMode::Light,
             background: "#fafaf9".into(),
@@ -201,6 +250,323 @@ impl ThemeTokens {
             ring: "#b45309".into(),
             radius: "0.625rem".into(),
         }
+    }
+
+    // ------------------------------------------------------------------------
+    // 4. Nordic Frost (Arctic Navy & Ice Blue)
+    // ------------------------------------------------------------------------
+    pub fn nordic_dark() -> Self {
+        Self {
+            id: ThemeId::Nordic,
+            name: "Nordic Dark".into(),
+            mode: ThemeMode::Dark,
+            background: "#1e222a".into(),
+            foreground: "#eceff4".into(),
+            card: "#242933".into(),
+            card_foreground: "#eceff4".into(),
+            popover: "#242933".into(),
+            popover_foreground: "#eceff4".into(),
+            primary: "#88c0d0".into(),
+            primary_foreground: "#1e222a".into(),
+            secondary: "#2e3440".into(),
+            secondary_foreground: "#eceff4".into(),
+            muted: "#2e3440".into(),
+            muted_foreground: "#d8dee9".into(),
+            accent: "#3b4252".into(),
+            accent_foreground: "#88c0d0".into(),
+            destructive: "#bf616a".into(),
+            destructive_foreground: "#eceff4".into(),
+            border: "#3b4252".into(),
+            input: "#3b4252".into(),
+            ring: "#88c0d0".into(),
+            radius: "0.5rem".into(),
+        }
+    }
+
+    pub fn nordic_light() -> Self {
+        Self {
+            id: ThemeId::Nordic,
+            name: "Nordic Light".into(),
+            mode: ThemeMode::Light,
+            background: "#f4f6fb".into(),
+            foreground: "#2e3440".into(),
+            card: "#ffffff".into(),
+            card_foreground: "#2e3440".into(),
+            popover: "#ffffff".into(),
+            popover_foreground: "#2e3440".into(),
+            primary: "#5e81ac".into(),
+            primary_foreground: "#ffffff".into(),
+            secondary: "#e5e9f0".into(),
+            secondary_foreground: "#2e3440".into(),
+            muted: "#e5e9f0".into(),
+            muted_foreground: "#4c566a".into(),
+            accent: "#e5e9f0".into(),
+            accent_foreground: "#5e81ac".into(),
+            destructive: "#bf616a".into(),
+            destructive_foreground: "#ffffff".into(),
+            border: "#d8dee9".into(),
+            input: "#d8dee9".into(),
+            ring: "#5e81ac".into(),
+            radius: "0.5rem".into(),
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // 5. Rose Pine (Warm Velvet & Twilight)
+    // ------------------------------------------------------------------------
+    pub fn rose_pine_dark() -> Self {
+        Self {
+            id: ThemeId::RosePine,
+            name: "Rose Pine Dark".into(),
+            mode: ThemeMode::Dark,
+            background: "#191724".into(),
+            foreground: "#e0def4".into(),
+            card: "#1f1d2e".into(),
+            card_foreground: "#e0def4".into(),
+            popover: "#1f1d2e".into(),
+            popover_foreground: "#e0def4".into(),
+            primary: "#eb6f92".into(),
+            primary_foreground: "#191724".into(),
+            secondary: "#26233a".into(),
+            secondary_foreground: "#e0def4".into(),
+            muted: "#26233a".into(),
+            muted_foreground: "#908caa".into(),
+            accent: "#2a283e".into(),
+            accent_foreground: "#f6c177".into(),
+            destructive: "#eb6f92".into(),
+            destructive_foreground: "#191724".into(),
+            border: "#26233a".into(),
+            input: "#26233a".into(),
+            ring: "#eb6f92".into(),
+            radius: "0.5rem".into(),
+        }
+    }
+
+    pub fn rose_pine_light() -> Self {
+        Self {
+            id: ThemeId::RosePine,
+            name: "Rose Pine Light".into(),
+            mode: ThemeMode::Light,
+            background: "#faf4ed".into(),
+            foreground: "#575279".into(),
+            card: "#ffffff".into(),
+            card_foreground: "#575279".into(),
+            popover: "#ffffff".into(),
+            popover_foreground: "#575279".into(),
+            primary: "#b4637a".into(),
+            primary_foreground: "#ffffff".into(),
+            secondary: "#f2e9de".into(),
+            secondary_foreground: "#575279".into(),
+            muted: "#f2e9de".into(),
+            muted_foreground: "#797593".into(),
+            accent: "#f2e9de".into(),
+            accent_foreground: "#ea9d34".into(),
+            destructive: "#b4637a".into(),
+            destructive_foreground: "#ffffff".into(),
+            border: "#cecacd".into(),
+            input: "#cecacd".into(),
+            ring: "#b4637a".into(),
+            radius: "0.5rem".into(),
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // 6. Tokyo Night (Cyber Midnight & Neon)
+    // ------------------------------------------------------------------------
+    pub fn tokyo_night_dark() -> Self {
+        Self {
+            id: ThemeId::TokyoNight,
+            name: "Tokyo Night Dark".into(),
+            mode: ThemeMode::Dark,
+            background: "#1a1b26".into(),
+            foreground: "#c0caf5".into(),
+            card: "#24283b".into(),
+            card_foreground: "#c0caf5".into(),
+            popover: "#24283b".into(),
+            popover_foreground: "#c0caf5".into(),
+            primary: "#7aa2f7".into(),
+            primary_foreground: "#1a1b26".into(),
+            secondary: "#292e42".into(),
+            secondary_foreground: "#c0caf5".into(),
+            muted: "#292e42".into(),
+            muted_foreground: "#7aa2f7".into(),
+            accent: "#bb9af7".into(),
+            accent_foreground: "#1a1b26".into(),
+            destructive: "#f7768e".into(),
+            destructive_foreground: "#1a1b26".into(),
+            border: "#292e42".into(),
+            input: "#292e42".into(),
+            ring: "#7aa2f7".into(),
+            radius: "0.5rem".into(),
+        }
+    }
+
+    pub fn tokyo_night_light() -> Self {
+        Self {
+            id: ThemeId::TokyoNight,
+            name: "Tokyo Night Light".into(),
+            mode: ThemeMode::Light,
+            background: "#e6e7ed".into(),
+            foreground: "#343b58".into(),
+            card: "#ffffff".into(),
+            card_foreground: "#343b58".into(),
+            popover: "#ffffff".into(),
+            popover_foreground: "#343b58".into(),
+            primary: "#2e5cb8".into(),
+            primary_foreground: "#ffffff".into(),
+            secondary: "#d5d6db".into(),
+            secondary_foreground: "#343b58".into(),
+            muted: "#d5d6db".into(),
+            muted_foreground: "#565a6e".into(),
+            accent: "#d5d6db".into(),
+            accent_foreground: "#7048a6".into(),
+            destructive: "#8c2a38".into(),
+            destructive_foreground: "#ffffff".into(),
+            border: "#c4c8d4".into(),
+            input: "#c4c8d4".into(),
+            ring: "#2e5cb8".into(),
+            radius: "0.5rem".into(),
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // 7. Forest Emerald (Organic Pine & Sage)
+    // ------------------------------------------------------------------------
+    pub fn forest_dark() -> Self {
+        Self {
+            id: ThemeId::Forest,
+            name: "Forest Dark".into(),
+            mode: ThemeMode::Dark,
+            background: "#0d1814".into(),
+            foreground: "#e2ede8".into(),
+            card: "#14251e".into(),
+            card_foreground: "#e2ede8".into(),
+            popover: "#14251e".into(),
+            popover_foreground: "#e2ede8".into(),
+            primary: "#10b981".into(),
+            primary_foreground: "#0d1814".into(),
+            secondary: "#1d362c".into(),
+            secondary_foreground: "#e2ede8".into(),
+            muted: "#1d362c".into(),
+            muted_foreground: "#84a99b".into(),
+            accent: "#1d362c".into(),
+            accent_foreground: "#10b981".into(),
+            destructive: "#e11d48".into(),
+            destructive_foreground: "#e2ede8".into(),
+            border: "#1d362c".into(),
+            input: "#1d362c".into(),
+            ring: "#10b981".into(),
+            radius: "0.5rem".into(),
+        }
+    }
+
+    pub fn forest_light() -> Self {
+        Self {
+            id: ThemeId::Forest,
+            name: "Forest Light".into(),
+            mode: ThemeMode::Light,
+            background: "#f4f9f6".into(),
+            foreground: "#132a21".into(),
+            card: "#ffffff".into(),
+            card_foreground: "#132a21".into(),
+            popover: "#ffffff".into(),
+            popover_foreground: "#132a21".into(),
+            primary: "#059669".into(),
+            primary_foreground: "#ffffff".into(),
+            secondary: "#e1efe7".into(),
+            secondary_foreground: "#132a21".into(),
+            muted: "#e1efe7".into(),
+            muted_foreground: "#4d6b5e".into(),
+            accent: "#e1efe7".into(),
+            accent_foreground: "#059669".into(),
+            destructive: "#dc2626".into(),
+            destructive_foreground: "#ffffff".into(),
+            border: "#cfe2d7".into(),
+            input: "#cfe2d7".into(),
+            ring: "#059669".into(),
+            radius: "0.5rem".into(),
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // 8. Catppuccin (Soothing Pastel Palette)
+    // ------------------------------------------------------------------------
+    pub fn catppuccin_dark() -> Self {
+        Self {
+            id: ThemeId::Catppuccin,
+            name: "Catppuccin Mocha".into(),
+            mode: ThemeMode::Dark,
+            background: "#1e1e2e".into(),
+            foreground: "#cdd6f4".into(),
+            card: "#181825".into(),
+            card_foreground: "#cdd6f4".into(),
+            popover: "#181825".into(),
+            popover_foreground: "#cdd6f4".into(),
+            primary: "#cba6f7".into(),
+            primary_foreground: "#11111b".into(),
+            secondary: "#313244".into(),
+            secondary_foreground: "#cdd6f4".into(),
+            muted: "#313244".into(),
+            muted_foreground: "#a6adc8".into(),
+            accent: "#89b4fa".into(),
+            accent_foreground: "#11111b".into(),
+            destructive: "#f38ba8".into(),
+            destructive_foreground: "#11111b".into(),
+            border: "#313244".into(),
+            input: "#313244".into(),
+            ring: "#cba6f7".into(),
+            radius: "0.5rem".into(),
+        }
+    }
+
+    pub fn catppuccin_light() -> Self {
+        Self {
+            id: ThemeId::Catppuccin,
+            name: "Catppuccin Latte".into(),
+            mode: ThemeMode::Light,
+            background: "#eff1f5".into(),
+            foreground: "#4c4f69".into(),
+            card: "#ffffff".into(),
+            card_foreground: "#4c4f69".into(),
+            popover: "#ffffff".into(),
+            popover_foreground: "#4c4f69".into(),
+            primary: "#8839ef".into(),
+            primary_foreground: "#ffffff".into(),
+            secondary: "#e6e9ef".into(),
+            secondary_foreground: "#4c4f69".into(),
+            muted: "#e6e9ef".into(),
+            muted_foreground: "#7c7f93".into(),
+            accent: "#1e66f5".into(),
+            accent_foreground: "#ffffff".into(),
+            destructive: "#d20f39".into(),
+            destructive_foreground: "#ffffff".into(),
+            border: "#ccd0da".into(),
+            input: "#ccd0da".into(),
+            ring: "#8839ef".into(),
+            radius: "0.5rem".into(),
+        }
+    }
+
+    /// Returns a vector of all 16 theme variants (8 themes x 2 modes).
+    pub fn all_themes() -> Vec<Self> {
+        vec![
+            Self::zinc_dark(),
+            Self::zinc_light(),
+            Self::slate_dark(),
+            Self::slate_light(),
+            Self::stone_dark(),
+            Self::stone_light(),
+            Self::nordic_dark(),
+            Self::nordic_light(),
+            Self::rose_pine_dark(),
+            Self::rose_pine_light(),
+            Self::tokyo_night_dark(),
+            Self::tokyo_night_light(),
+            Self::forest_dark(),
+            Self::forest_light(),
+            Self::catppuccin_dark(),
+            Self::catppuccin_light(),
+        ]
     }
 
     /// Sanitizes CSS value to prevent CSS injection attacks.

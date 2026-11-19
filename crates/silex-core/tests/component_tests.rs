@@ -83,14 +83,8 @@ fn test_alert_props() {
 
 #[test]
 fn test_wcag_contrast_thresholds_for_all_themes() {
-    let themes = vec![
-        ThemeTokens::zinc_dark(),
-        ThemeTokens::zinc_light(),
-        ThemeTokens::slate_dark(),
-        ThemeTokens::slate_light(),
-        ThemeTokens::stone_dark(),
-        ThemeTokens::stone_light(),
-    ];
+    let themes = ThemeTokens::all_themes();
+    assert_eq!(themes.len(), 16, "Must test all 16 theme variants");
 
     for t in themes {
         let ratio = contrast_ratio(&t.background, &t.foreground);
