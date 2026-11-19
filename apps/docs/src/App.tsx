@@ -103,26 +103,26 @@ export const THEMES: ThemeConfig[] = [
     accentHex: '#f97316', 
     accentTextHex: '#09090b',
     darkBg: '#09090b', 
-    lightBg: '#ffffff',
+    lightBg: '#f8fafc',
     darkSurface: '#121215',
-    lightSurface: '#f4f4f5',
+    lightSurface: '#f1f5f9',
     darkBorder: '#27272a',
-    lightBorder: '#e4e4e7',
+    lightBorder: '#e2e8f0',
     darkText: '#fafafa',
-    lightText: '#09090b',
+    lightText: '#0f172a',
     darkTextMuted: '#a1a1aa',
-    lightTextMuted: '#52525b'
+    lightTextMuted: '#475569'
   },
   { 
     id: 'slate', 
     name: 'Slate', 
     tagline: 'Linear Precision', 
-    accentHex: '#38bdf8', 
-    accentTextHex: '#020817',
+    accentHex: '#0284c7', 
+    accentTextHex: '#ffffff',
     darkBg: '#020817', 
     lightBg: '#f8fafc',
     darkSurface: '#0f172a',
-    lightSurface: '#ffffff',
+    lightSurface: '#f1f5f9',
     darkBorder: '#1e293b',
     lightBorder: '#e2e8f0',
     darkText: '#f8fafc',
@@ -134,12 +134,12 @@ export const THEMES: ThemeConfig[] = [
     id: 'stone', 
     name: 'Warm Stone', 
     tagline: 'Tactile & Organic', 
-    accentHex: '#d97706', 
+    accentHex: '#b45309', 
     accentTextHex: '#ffffff',
     darkBg: '#0c0a09', 
     lightBg: '#fafaf9',
     darkSurface: '#1c1917',
-    lightSurface: '#ffffff',
+    lightSurface: '#f5f5f4',
     darkBorder: '#292524',
     lightBorder: '#e7e5e4',
     darkText: '#fafaf9',
@@ -151,12 +151,12 @@ export const THEMES: ThemeConfig[] = [
     id: 'nordic', 
     name: 'Nordic Frost', 
     tagline: 'Arctic Deep Cool', 
-    accentHex: '#88c0d0', 
-    accentTextHex: '#1e222a',
+    accentHex: '#5e81ac', 
+    accentTextHex: '#ffffff',
     darkBg: '#1e222a', 
     lightBg: '#f4f6fb',
     darkSurface: '#242933',
-    lightSurface: '#ffffff',
+    lightSurface: '#e5e9f0',
     darkBorder: '#3b4252',
     lightBorder: '#d8dee9',
     darkText: '#eceff4',
@@ -168,12 +168,12 @@ export const THEMES: ThemeConfig[] = [
     id: 'rose-pine', 
     name: 'Rose Pine', 
     tagline: 'Warm Dusk & Berry', 
-    accentHex: '#eb6f92', 
-    accentTextHex: '#191724',
+    accentHex: '#b4637a', 
+    accentTextHex: '#ffffff',
     darkBg: '#191724', 
     lightBg: '#faf4ed',
     darkSurface: '#1f1d2e',
-    lightSurface: '#ffffff',
+    lightSurface: '#f2e9de',
     darkBorder: '#26233a',
     lightBorder: '#cecacd',
     darkText: '#e0def4',
@@ -185,16 +185,16 @@ export const THEMES: ThemeConfig[] = [
     id: 'tokyo-night', 
     name: 'Tokyo Night', 
     tagline: 'Cyber Midnight', 
-    accentHex: '#7aa2f7', 
-    accentTextHex: '#1a1b26',
+    accentHex: '#3b82f6', 
+    accentTextHex: '#ffffff',
     darkBg: '#1a1b26', 
-    lightBg: '#e6e7ed',
+    lightBg: '#f0f2f7',
     darkSurface: '#24283b',
-    lightSurface: '#ffffff',
+    lightSurface: '#e2e5ee',
     darkBorder: '#292e42',
     lightBorder: '#c4c8d4',
     darkText: '#c0caf5',
-    lightText: '#343b58',
+    lightText: '#1f2335',
     darkTextMuted: '#7aa2f7',
     lightTextMuted: '#565a6e'
   },
@@ -202,12 +202,12 @@ export const THEMES: ThemeConfig[] = [
     id: 'forest', 
     name: 'Forest Emerald', 
     tagline: 'Organic Deep Pine', 
-    accentHex: '#10b981', 
-    accentTextHex: '#0d1814',
+    accentHex: '#059669', 
+    accentTextHex: '#ffffff',
     darkBg: '#0d1814', 
     lightBg: '#f4f9f6',
     darkSurface: '#14251e',
-    lightSurface: '#ffffff',
+    lightSurface: '#e2ede8',
     darkBorder: '#1d362c',
     lightBorder: '#cfe2d7',
     darkText: '#e2ede8',
@@ -219,12 +219,12 @@ export const THEMES: ThemeConfig[] = [
     id: 'catppuccin', 
     name: 'Catppuccin', 
     tagline: 'Pastel Mindful Focus', 
-    accentHex: '#cba6f7', 
-    accentTextHex: '#11111b',
+    accentHex: '#8839ef', 
+    accentTextHex: '#ffffff',
     darkBg: '#1e1e2e', 
     lightBg: '#eff1f5',
     darkSurface: '#181825',
-    lightSurface: '#ffffff',
+    lightSurface: '#e6e9ef',
     darkBorder: '#313244',
     lightBorder: '#ccd0da',
     darkText: '#cdd6f4',
@@ -538,7 +538,7 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
 
   return (
     <div className="flex-1 flex flex-col">
-      <section className="relative px-6 pt-24 pb-20 max-w-5xl mx-auto text-center space-y-8">
+      <section className="relative px-4 sm:px-6 pt-16 sm:pt-24 pb-14 sm:pb-20 max-w-5xl mx-auto text-center space-y-6 sm:space-y-8">
         <div 
           className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border"
           style={{ 
@@ -550,20 +550,20 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
           <span>The Human-Crafted Polyglot Design Engine</span>
         </div>
 
-        <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-[1.1]">
-          We struck flint against steel <br />
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-[1.15] sm:leading-[1.1]">
+          We struck flint against steel <br className="hidden sm:inline" />
           <span style={{ color: activeTheme.accentHex }}>
             because UI kits lost their soul.
           </span>
         </h1>
 
-        <p className="max-w-2xl mx-auto text-lg sm:text-xl text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
+        <p className="max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal px-2">
           Tired of 40MB JavaScript node dependencies, mysterious runtime errors, and synthetic AI template slop? 
           <strong> Silex</strong> is the pure Rust component core engineered for speed, mathematical WCAG contrast, and human editorial beauty across React, Vue, Svelte, Angular, and Web Components.
         </p>
 
         {/* Scaffold Box */}
-        <div className="max-w-lg mx-auto bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl p-3 shadow-xl space-y-2">
+        <div className="max-w-lg mx-auto bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl p-3 shadow-sm space-y-2">
           <div className="flex items-center justify-between px-2">
             <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Start the Spark</span>
             <div className="flex gap-1">
@@ -606,10 +606,10 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-center gap-4 pt-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 pt-4">
           <Link
             to="/docs/components/button"
-            className="px-6 py-3 rounded-lg font-semibold text-sm flex items-center gap-2 shadow-md transition cursor-pointer"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition cursor-pointer"
             style={{ backgroundColor: activeTheme.accentHex, color: activeTheme.accentTextHex }}
           >
             <span>Explore Documentation</span>
@@ -619,7 +619,7 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
             href="https://github.com/sagarkrjha/silex"
             target="_blank"
             rel="noreferrer"
-            className="px-6 py-3 rounded-lg bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-800 font-semibold text-sm transition"
+            className="w-full sm:w-auto px-6 py-3 rounded-lg bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-800 font-semibold text-sm flex items-center justify-center transition"
           >
             GitHub Repository
           </a>
@@ -2082,14 +2082,14 @@ function DocsLayout({
 
             {/* Polyglot Framework Code Snippets */}
             <div id="polyglot-usage" className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex flex-wrap gap-1.5">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                <div className="flex flex-wrap gap-1.5 w-full sm:w-auto">
                   {(['react', 'vue', 'svelte', 'angular', 'web', 'rust'] as const).map((fw) => (
                     <button
                       key={fw}
                       type="button"
                       onClick={() => setActiveFramework(fw)}
-                      className={`px-3 py-1 rounded-md text-xs font-medium uppercase tracking-wider transition cursor-pointer ${
+                      className={`px-2.5 sm:px-3 py-1 rounded-md text-xs font-medium uppercase tracking-wider transition cursor-pointer ${
                         activeFramework === fw
                           ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-950 dark:text-white font-bold'
                           : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
@@ -2103,7 +2103,7 @@ function DocsLayout({
                   type="button"
                   aria-label="Copy Framework Snippet"
                   onClick={() => copyText(currentComponent.code[activeFramework])}
-                  className="flex items-center gap-1.5 px-3 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md transition cursor-pointer"
+                  className="self-end sm:self-auto flex items-center gap-1.5 px-3 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md transition cursor-pointer"
                 >
                   {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
                   <span>{copied ? 'Copied' : 'Copy'}</span>
@@ -2116,8 +2116,8 @@ function DocsLayout({
             {/* Props Table */}
             <div id="props-reference" className="space-y-3">
               <h3 className="text-lg font-semibold text-zinc-950 dark:text-white">Props Reference</h3>
-              <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 overflow-hidden shadow-sm">
-                <table className="w-full text-left text-xs">
+              <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 overflow-x-auto shadow-sm">
+                <table className="w-full min-w-[500px] text-left text-xs">
                   <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
                     <tr>
                       <th className="p-3 font-semibold">Prop</th>
