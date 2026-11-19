@@ -2,25 +2,112 @@
 
 @layer base {
   :root {
-    --background: #09090b;
-    --foreground: #fafafa;
-    --card: #09090b;
-    --card-foreground: #fafafa;
-    --popover: #09090b;
-    --popover-foreground: #fafafa;
-    --primary: #fafafa;
-    --primary-foreground: #18181b;
-    --secondary: #27272a;
-    --secondary-foreground: #fafafa;
-    --muted: #27272a;
-    --muted-foreground: #a1a1aa;
-    --accent: #27272a;
-    --accent-foreground: #fafafa;
-    --destructive: #7f1d1d;
-    --destructive-foreground: #fafafa;
-    --border: #27272a;
-    --input: #27272a;
-    --ring: #d4d4d8;
-    --radius: 0.5rem;
+    --bg-page: #fafafa;
+    --text-page: #09090b;
+    --border-subtle: #e4e4e7;
+    --card-surface: #ffffff;
+    --muted-surface: #f4f4f5;
+    --muted-text: #71717a;
+    --primary-action: #18181b;
+    --primary-action-text: #fafafa;
+    --code-surface: #f4f4f5;
+    --code-border: #e4e4e7;
+    --code-text: #18181b;
   }
+
+  .dark {
+    --bg-page: #09090b;
+    --text-page: #fafafa;
+    --border-subtle: #27272a;
+    --card-surface: #121215;
+    --muted-surface: #18181b;
+    --muted-text: #a1a1aa;
+    --primary-action: #fafafa;
+    --primary-action-text: #09090b;
+    --code-surface: #0d0f12;
+    --code-border: #1e293b;
+    --code-text: #e2e8f0;
+  }
+}
+
+/* Prism syntax highlighting styles */
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #71717a;
+  font-style: italic;
+}
+
+.token.punctuation {
+  color: #a1a1aa;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #f97316;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+  color: #10b981;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+  color: #38bdf8;
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #fbbf24;
+}
+
+.token.function,
+.token.class-name {
+  color: #f43f5e;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #a855f7;
+}
+
+/* Markdown styling classes */
+.markdown-body {
+  line-height: 1.65;
+}
+.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+.markdown-body p {
+  margin-bottom: 0.75rem;
+}
+.markdown-body ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+.markdown-body code {
+  font-family: monospace;
+  padding: 0.15rem 0.35rem;
+  border-radius: 0.25rem;
+  font-size: 0.85em;
 }
