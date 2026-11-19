@@ -1,0 +1,7 @@
+/target
+/dist
+/node_modules
+/.turbo
+*.log
+.DS_Store
+preview.html
