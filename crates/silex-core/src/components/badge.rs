@@ -18,7 +18,7 @@ pub enum BadgeVariant {
 ///
 /// # Example
 /// ```rust
-/// use silex_core::{BadgeProps, BadgeVariant};
+/// use silex_ui_core::{BadgeProps, BadgeVariant};
 ///
 /// let badge = BadgeProps::new(BadgeVariant::Primary);
 /// let classes = badge.compute_classes();

@@ -19,7 +19,7 @@ pub enum AccordionType {
 ///
 /// # Example
 /// ```rust
-/// use silex_core::{AccordionState, AccordionType};
+/// use silex_ui_core::{AccordionState, AccordionType};
 ///
 /// let mut acc = AccordionState::new(AccordionType::Single);
 /// assert!(acc.toggle("section-1"));

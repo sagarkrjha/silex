@@ -16,7 +16,7 @@ pub enum AlertVariant {
 ///
 /// # Example
 /// ```rust
-/// use silex_core::{AlertProps, AlertVariant};
+/// use silex_ui_core::{AlertProps, AlertVariant};
 ///
 /// let alert = AlertProps::new(AlertVariant::Destructive);
 /// let classes = alert.compute_classes();

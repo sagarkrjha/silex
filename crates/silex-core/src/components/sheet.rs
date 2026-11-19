@@ -14,7 +14,7 @@ pub enum SheetSide {
 ///
 /// # Example
 /// ```rust
-/// use silex_core::{SheetState, SheetSide};
+/// use silex_ui_core::{SheetState, SheetSide};
 ///
 /// let mut sheet = SheetState::new(SheetSide::Right, false);
 /// assert!(!sheet.is_open());

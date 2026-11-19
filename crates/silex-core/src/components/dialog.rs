@@ -15,7 +15,7 @@ pub enum DialogAnimationState {
 ///
 /// # Example
 /// ```rust
-/// use silex_core::{DialogState, DialogAnimationState};
+/// use silex_ui_core::{DialogState, DialogAnimationState};
 ///
 /// let mut dialog = DialogState::new(false);
 /// assert!(!dialog.is_open());

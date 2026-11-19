@@ -14,7 +14,7 @@ pub enum InputType {
 ///
 /// # Example
 /// ```rust
-/// use silex_core::{InputProps, InputType};
+/// use silex_ui_core::{InputProps, InputType};
 ///
 /// let input = InputProps::new(InputType::Text);
 /// let classes = input.compute_classes();

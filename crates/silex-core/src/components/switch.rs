@@ -4,7 +4,7 @@ use wasm_bindgen::prelude::*;
 ///
 /// # Example
 /// ```rust
-/// use silex_core::SwitchState;
+/// use silex_ui_core::SwitchState;
 ///
 /// let mut switch = SwitchState::new(false);
 /// assert!(!switch.is_checked());

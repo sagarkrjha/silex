@@ -1,8 +1,16 @@
 [package]
-name = "silex-core"
+name = "silex-ui-core"
 version = "0.1.0"
 edition = "2021"
-description = "Core state machines, color calculators, and algorithms for Silex UI"
+authors = ["Sagar Kumar Jha <devsagarkumarjha@gmail.com>"]
+description = "Core state machines, WCAG color calculators, and design tokens for Silex UI"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/sagarkrjha/silex"
+homepage = "https://github.com/sagarkrjha/silex"
+documentation = "https://docs.rs/silex-ui-core"
+readme = "README.md"
+keywords = ["ui", "components", "design-system", "wasm", "state-machine"]
+categories = ["gui", "wasm", "web-programming"]
 
 [lib]
 crate-type = ["cdylib", "rlib"]

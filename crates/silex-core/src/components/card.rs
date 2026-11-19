@@ -26,7 +26,7 @@ pub enum CardHover {
 ///
 /// # Example
 /// ```rust
-/// use silex_core::{CardProps, CardVariant, CardHover};
+/// use silex_ui_core::{CardProps, CardVariant, CardHover};
 ///
 /// let card = CardProps::new(CardVariant::Default, CardHover::Scale);
 /// let classes = card.compute_classes();

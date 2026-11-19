@@ -1,9 +1,15 @@
 [package]
-name = "silex-cli"
+name = "silex-ui-cli"
 version = "0.1.0"
 edition = "2021"
-description = "Native Rust CLI for Silex component registry and scaffolding"
-authors = ["Silex Team"]
+authors = ["Sagar Kumar Jha <devsagarkumarjha@gmail.com>"]
+description = "Native Rust command-line tool for Silex component scaffolding and registry management"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/sagarkrjha/silex"
+homepage = "https://github.com/sagarkrjha/silex"
+readme = "README.md"
+keywords = ["cli", "ui", "scaffolding", "design-system", "silex"]
+categories = ["command-line-utilities", "development-tools"]
 
 [[bin]]
 name = "silex"
@@ -14,4 +20,4 @@ clap = { version = "4.5", features = ["derive"] }
 colored = "2.1"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
-silex-core = { path = "../silex-core" }
+silex-ui-core = { path = "../silex-core", version = "0.1.0" }

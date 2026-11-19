@@ -12,7 +12,7 @@ pub enum SeparatorOrientation {
 ///
 /// # Example
 /// ```rust
-/// use silex_core::{SeparatorProps, SeparatorOrientation};
+/// use silex_ui_core::{SeparatorProps, SeparatorOrientation};
 ///
 /// let sep = SeparatorProps::new(SeparatorOrientation::Horizontal);
 /// let classes = sep.compute_classes();

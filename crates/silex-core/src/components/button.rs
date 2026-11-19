@@ -30,7 +30,7 @@ pub enum ButtonSize {
 ///
 /// # Example
 /// ```rust
-/// use silex_core::{ButtonProps, ButtonVariant, ButtonSize};
+/// use silex_ui_core::{ButtonProps, ButtonVariant, ButtonSize};
 ///
 /// let button = ButtonProps::new(ButtonVariant::Primary, ButtonSize::Md);
 /// let html = button.render_html("Save Changes");
