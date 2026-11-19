@@ -5,8 +5,7 @@ import {
   Link, 
   NavLink, 
   useParams, 
-  useNavigate,
-  useLocation
+  useNavigate 
 } from 'react-router';
 import { 
   Flame, 
@@ -17,7 +16,6 @@ import {
   ShieldCheck, 
   Zap, 
   Layers, 
-  Globe2, 
   Search, 
   ChevronRight, 
   ChevronDown,
@@ -29,31 +27,19 @@ import {
   SquareCode,
   TextCursorInput,
   ToggleLeft,
-  Split,
-  Tag,
-  ListCollapse,
-  AlertTriangle,
-  Cpu,
   Boxes,
-  Database,
   Sun,
   Moon,
-  BookOpen,
-  Code2,
+  Sparkles,
   Palette,
   Heart,
   Compass,
   Feather,
-  SlidersHorizontal,
   PanelLeftClose,
   PanelLeft,
   FileText,
-  Settings,
-  Download,
-  CheckCircle2,
-  Sparkles,
-  HelpCircle,
-  FolderGit2
+  AlertTriangle,
+  Cpu
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import Prism from 'prismjs';
@@ -63,7 +49,7 @@ import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-tsx';
 
 // ----------------------------------------------------------------------------
-// Type-Safe Themes Definition
+// Type-Safe Themes Definition (Solid Colors, Zero Gradients)
 // ----------------------------------------------------------------------------
 
 export type ThemeKey = 
@@ -81,19 +67,120 @@ export interface ThemeConfig {
   name: string;
   tagline: string;
   accentHex: string;
+  accentTextHex: string;
   darkBg: string;
   lightBg: string;
+  darkSurface: string;
+  lightSurface: string;
+  darkBorder: string;
+  lightBorder: string;
 }
 
 export const THEMES: ThemeConfig[] = [
-  { id: 'zinc', name: 'Zinc', tagline: 'Editorial Monochrome', accentHex: '#f97316', darkBg: '#09090b', lightBg: '#ffffff' },
-  { id: 'slate', name: 'Slate', tagline: 'Linear Precision', accentHex: '#38bdf8', darkBg: '#020817', lightBg: '#f8fafc' },
-  { id: 'stone', name: 'Warm Stone', tagline: 'Tactile & Organic', accentHex: '#f59e0b', darkBg: '#0c0a09', lightBg: '#fafaf9' },
-  { id: 'nordic', name: 'Nordic Frost', tagline: 'Arctic Deep Cool', accentHex: '#88c0d0', darkBg: '#1e222a', lightBg: '#f4f6fb' },
-  { id: 'rose-pine', name: 'Rose Pine', tagline: 'Warm Dusk & Berry', accentHex: '#eb6f92', darkBg: '#191724', lightBg: '#faf4ed' },
-  { id: 'tokyo-night', name: 'Tokyo Night', tagline: 'Cyber Midnight', accentHex: '#7aa2f7', darkBg: '#1a1b26', lightBg: '#e6e7ed' },
-  { id: 'forest', name: 'Forest Emerald', tagline: 'Organic Deep Pine', accentHex: '#10b981', darkBg: '#0d1814', lightBg: '#f4f9f6' },
-  { id: 'catppuccin', name: 'Catppuccin', tagline: 'Pastel Mindful Focus', accentHex: '#cba6f7', darkBg: '#1e1e2e', lightBg: '#eff1f5' },
+  { 
+    id: 'zinc', 
+    name: 'Zinc', 
+    tagline: 'Editorial Monochrome', 
+    accentHex: '#f97316', 
+    accentTextHex: '#09090b',
+    darkBg: '#09090b', 
+    lightBg: '#ffffff',
+    darkSurface: '#121215',
+    lightSurface: '#f4f4f5',
+    darkBorder: '#27272a',
+    lightBorder: '#e4e4e7'
+  },
+  { 
+    id: 'slate', 
+    name: 'Slate', 
+    tagline: 'Linear Precision', 
+    accentHex: '#38bdf8', 
+    accentTextHex: '#020817',
+    darkBg: '#020817', 
+    lightBg: '#f8fafc',
+    darkSurface: '#0f172a',
+    lightSurface: '#ffffff',
+    darkBorder: '#1e293b',
+    lightBorder: '#e2e8f0'
+  },
+  { 
+    id: 'stone', 
+    name: 'Warm Stone', 
+    tagline: 'Tactile & Organic', 
+    accentHex: '#d97706', 
+    accentTextHex: '#ffffff',
+    darkBg: '#0c0a09', 
+    lightBg: '#fafaf9',
+    darkSurface: '#1c1917',
+    lightSurface: '#ffffff',
+    darkBorder: '#292524',
+    lightBorder: '#e7e5e4'
+  },
+  { 
+    id: 'nordic', 
+    name: 'Nordic Frost', 
+    tagline: 'Arctic Deep Cool', 
+    accentHex: '#88c0d0', 
+    accentTextHex: '#1e222a',
+    darkBg: '#1e222a', 
+    lightBg: '#f4f6fb',
+    darkSurface: '#242933',
+    lightSurface: '#ffffff',
+    darkBorder: '#3b4252',
+    lightBorder: '#d8dee9'
+  },
+  { 
+    id: 'rose-pine', 
+    name: 'Rose Pine', 
+    tagline: 'Warm Dusk & Berry', 
+    accentHex: '#eb6f92', 
+    accentTextHex: '#191724',
+    darkBg: '#191724', 
+    lightBg: '#faf4ed',
+    darkSurface: '#1f1d2e',
+    lightSurface: '#ffffff',
+    darkBorder: '#26233a',
+    lightBorder: '#cecacd'
+  },
+  { 
+    id: 'tokyo-night', 
+    name: 'Tokyo Night', 
+    tagline: 'Cyber Midnight', 
+    accentHex: '#7aa2f7', 
+    accentTextHex: '#1a1b26',
+    darkBg: '#1a1b26', 
+    lightBg: '#e6e7ed',
+    darkSurface: '#24283b',
+    lightSurface: '#ffffff',
+    darkBorder: '#292e42',
+    lightBorder: '#c4c8d4'
+  },
+  { 
+    id: 'forest', 
+    name: 'Forest Emerald', 
+    tagline: 'Organic Deep Pine', 
+    accentHex: '#10b981', 
+    accentTextHex: '#0d1814',
+    darkBg: '#0d1814', 
+    lightBg: '#f4f9f6',
+    darkSurface: '#14251e',
+    lightSurface: '#ffffff',
+    darkBorder: '#1d362c',
+    lightBorder: '#cfe2d7'
+  },
+  { 
+    id: 'catppuccin', 
+    name: 'Catppuccin', 
+    tagline: 'Pastel Mindful Focus', 
+    accentHex: '#cba6f7', 
+    accentTextHex: '#11111b',
+    darkBg: '#1e1e2e', 
+    lightBg: '#eff1f5',
+    darkSurface: '#181825',
+    lightSurface: '#ffffff',
+    darkBorder: '#313244',
+    lightBorder: '#ccd0da'
+  },
 ];
 
 export type FrameworkType = 'react' | 'vue' | 'svelte' | 'angular' | 'web' | 'rust';
@@ -114,7 +201,7 @@ export interface ComponentDoc {
   icon: React.ReactNode;
   description: string;
   markdownDoc: string;
-  preview: (accentColor: string) => React.ReactNode;
+  preview: (accentColor: string, accentTextColor: string) => React.ReactNode;
   install: {
     npm: string;
     pnpm: string;
@@ -131,7 +218,7 @@ export interface ComponentDoc {
 }
 
 // ----------------------------------------------------------------------------
-// Global Theme Hook
+// Global Theme Hook with HTML Class & CSS Custom Property Sync
 // ----------------------------------------------------------------------------
 
 function useActiveTheme() {
@@ -152,19 +239,27 @@ function useActiveTheme() {
     return true;
   });
 
+  const active = THEMES.find(t => t.id === selectedTheme) || THEMES[0];
+
   useEffect(() => {
     const root = document.documentElement;
     if (isDark) {
       root.classList.add('dark');
+      root.style.setProperty('--bg-page', active.darkBg);
+      root.style.setProperty('--text-page', '#fafafa');
+      root.style.setProperty('--border-subtle', active.darkBorder);
+      root.style.setProperty('--card-surface', active.darkSurface);
       localStorage.setItem('silex-theme-mode', 'dark');
     } else {
       root.classList.remove('dark');
+      root.style.setProperty('--bg-page', active.lightBg);
+      root.style.setProperty('--text-page', '#09090b');
+      root.style.setProperty('--border-subtle', active.lightBorder);
+      root.style.setProperty('--card-surface', active.lightSurface);
       localStorage.setItem('silex-theme-mode', 'light');
     }
     localStorage.setItem('silex-theme-id', selectedTheme);
-  }, [isDark, selectedTheme]);
-
-  const active = THEMES.find(t => t.id === selectedTheme) || THEMES[0];
+  }, [isDark, selectedTheme, active]);
 
   return {
     isDark,
@@ -217,25 +312,25 @@ function NavigationBar({
   const active = THEMES.find(t => t.id === selectedTheme) || THEMES[0];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-zinc-200/80 dark:border-zinc-800/80 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-md transition-colors">
+    <header className="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 transition-colors">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-8">
-          <Link to="/" className="flex items-center gap-3 group">
+          <Link to="/" className="flex items-center gap-3 group" aria-label="Silex Home">
             <div 
-              className="h-9 w-9 rounded-lg flex items-center justify-center shadow-inner transition-transform group-hover:scale-105"
-              style={{ backgroundColor: `${active.accentHex}20`, borderColor: `${active.accentHex}40`, borderWidth: 1 }}
+              className="h-9 w-9 rounded-lg flex items-center justify-center shadow-sm transition-transform group-hover:scale-105"
+              style={{ backgroundColor: active.accentHex, color: active.accentTextHex }}
             >
-              <Flame className="h-5 w-5" style={{ color: active.accentHex }} />
+              <Flame className="h-5 w-5" />
             </div>
             <span className="font-bold text-lg tracking-tight text-zinc-950 dark:text-white">Silex</span>
             <span 
               className="text-[10px] px-2 py-0.5 rounded-full font-mono font-medium border"
-              style={{ color: active.accentHex, borderColor: `${active.accentHex}40`, backgroundColor: `${active.accentHex}15` }}
+              style={{ color: active.accentHex, borderColor: active.accentHex }}
             >
               Polyglot
             </span>
           </Link>
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-400">
+          <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-400">
             <NavLink to="/" end className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Story</NavLink>
             <NavLink to="/docs/components/button" className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Components</NavLink>
             <NavLink to="/docs/installation" className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Installation</NavLink>
@@ -252,7 +347,8 @@ function NavigationBar({
           <div className="relative">
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:border-zinc-400 dark:hover:border-zinc-600 transition cursor-pointer"
+              aria-label="Select Palette Theme"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-xs font-medium text-zinc-800 dark:text-zinc-200 hover:border-zinc-500 transition cursor-pointer"
             >
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: active.accentHex }} />
               <span className="hidden sm:inline">{active.name}</span>
@@ -260,9 +356,9 @@ function NavigationBar({
             </button>
 
             {dropdownOpen && (
-              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 shadow-2xl z-50 animate-in fade-in zoom-in-95">
+              <div className="absolute right-0 mt-2 w-56 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 shadow-2xl z-50">
                 <div className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-zinc-400">
-                  Curated Creative Palettes
+                  Solid Creative Palettes
                 </div>
                 <div className="space-y-1 mt-1">
                   {THEMES.map((t) => (
@@ -293,8 +389,8 @@ function NavigationBar({
           {/* Light / Dark Mode Toggle */}
           <button
             onClick={onToggleTheme}
-            aria-label="Toggle theme"
-            className="p-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer"
+            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            className="p-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer"
           >
             {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-zinc-600" />}
           </button>
@@ -302,7 +398,7 @@ function NavigationBar({
           <Link
             to="/docs/components/button"
             className="px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-sm transition"
-            style={{ backgroundColor: active.accentHex, color: isDark ? '#09090b' : '#ffffff' }}
+            style={{ backgroundColor: active.accentHex, color: active.accentTextHex }}
           >
             Explore Library
           </Link>
@@ -313,7 +409,7 @@ function NavigationBar({
 }
 
 // ----------------------------------------------------------------------------
-// Story Landing Page: "From Spark to Structure"
+// Landing Page (Zero Gradients, Bold Editorial Design)
 // ----------------------------------------------------------------------------
 
 function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
@@ -331,11 +427,10 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
     <div className="flex-1 flex flex-col">
       <section className="relative px-6 pt-24 pb-20 max-w-5xl mx-auto text-center space-y-8">
         <div 
-          className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium border transition-colors"
+          className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border"
           style={{ 
             color: activeTheme.accentHex, 
-            borderColor: `${activeTheme.accentHex}40`, 
-            backgroundColor: `${activeTheme.accentHex}15` 
+            borderColor: activeTheme.accentHex
           }}
         >
           <Feather className="h-3.5 w-3.5" />
@@ -344,37 +439,31 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
 
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-[1.1]">
           We struck flint against steel <br />
-          <span 
-            className="text-transparent bg-clip-text bg-gradient-to-r"
-            style={{
-              backgroundImage: `linear-gradient(to right, ${activeTheme.accentHex}, #fbbf24, ${activeTheme.accentHex})`
-            }}
-          >
+          <span style={{ color: activeTheme.accentHex }}>
             because UI kits lost their soul.
           </span>
         </h1>
 
-        <p className="max-w-2xl mx-auto text-lg sm:text-xl text-zinc-600 dark:text-zinc-300 leading-relaxed font-normal">
+        <p className="max-w-2xl mx-auto text-lg sm:text-xl text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal">
           Tired of 40MB JavaScript node dependencies, mysterious runtime errors, and synthetic AI template slop? 
           <strong> Silex</strong> is the pure Rust component core engineered for speed, mathematical WCAG contrast, and human editorial beauty across React, Vue, Svelte, Angular, and Web Components.
         </p>
 
         {/* Scaffold Box */}
-        <div className="max-w-lg mx-auto bg-white/90 dark:bg-zinc-900/90 border border-zinc-200 dark:border-zinc-800 rounded-xl p-3 shadow-2xl backdrop-blur-md space-y-2">
+        <div className="max-w-lg mx-auto bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl p-3 shadow-xl space-y-2">
           <div className="flex items-center justify-between px-2">
-            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider">Start the Spark</span>
+            <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Start the Spark</span>
             <div className="flex gap-1">
               {(['pnpm', 'npm', 'bun', 'cargo'] as const).map((pm) => (
                 <button
                   key={pm}
                   onClick={() => setInstallPm(pm)}
                   className={`px-2 py-0.5 rounded text-[11px] font-mono transition cursor-pointer ${
-                    installPm === pm ? 'font-semibold border' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
+                    installPm === pm ? 'font-bold border' : 'text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300'
                   }`}
                   style={installPm === pm ? { 
                     color: activeTheme.accentHex, 
-                    borderColor: `${activeTheme.accentHex}40`,
-                    backgroundColor: `${activeTheme.accentHex}15`
+                    borderColor: activeTheme.accentHex
                   } : {}}
                 >
                   {pm}
@@ -382,7 +471,7 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
               ))}
             </div>
           </div>
-          <div className="flex items-center justify-between bg-zinc-50 dark:bg-zinc-950 px-3 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800/80 font-mono text-xs">
+          <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-950 px-3 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 font-mono text-xs">
             <span className="font-semibold select-all" style={{ color: activeTheme.accentHex }}>
               {installPm === 'pnpm' && 'pnpm dlx silex-ui init'}
               {installPm === 'npm' && 'npx silex-ui init'}
@@ -396,7 +485,8 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
                             installPm === 'bun' ? 'bunx silex-ui init' : 'cargo install silex-ui-cli && silex init';
                 copyText(cmd);
               }}
-              className="text-zinc-400 hover:text-zinc-700 dark:hover:text-white transition ml-3"
+              aria-label="Copy Command"
+              className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white transition ml-3"
             >
               {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
             </button>
@@ -406,8 +496,8 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
         <div className="flex items-center justify-center gap-4 pt-4">
           <Link
             to="/docs/components/button"
-            className="px-6 py-3 rounded-lg font-medium text-sm flex items-center gap-2 shadow-lg transition cursor-pointer"
-            style={{ backgroundColor: activeTheme.accentHex, color: '#09090b' }}
+            className="px-6 py-3 rounded-lg font-semibold text-sm flex items-center gap-2 shadow-md transition cursor-pointer"
+            style={{ backgroundColor: activeTheme.accentHex, color: activeTheme.accentTextHex }}
           >
             <span>Explore Documentation</span>
             <ArrowRight className="h-4 w-4" />
@@ -416,7 +506,7 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
             href="https://github.com/sagarkrjha/silex"
             target="_blank"
             rel="noreferrer"
-            className="px-6 py-3 rounded-lg bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-800 font-medium text-sm transition"
+            className="px-6 py-3 rounded-lg bg-zinc-100 dark:bg-zinc-900 hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-800 font-semibold text-sm transition"
           >
             GitHub Repository
           </a>
@@ -439,7 +529,7 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white dark:bg-zinc-900/40 rounded-2xl border border-zinc-200 dark:border-zinc-800 p-8 shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center bg-white dark:bg-zinc-900 rounded-2xl border border-zinc-300 dark:border-zinc-800 p-8 shadow-sm">
           <div className="space-y-6">
             <h3 className="text-xl font-semibold text-zinc-950 dark:text-white">
               Try the Dialog State Machine
@@ -453,7 +543,7 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
               <button
                 onClick={() => setInteractiveOpen(true)}
                 className="px-5 py-2.5 rounded-lg text-xs font-semibold shadow-md transition cursor-pointer"
-                style={{ backgroundColor: activeTheme.accentHex, color: '#09090b' }}
+                style={{ backgroundColor: activeTheme.accentHex, color: activeTheme.accentTextHex }}
               >
                 Trigger State Transition
               </button>
@@ -463,13 +553,13 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
             </div>
 
             {interactiveOpen && (
-              <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 space-y-3 animate-in fade-in">
+              <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-xs font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
                     <ShieldCheck className="h-4 w-4" style={{ color: activeTheme.accentHex }} />
                     Zero Undefined Behavior
                   </span>
-                  <button onClick={() => setInteractiveOpen(false)} className="text-xs text-zinc-400 hover:text-white">
+                  <button onClick={() => setInteractiveOpen(false)} aria-label="Dismiss message" className="text-xs text-zinc-400 hover:text-white">
                     Dismiss
                   </button>
                 </div>
@@ -531,7 +621,7 @@ impl DialogState {
           ].map((fw) => (
             <div 
               key={fw.name}
-              className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 text-center space-y-1 shadow-sm"
+              className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-center space-y-1 shadow-sm"
             >
               <div className="text-sm font-semibold text-zinc-950 dark:text-white">{fw.name}</div>
               <div className="text-[11px] text-zinc-500">{fw.desc}</div>
@@ -541,7 +631,7 @@ impl DialogState {
       </section>
 
       {/* Act IV: The Polyglot Manifesto */}
-      <section className="max-w-4xl mx-auto px-6 py-20 text-center space-y-8 border-t border-zinc-200 dark:border-zinc-800/80">
+      <section className="max-w-4xl mx-auto px-6 py-20 text-center space-y-8 border-t border-zinc-300 dark:border-zinc-800">
         <Heart className="h-8 w-8 mx-auto" style={{ color: activeTheme.accentHex }} />
         <h2 className="text-3xl font-extrabold text-zinc-950 dark:text-white">
           Copy what you own. Change what you wish.
@@ -554,7 +644,7 @@ impl DialogState {
           <Link
             to="/docs/components/button"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold shadow-md transition"
-            style={{ backgroundColor: activeTheme.accentHex, color: '#09090b' }}
+            style={{ backgroundColor: activeTheme.accentHex, color: activeTheme.accentTextHex }}
           >
             <span>Dive into the Components</span>
             <ChevronRight className="h-4 w-4" />
@@ -566,7 +656,7 @@ impl DialogState {
 }
 
 // ----------------------------------------------------------------------------
-// Documentation Data Store with Polyglot Framework Code Snippets
+// Type-Safe Component Data Store (Strict Types for TS Demos)
 // ----------------------------------------------------------------------------
 
 const COMPONENTS_DATA: Record<string, ComponentDoc> = {
@@ -585,21 +675,23 @@ The **Button** component serves as the primary interactive element in the Silex 
 - **Sizes**: \`Sm\` (32px), \`Md\` (36px), \`Lg\` (44px).
 - **Accessibility**: Native focus rings, disabled state deterrence, and ARIA attributes.
     `,
-    preview: (accent: string) => (
+    preview: (accent: string, accentText: string) => (
       <div className="flex flex-wrap gap-4 items-center">
         <button 
+          type="button"
+          aria-label="Primary Action"
           className="px-4 py-2 font-semibold rounded-md shadow-sm transition"
-          style={{ backgroundColor: accent, color: '#09090b' }}
+          style={{ backgroundColor: accent, color: accentText }}
         >
           Primary Action
         </button>
-        <button className="px-4 py-2 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-700 rounded-md transition">
+        <button type="button" aria-label="Secondary" className="px-4 py-2 bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-700 rounded-md transition">
           Secondary
         </button>
-        <button className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 rounded-md transition">
+        <button type="button" aria-label="Outline" className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-800 dark:text-zinc-200 rounded-md transition">
           Outline
         </button>
-        <button className="px-4 py-2 bg-red-900/40 hover:bg-red-800/60 text-red-700 dark:text-red-200 border border-red-500/30 rounded-md transition">
+        <button type="button" aria-label="Destructive" className="px-4 py-2 bg-red-900/40 hover:bg-red-800/60 text-red-700 dark:text-red-200 border border-red-500/30 rounded-md transition">
           Destructive
         </button>
       </div>
@@ -616,19 +708,34 @@ The **Button** component serves as the primary interactive element in the Silex 
       { name: 'disabled', type: 'boolean', default: 'false', description: 'Prevents interactions and dims appearance' },
     ],
     code: {
-      react: `import { Button } from "@/components/ui/button";
+      react: `import React from "react";
+import { Button, type ButtonProps } from "@/components/ui/button";
 
-export default function Example() {
+export interface ButtonDemoProps {
+  onAction?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}
+
+export const Example: React.FC<ButtonDemoProps> = ({ onAction }): React.ReactElement => {
   return (
     <div className="flex gap-4">
-      <Button variant="primary">Primary Action</Button>
+      <Button variant="primary" onClick={onAction}>
+        Primary Action
+      </Button>
       <Button variant="secondary">Secondary</Button>
       <Button variant="outline">Outline</Button>
     </div>
   );
-}`,
+};
+
+export default Example;`,
       vue: `<script setup lang="ts">
 import { SilexButton } from '@/components/ui';
+
+interface Props {
+  variant?: 'primary' | 'secondary' | 'outline';
+}
+
+defineProps<Props>();
 </script>
 
 <template>
@@ -640,34 +747,43 @@ import { SilexButton } from '@/components/ui';
 </template>`,
       svelte: `<script lang="ts">
   import Button from '$lib/components/ui/Button.svelte';
+  
+  interface Props {
+    variant?: 'primary' | 'secondary' | 'outline';
+  }
+  let { variant = 'primary' }: Props = $props();
 </script>
 
 <div class="flex gap-4">
-  <Button variant="primary">Primary Action</Button>
+  <Button {variant}>Primary Action</Button>
   <Button variant="secondary">Secondary</Button>
   <Button variant="outline">Outline</Button>
 </div>`,
-      angular: `import { Component } from '@angular/core';
+      angular: `import { Component, input } from '@angular/core';
 import { SilexButtonComponent } from './components/ui/button.component';
+
+export type ButtonVariant = 'primary' | 'secondary' | 'outline';
 
 @Component({
   standalone: true,
   imports: [SilexButtonComponent],
   template: \`
     <div class="flex gap-4">
-      <silex-button variant="primary">Primary Action</silex-button>
+      <silex-button [variant]="variant()">Primary Action</silex-button>
       <silex-button variant="secondary">Secondary</silex-button>
     </div>
   \`
 })
-export class ButtonExample {}`,
+export class ButtonExample {
+  variant = input<ButtonVariant>('primary');
+}`,
       web: `<silex-button variant="primary">Primary Action</silex-button>
 <silex-button variant="secondary">Secondary</silex-button>
 <silex-button variant="outline">Outline</silex-button>`,
       rust: `use silex_ui_core::components::button::{ButtonProps, ButtonVariant, ButtonSize};
 
-let button = ButtonProps::new(ButtonVariant::Primary, ButtonSize::Md);
-let classes = button.compute_classes();`,
+let button: ButtonProps = ButtonProps::new(ButtonVariant::Primary, ButtonSize::Md);
+let classes: String = button.compute_classes();`,
     },
   },
 
@@ -685,27 +801,29 @@ The **Dialog** component interrupts the user with a mandatory or informative lay
 - Focus is automatically trapped within the modal content while open.
 - Escape key and backdrop clicks dismiss the dialog gracefully.
     `,
-    preview: (accent: string) => {
+    preview: (accent: string, accentText: string) => {
       const [isOpen, setIsOpen] = useState(false);
       return (
         <div>
           <button
+            type="button"
+            aria-label="Open Modal Dialog"
             onClick={() => setIsOpen(true)}
             className="px-4 py-2 font-semibold rounded-md shadow-sm transition cursor-pointer"
-            style={{ backgroundColor: accent, color: '#09090b' }}
+            style={{ backgroundColor: accent, color: accentText }}
           >
             Open Modal Dialog
           </button>
 
           {isOpen && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/70 backdrop-blur-sm animate-in fade-in">
+            <div role="dialog" aria-modal="true" aria-labelledby="modal-heading" className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-zinc-950/70">
               <div className="relative w-full max-w-md rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-2xl">
                 <div className="flex justify-between items-start pb-4">
-                  <h3 className="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
+                  <h3 id="modal-heading" className="text-lg font-semibold text-zinc-900 dark:text-white flex items-center gap-2">
                     <Maximize2 className="h-5 w-5" style={{ color: accent }} />
                     <span>Database Migration</span>
                   </h3>
-                  <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+                  <button type="button" aria-label="Close Dialog" onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
                     <X className="h-4 w-4" />
                   </button>
                 </div>
@@ -714,15 +832,17 @@ The **Dialog** component interrupts the user with a mandatory or informative lay
                 </p>
                 <div className="mt-6 flex justify-end gap-2">
                   <button
+                    type="button"
                     onClick={() => setIsOpen(false)}
                     className="px-4 py-2 text-xs font-semibold rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   >
                     Cancel
                   </button>
                   <button
+                    type="button"
                     onClick={() => setIsOpen(false)}
                     className="px-4 py-2 text-xs font-semibold rounded-md shadow"
-                    style={{ backgroundColor: accent, color: '#09090b' }}
+                    style={{ backgroundColor: accent, color: accentText }}
                   >
                     Confirm Migration
                   </button>
@@ -745,40 +865,54 @@ The **Dialog** component interrupts the user with a mandatory or informative lay
       { name: 'title', type: 'string', default: '-', description: 'Accessible modal heading title' },
     ],
     code: {
-      react: `import { Dialog } from "@/components/ui/dialog";
-import { useState } from "react";
+      react: `import React, { useState } from "react";
+import { Dialog, type DialogProps } from "@/components/ui/dialog";
 
-export default function Example() {
-  const [open, setOpen] = useState(false);
+export interface DialogDemoProps {
+  initialOpen?: boolean;
+}
+
+export const Example: React.FC<DialogDemoProps> = ({ initialOpen = false }): React.ReactElement => {
+  const [open, setOpen] = useState<boolean>(initialOpen);
+
   return (
-    <Dialog open={open} onOpenChange={setOpen} title="Database Migration">
-      <p>Confirm cluster configuration change.</p>
+    <Dialog 
+      open={open} 
+      onOpenChange={(nextState: boolean) => setOpen(nextState)} 
+      title="Database Migration"
+    >
+      <p className="text-sm text-zinc-400">Confirm cluster configuration change.</p>
     </Dialog>
   );
-}`,
+};
+
+export default Example;`,
       vue: `<script setup lang="ts">
 import { ref } from 'vue';
 import { SilexDialog } from '@/components/ui';
 
-const isOpen = ref(false);
+const isOpen = ref<boolean>(false);
+const handleStateChange = (state: boolean): void => {
+  isOpen.value = state;
+};
 </script>
 
 <template>
-  <button @click="isOpen = true">Open Dialog</button>
-  <SilexDialog :open="isOpen" @update:open="isOpen = $event" title="Database Migration">
+  <button type="button" @click="isOpen = true">Open Dialog</button>
+  <SilexDialog :open="isOpen" @update:open="handleStateChange" title="Database Migration">
     <p>Confirm cluster configuration change.</p>
   </SilexDialog>
 </template>`,
       svelte: `<script lang="ts">
   import Dialog from '$lib/components/ui/Dialog.svelte';
-  let open = $state(false);
+  let open: boolean = $state(false);
 </script>
 
-<button onclick={() => open = true}>Open Dialog</button>
+<button type="button" onclick={() => open = true}>Open Dialog</button>
 <Dialog bind:open title="Database Migration">
   <p>Confirm cluster configuration change.</p>
 </Dialog>`,
-      angular: `import { Component, signal } from '@angular/core';
+      angular: `import { Component, signal, WritableSignal } from '@angular/core';
 import { SilexDialogComponent } from './components/ui/dialog.component';
 
 @Component({
@@ -792,14 +926,14 @@ import { SilexDialogComponent } from './components/ui/dialog.component';
   \`
 })
 export class DialogExample {
-  open = signal(false);
+  open: WritableSignal<boolean> = signal(false);
 }`,
       web: `<silex-dialog title="Database Migration" open>
   <p>Confirm cluster configuration change.</p>
 </silex-dialog>`,
       rust: `use silex_ui_core::components::dialog::DialogState;
 
-let mut dialog = DialogState::new(false);
+let mut dialog: DialogState = DialogState::new(false);
 dialog.open();
 assert!(dialog.is_open());
 dialog.close();`,
@@ -816,25 +950,27 @@ dialog.close();`,
 ### Overview
 The **Sheet** component extends dialog semantics into sliding drawer panels. Ideal for side navigation, inspectors, and filter drawers.
     `,
-    preview: (accent: string) => {
+    preview: (accent: string, accentText: string) => {
       const [isOpen, setIsOpen] = useState(false);
       return (
         <div>
           <button
+            type="button"
+            aria-label="Open Side Sheet"
             onClick={() => setIsOpen(true)}
             className="px-4 py-2 font-semibold rounded-md shadow-sm transition cursor-pointer"
-            style={{ backgroundColor: accent, color: '#09090b' }}
+            style={{ backgroundColor: accent, color: accentText }}
           >
             Open Side Sheet
           </button>
 
           {isOpen && (
-            <div className="fixed inset-0 z-50 bg-zinc-950/70 backdrop-blur-sm">
+            <div role="dialog" aria-modal="true" aria-labelledby="sheet-heading" className="fixed inset-0 z-50 bg-zinc-950/70">
               <div className="fixed inset-y-0 right-0 w-full sm:max-w-md bg-white dark:bg-zinc-900 border-l border-zinc-200 dark:border-zinc-800 p-6 shadow-2xl flex flex-col justify-between">
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-zinc-950 dark:text-white">Workspace Configuration</h3>
-                    <button onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
+                    <h3 id="sheet-heading" className="text-lg font-semibold text-zinc-950 dark:text-white">Workspace Configuration</h3>
+                    <button type="button" aria-label="Close Sheet" onClick={() => setIsOpen(false)} className="text-zinc-500 hover:text-zinc-900 dark:hover:text-white">
                       <X className="h-5 w-5" />
                     </button>
                   </div>
@@ -842,6 +978,7 @@ The **Sheet** component extends dialog semantics into sliding drawer panels. Ide
                 </div>
                 <div className="flex justify-end gap-2 pt-6 border-t border-zinc-200 dark:border-zinc-800">
                   <button
+                    type="button"
                     onClick={() => setIsOpen(false)}
                     className="px-4 py-2 text-xs font-semibold rounded-md border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   >
@@ -865,22 +1002,33 @@ The **Sheet** component extends dialog semantics into sliding drawer panels. Ide
       { name: 'side', type: "'top' | 'right' | 'bottom' | 'left'", default: "'right'", description: 'Edge to dock the sheet' },
     ],
     code: {
-      react: `import { Sheet } from "@/components/ui/sheet";
-import { useState } from "react";
+      react: `import React, { useState } from "react";
+import { Sheet, type SheetProps } from "@/components/ui/sheet";
 
-export default function Example() {
-  const [open, setOpen] = useState(false);
+export interface SheetDemoProps {
+  side?: "right" | "left" | "top" | "bottom";
+}
+
+export const Example: React.FC<SheetDemoProps> = ({ side = "right" }): React.ReactElement => {
+  const [open, setOpen] = useState<boolean>(false);
   return (
-    <Sheet open={open} onOpenChange={setOpen} side="right" title="Inspector">
-      <p>Sheet drawer content.</p>
+    <Sheet 
+      open={open} 
+      onOpenChange={(nextState: boolean) => setOpen(nextState)} 
+      side={side} 
+      title="Inspector"
+    >
+      <p className="text-sm text-zinc-400">Sheet drawer content.</p>
     </Sheet>
   );
-}`,
+};
+
+export default Example;`,
       vue: `<script setup lang="ts">
 import { ref } from 'vue';
 import { SilexSheet } from '@/components/ui';
 
-const open = ref(false);
+const open = ref<boolean>(false);
 </script>
 
 <template>
@@ -890,13 +1038,13 @@ const open = ref(false);
 </template>`,
       svelte: `<script lang="ts">
   import Sheet from '$lib/components/ui/Sheet.svelte';
-  let open = $state(false);
+  let open: boolean = $state(false);
 </script>
 
 <Sheet bind:open side="right" title="Inspector">
   <p>Sheet drawer content.</p>
 </Sheet>`,
-      angular: `import { Component, signal } from '@angular/core';
+      angular: `import { Component, signal, WritableSignal } from '@angular/core';
 import { SilexSheetComponent } from './components/ui/sheet.component';
 
 @Component({
@@ -909,14 +1057,14 @@ import { SilexSheetComponent } from './components/ui/sheet.component';
   \`
 })
 export class SheetExample {
-  open = signal(false);
+  open: WritableSignal<boolean> = signal(false);
 }`,
       web: `<silex-sheet side="right" title="Inspector" open>
   <p>Sheet drawer content.</p>
 </silex-sheet>`,
       rust: `use silex_ui_core::components::sheet::{SheetState, SheetSide};
 
-let mut sheet = SheetState::new(SheetSide::Right, false);
+let mut sheet: SheetState = SheetState::new(SheetSide::Right, false);
 sheet.open();
 assert!(sheet.is_open());`,
     },
@@ -933,10 +1081,10 @@ assert!(sheet.is_open());`,
 The **Card** container standardizes visual containment for metrics, charts, and articles.
     `,
     preview: (accent: string) => (
-      <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/60 p-6 shadow-sm space-y-3">
+      <div className="w-full max-w-sm rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-mono uppercase tracking-wider" style={{ color: accent }}>Telemetry</span>
-          <span className="h-2 w-2 rounded-full animate-pulse" style={{ backgroundColor: accent }} />
+          <span className="text-xs font-mono uppercase tracking-wider font-semibold" style={{ color: accent }}>Telemetry</span>
+          <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accent }} />
         </div>
         <h4 className="text-base font-semibold text-zinc-950 dark:text-white">Active Workers</h4>
         <p className="text-3xl font-extrabold text-zinc-900 dark:text-white">99.98%</p>
@@ -953,48 +1101,77 @@ The **Card** container standardizes visual containment for metrics, charts, and 
       { name: 'className', type: 'string', default: "''", description: 'Custom CSS classes' },
     ],
     code: {
-      react: `import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+      react: `import React from "react";
+import { Card, CardHeader, CardTitle, CardContent, type CardProps } from "@/components/ui/card";
 
-export default function Example() {
+export interface MetricCardProps extends CardProps {
+  title: string;
+  value: string;
+}
+
+export const Example: React.FC<MetricCardProps> = ({ title, value, ...props }): React.ReactElement => {
   return (
-    <Card>
+    <Card {...props}>
       <CardHeader>
-        <CardTitle>Active Workers</CardTitle>
+        <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent>
-        <p className="text-3xl font-bold">99.98%</p>
+        <p className="text-3xl font-bold">{value}</p>
       </CardContent>
     </Card>
   );
-}`,
-      vue: `<template>
+};
+
+export default Example;`,
+      vue: `<script setup lang="ts">
+interface CardProps {
+  title: string;
+  value: string;
+}
+defineProps<CardProps>();
+</script>
+
+<template>
   <div class="rounded-lg border border-border bg-card p-6 shadow-sm">
-    <h3 class="text-lg font-semibold text-foreground">Active Workers</h3>
-    <p class="text-3xl font-bold mt-2">99.98%</p>
+    <h3 class="text-lg font-semibold text-foreground">{{ title }}</h3>
+    <p class="text-3xl font-bold mt-2">{{ value }}</p>
   </div>
 </template>`,
-      svelte: `<div class="rounded-lg border border-border bg-card p-6 shadow-sm">
-  <h3 class="text-lg font-semibold text-foreground">Active Workers</h3>
-  <p class="text-3xl font-bold mt-2">99.98%</p>
+      svelte: `<script lang="ts">
+  interface Props {
+    title: string;
+    value: string;
+  }
+  let { title, value }: Props = $props();
+</script>
+
+<div class="rounded-lg border border-border bg-card p-6 shadow-sm">
+  <h3 class="text-lg font-semibold text-foreground">{title}</h3>
+  <p class="text-3xl font-bold mt-2">{value}</p>
 </div>`,
-      angular: `@Component({
+      angular: `import { Component, input } from '@angular/core';
+
+@Component({
   standalone: true,
   template: \`
     <div class="rounded-lg border border-border bg-card p-6 shadow-sm">
-      <h3 class="text-lg font-semibold text-foreground">Active Workers</h3>
-      <p class="text-3xl font-bold mt-2">99.98%</p>
+      <h3 class="text-lg font-semibold text-foreground">{{ title() }}</h3>
+      <p class="text-3xl font-bold mt-2">{{ value() }}</p>
     </div>
   \`
 })
-export class CardExample {}`,
+export class CardExample {
+  title = input<string>('Active Workers');
+  value = input<string>('99.98%');
+}`,
       web: `<silex-card>
   <h3>Active Workers</h3>
   <p>99.98%</p>
 </silex-card>`,
       rust: `use silex_ui_core::components::card::{CardProps, CardVariant, CardHover};
 
-let card = CardProps::new(CardVariant::Default, CardHover::Scale);
-let classes = card.compute_classes();`,
+let card: CardProps = CardProps::new(CardVariant::Default, CardHover::Scale);
+let classes: String = card.compute_classes();`,
     },
   },
 
@@ -1016,12 +1193,13 @@ The **Switch** component provides accessible on/off toggle behavior conforming t
             type="button"
             role="switch"
             aria-checked={checked}
+            aria-label="Continuous Deployment Toggle"
             onClick={() => setChecked(!checked)}
             className="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none"
-            style={{ backgroundColor: checked ? accent : '#3f3f46' }}
+            style={{ backgroundColor: checked ? accent : '#52525b' }}
           >
             <span
-              className={`pointer-events-none block h-5 w-5 rounded-full bg-white shadow-lg ring-0 transition-transform ${
+              className={`pointer-events-none block h-5 w-5 rounded-full bg-white shadow-md ring-0 transition-transform ${
                 checked ? 'translate-x-5' : 'translate-x-0'
               }`}
             />
@@ -1044,15 +1222,31 @@ The **Switch** component provides accessible on/off toggle behavior conforming t
       { name: 'disabled', type: 'boolean', default: 'false', description: 'Disables toggle interaction' },
     ],
     code: {
-      react: `import { Switch } from "@/components/ui/switch";
+      react: `import React, { useState } from "react";
+import { Switch, type SwitchProps } from "@/components/ui/switch";
 
-export default function Example() {
-  return <Switch defaultChecked />;
-}`,
+export interface SwitchDemoProps {
+  defaultChecked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+}
+
+export const Example: React.FC<SwitchDemoProps> = ({ defaultChecked = false, onCheckedChange }): React.ReactElement => {
+  const [checked, setChecked] = useState<boolean>(defaultChecked);
+
+  const handleChange = (next: boolean) => {
+    setChecked(next);
+    onCheckedChange?.(next);
+  };
+
+  return <Switch checked={checked} onCheckedChange={handleChange} />;
+};
+
+export default Example;`,
       vue: `<script setup lang="ts">
 import { ref } from 'vue';
 import { SilexSwitch } from '@/components/ui';
-const active = ref(true);
+
+const active = ref<boolean>(true);
 </script>
 
 <template>
@@ -1060,19 +1254,25 @@ const active = ref(true);
 </template>`,
       svelte: `<script lang="ts">
   import Switch from '$lib/components/ui/Switch.svelte';
-  let checked = $state(true);
+  let checked: boolean = $state(true);
 </script>
 
 <Switch bind:checked />`,
-      angular: `@Component({
+      angular: `import { Component, signal, WritableSignal } from '@angular/core';
+import { SilexSwitchComponent } from './components/ui/switch.component';
+
+@Component({
   standalone: true,
-  template: \`<silex-switch [checked]="true"></silex-switch>\`
+  imports: [SilexSwitchComponent],
+  template: \`<silex-switch [checked]="checked()" (checkedChange)="checked.set($event)"></silex-switch>\`
 })
-export class SwitchExample {}`,
+export class SwitchExample {
+  checked: WritableSignal<boolean> = signal(true);
+}`,
       web: `<silex-switch checked></silex-switch>`,
       rust: `use silex_ui_core::components::switch::SwitchState;
 
-let mut switch = SwitchState::new(true);
+let mut switch: SwitchState = SwitchState::new(true);
 switch.toggle();`,
     },
   },
@@ -1089,7 +1289,11 @@ The **Input** component standardizes text field styles, focus states, and input 
     `,
     preview: (accent: string) => (
       <div className="w-full max-w-sm space-y-2">
+        <label htmlFor="api-key-input" className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          API Key
+        </label>
         <input
+          id="api-key-input"
           type="text"
           placeholder="Search API keys..."
           className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none"
@@ -1108,11 +1312,24 @@ The **Input** component standardizes text field styles, focus states, and input 
       { name: 'disabled', type: 'boolean', default: 'false', description: 'Disables input' },
     ],
     code: {
-      react: `import { Input } from "@/components/ui/input";
+      react: `import React from "react";
+import { Input, type InputProps } from "@/components/ui/input";
 
-export default function Example() {
-  return <Input placeholder="Search API keys..." />;
-}`,
+export interface SearchInputProps extends InputProps {
+  onSearchChange?: (value: string) => void;
+}
+
+export const Example: React.FC<SearchInputProps> = ({ onSearchChange, ...props }): React.ReactElement => {
+  return (
+    <Input 
+      placeholder="Search API keys..." 
+      onChange={(e: React.ChangeEvent<HTMLInputElement>) => onSearchChange?.(e.target.value)}
+      {...props} 
+    />
+  );
+};
+
+export default Example;`,
       vue: `<template>
   <input class="h-9 w-full rounded-md border border-input px-3 py-1 text-sm bg-background" placeholder="Search..." />
 </template>`,
@@ -1121,8 +1338,8 @@ export default function Example() {
       web: `<silex-input placeholder="Search API keys..."></silex-input>`,
       rust: `use silex_ui_core::components::input::{InputProps, InputType};
 
-let input = InputProps::new(InputType::Text);
-let classes = input.compute_classes();`,
+let input: InputProps = InputProps::new(InputType::Text);
+let classes: String = input.compute_classes();`,
     },
   },
 
@@ -1137,12 +1354,12 @@ let classes = input.compute_classes();`,
 The **Alert** component highlights critical status messages, warnings, and confirmations.
     `,
     preview: (_accent: string) => (
-      <div className="w-full max-w-md rounded-lg border border-red-500/30 bg-red-500/10 p-4 text-red-700 dark:text-red-300 space-y-1">
+      <div role="alert" className="w-full max-w-md rounded-lg border border-red-500 bg-red-500/10 p-4 text-red-700 dark:text-red-300 space-y-1">
         <div className="flex items-center gap-2 font-semibold text-sm">
           <AlertTriangle className="h-4 w-4 text-red-500" />
           <span>Cluster Rebalance Triggered</span>
         </div>
-        <p className="text-xs text-red-600/80 dark:text-red-300/80 pl-6">Worker node eu-west-1a was drained for kernel upgrades.</p>
+        <p className="text-xs text-red-600 dark:text-red-300 pl-6">Worker node eu-west-1a was drained for kernel upgrades.</p>
       </div>
     ),
     install: {
@@ -1155,37 +1372,46 @@ The **Alert** component highlights critical status messages, warnings, and confi
       { name: 'variant', type: "'info' | 'warning' | 'destructive' | 'success'", default: "'info'", description: 'Alert semantic status' },
     ],
     code: {
-      react: `import { Alert } from "@/components/ui/alert";
+      react: `import React from "react";
+import { Alert, type AlertProps } from "@/components/ui/alert";
 
-export default function Example() {
+export interface AlertNotificationProps extends AlertProps {
+  title: string;
+  message: string;
+}
+
+export const Example: React.FC<AlertNotificationProps> = ({ title, message, variant = "destructive" }): React.ReactElement => {
   return (
-    <Alert variant="destructive">
-      Cluster Rebalance Triggered
+    <Alert variant={variant}>
+      <h5 className="font-semibold">{title}</h5>
+      <p className="text-xs">{message}</p>
     </Alert>
   );
-}`,
+};
+
+export default Example;`,
       vue: `<template>
-  <div role="alert" class="rounded-lg border border-red-900/50 bg-red-950/20 p-4 text-red-200">
+  <div role="alert" class="rounded-lg border border-red-900 bg-red-950 p-4 text-red-200">
     Cluster Rebalance Triggered
   </div>
 </template>`,
-      svelte: `<div role="alert" class="rounded-lg border border-red-900/50 bg-red-950/20 p-4 text-red-200">
+      svelte: `<div role="alert" class="rounded-lg border border-red-900 bg-red-950 p-4 text-red-200">
   Cluster Rebalance Triggered
 </div>`,
-      angular: `<div role="alert" class="rounded-lg border border-red-900/50 bg-red-950/20 p-4 text-red-200">
+      angular: `<div role="alert" class="rounded-lg border border-red-900 bg-red-950 p-4 text-red-200">
   Cluster Rebalance Triggered
 </div>`,
       web: `<silex-alert variant="destructive">Cluster Rebalance Triggered</silex-alert>`,
       rust: `use silex_ui_core::components::alert::{AlertProps, AlertVariant};
 
-let alert = AlertProps::new(AlertVariant::Destructive);
-let classes = alert.compute_classes();`,
+let alert: AlertProps = AlertProps::new(AlertVariant::Destructive);
+let classes: String = alert.compute_classes();`,
     },
   },
 };
 
 // ----------------------------------------------------------------------------
-// Guide Documentation Pages (Introduction, Installation, Theming, Config)
+// Guide Documentation Pages
 // ----------------------------------------------------------------------------
 
 function IntroductionDoc() {
@@ -1199,7 +1425,7 @@ function IntroductionDoc() {
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-        <div className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 space-y-2">
+        <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
           <div className="flex items-center gap-2 font-semibold text-zinc-900 dark:text-white">
             <Cpu className="h-4 w-4 text-orange-500" />
             <span>Deterministic Rust State</span>
@@ -1209,7 +1435,7 @@ function IntroductionDoc() {
           </p>
         </div>
 
-        <div className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 space-y-2">
+        <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
           <div className="flex items-center gap-2 font-semibold text-zinc-900 dark:text-white">
             <Layers className="h-4 w-4 text-sky-500" />
             <span>Polyglot Generation</span>
@@ -1236,9 +1462,10 @@ function InstallationDoc() {
         {(['vite', 'nextjs', 'vue', 'svelte', 'cargo'] as const).map((t) => (
           <button
             key={t}
+            type="button"
             onClick={() => setTab(t)}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition ${
-              tab === t ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/30' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+              tab === t ? 'bg-orange-600 text-white font-bold' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
             }`}
           >
             {t}
@@ -1246,15 +1473,15 @@ function InstallationDoc() {
         ))}
       </div>
 
-      <div className="p-6 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 space-y-4">
+      <div className="p-6 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-4">
         {tab === 'vite' && (
           <div className="space-y-3">
             <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">1. Initialize Silex</h3>
-            <pre className="p-3 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-xs font-mono text-orange-500">
+            <pre className="p-3 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-xs font-mono text-orange-600 dark:text-orange-400">
               npx silex-ui init
             </pre>
             <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">2. Add components</h3>
-            <pre className="p-3 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-xs font-mono text-orange-500">
+            <pre className="p-3 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-xs font-mono text-orange-600 dark:text-orange-400">
               npx silex-ui add button dialog card
             </pre>
           </div>
@@ -1263,11 +1490,11 @@ function InstallationDoc() {
         {tab === 'cargo' && (
           <div className="space-y-3">
             <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">Native Rust Core Installation</h3>
-            <pre className="p-3 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-xs font-mono text-orange-500">
+            <pre className="p-3 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-xs font-mono text-orange-600 dark:text-orange-400">
               cargo add silex-ui-core
             </pre>
             <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">Native Scaffolding CLI</h3>
-            <pre className="p-3 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-xs font-mono text-orange-500">
+            <pre className="p-3 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-xs font-mono text-orange-600 dark:text-orange-400">
               cargo install silex-ui-cli
             </pre>
           </div>
@@ -1276,7 +1503,7 @@ function InstallationDoc() {
         {(tab === 'nextjs' || tab === 'vue' || tab === 'svelte') && (
           <div className="space-y-3">
             <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">Polyglot Scaffolding for {tab.toUpperCase()}</h3>
-            <pre className="p-3 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-xs font-mono text-orange-500">
+            <pre className="p-3 bg-zinc-100 dark:bg-zinc-950 rounded-lg text-xs font-mono text-orange-600 dark:text-orange-400">
               npx silex-ui init && npx silex-ui add button
             </pre>
           </div>
@@ -1291,12 +1518,12 @@ function ThemingDoc() {
     <div className="space-y-6">
       <h1 className="text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">Theming & Tokens</h1>
       <p className="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-        Silex ships with 8 professionally tuned, human-designed color palettes that pass WCAG 2.1 AA mathematical contrast checks.
+        Silex ships with 8 professionally tuned, solid human-designed color palettes that pass WCAG 2.1 AA mathematical contrast checks.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {THEMES.map((t) => (
-          <div key={t.id} className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 space-y-2">
+          <div key={t.id} className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
             <div className="flex items-center justify-between">
               <span className="font-semibold text-sm text-zinc-950 dark:text-white">{t.name}</span>
               <span className="h-3 w-3 rounded-full" style={{ backgroundColor: t.accentHex }} />
@@ -1317,7 +1544,7 @@ function ConfigurationDoc() {
         The `silex.json` configuration file at your project root defines scaffolding targets, Tailwind CSS paths, and module aliases.
       </p>
 
-      <pre className="p-4 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 font-mono text-xs text-zinc-800 dark:text-zinc-200">
+      <pre className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 font-mono text-xs text-zinc-800 dark:text-zinc-200">
 {`{
   "$schema": "https://silex-ui.dev/schema.json",
   "style": "default",
@@ -1337,28 +1564,20 @@ function ConfigurationDoc() {
 }
 
 // ----------------------------------------------------------------------------
-// 3-Column Documentation Page with Collapsible Sidebar and "On This Page"
+// 3-Column Documentation Page
 // ----------------------------------------------------------------------------
 
 function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
   const { docSlug, componentId } = useParams<{ docSlug?: string; componentId?: string }>();
-  const navigate = useNavigate();
-  const location = useLocation();
-
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [activeTab, setActiveTab] = useState<'preview' | 'docs'>('preview');
   const [activeFramework, setActiveFramework] = useState<FrameworkType>('react');
   const [installPm, setInstallPm] = useState<'pnpm' | 'npm' | 'bun' | 'cargo'>('pnpm');
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
 
-  // Sidebar collapsible section toggles
   const [gettingStartedOpen, setGettingStartedOpen] = useState(true);
   const [primitivesOpen, setPrimitivesOpen] = useState(true);
-  const [overlaysOpen, setOverlaysOpen] = useState(true);
-  const [formControlsOpen, setFormControlsOpen] = useState(true);
-  const [feedbackOpen, setFeedbackOpen] = useState(true);
 
   const copyText = (txt: string) => {
     navigator.clipboard.writeText(txt);
@@ -1368,7 +1587,6 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
 
   const currentComponent = componentId ? COMPONENTS_DATA[componentId] : null;
 
-  // Sections for "On This Page"
   const sections = currentComponent ? [
     { id: 'overview', title: 'Overview' },
     { id: 'interactive-preview', title: 'Interactive Preview' },
@@ -1379,30 +1597,11 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
     { id: 'overview', title: 'Overview' },
   ];
 
-  // Intersection observer for "On this page"
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollY = window.scrollY;
-      sections.forEach((s) => {
-        const el = document.getElementById(s.id);
-        if (el) {
-          const top = el.offsetTop - 150;
-          const bottom = top + el.offsetHeight;
-          if (scrollY >= top && scrollY < bottom) {
-            setActiveSection(s.id);
-          }
-        }
-      });
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [sections]);
-
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-6 flex-1 w-full flex gap-8 py-8">
       {/* 1. Left Collapsible Sidebar */}
       <aside 
+        aria-label="Documentation Navigation"
         className={`shrink-0 transition-all duration-300 ${
           sidebarCollapsed ? 'w-12' : 'w-64'
         } space-y-6 hidden md:block`}
@@ -1414,7 +1613,9 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
             </span>
           )}
           <button
+            type="button"
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
             className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
@@ -1427,6 +1628,7 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
             <Search className="h-4 w-4 absolute left-3 top-2.5 text-zinc-400" />
             <input
               type="text"
+              aria-label="Search documentation and components"
               placeholder="Search docs & components..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -1439,6 +1641,7 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
           {/* Getting Started Category */}
           <div>
             <button
+              type="button"
               onClick={() => !sidebarCollapsed && setGettingStartedOpen(!gettingStartedOpen)}
               className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1"
             >
@@ -1474,6 +1677,7 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
           {/* Component Primitives Category */}
           <div>
             <button
+              type="button"
               onClick={() => !sidebarCollapsed && setPrimitivesOpen(!primitivesOpen)}
               className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1"
             >
@@ -1511,13 +1715,11 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
 
       {/* 2. Middle Main Documentation Area */}
       <main className="flex-1 min-w-0 space-y-8">
-        {/* Dynamic Route View */}
         {docSlug === 'introduction' && <IntroductionDoc />}
         {docSlug === 'installation' && <InstallationDoc />}
         {docSlug === 'theming' && <ThemingDoc />}
         {docSlug === 'configuration' && <ConfigurationDoc />}
 
-        {/* Component Documentation View */}
         {currentComponent && (
           <div className="space-y-8">
             <div id="overview" className="space-y-2">
@@ -1537,8 +1739,8 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
                   <span>Interactive Preview Canvas</span>
                 </div>
               </div>
-              <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-10 flex items-center justify-center min-h-[220px] shadow-sm">
-                {currentComponent.preview(activeTheme.accentHex)}
+              <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-10 flex items-center justify-center min-h-[220px] shadow-sm">
+                {currentComponent.preview(activeTheme.accentHex, activeTheme.accentTextHex)}
               </div>
             </div>
 
@@ -1553,14 +1755,14 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
                   {(['pnpm', 'npm', 'bun', 'cargo'] as const).map((pm) => (
                     <button
                       key={pm}
+                      type="button"
                       onClick={() => setInstallPm(pm)}
                       className={`px-2 py-0.5 rounded text-[11px] font-mono transition cursor-pointer ${
-                        installPm === pm ? 'font-semibold border' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
+                        installPm === pm ? 'font-bold border' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
                       }`}
                       style={installPm === pm ? { 
                         color: activeTheme.accentHex, 
-                        borderColor: `${activeTheme.accentHex}40`,
-                        backgroundColor: `${activeTheme.accentHex}15`
+                        borderColor: activeTheme.accentHex
                       } : {}}
                     >
                       {pm}
@@ -1568,9 +1770,11 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
                   ))}
                 </div>
               </div>
-              <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-900 px-4 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 font-mono text-xs">
+              <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-900 px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-800 font-mono text-xs">
                 <span className="text-zinc-900 dark:text-zinc-200">{currentComponent.install[installPm]}</span>
                 <button
+                  type="button"
+                  aria-label="Copy Installation Command"
                   onClick={() => copyText(currentComponent.install[installPm])}
                   className="text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition ml-3 cursor-pointer"
                 >
@@ -1586,6 +1790,7 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
                   {(['react', 'vue', 'svelte', 'angular', 'web', 'rust'] as const).map((fw) => (
                     <button
                       key={fw}
+                      type="button"
                       onClick={() => setActiveFramework(fw)}
                       className={`px-3 py-1 rounded-md text-xs font-medium uppercase tracking-wider transition cursor-pointer ${
                         activeFramework === fw
@@ -1598,8 +1803,10 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
                   ))}
                 </div>
                 <button
+                  type="button"
+                  aria-label="Copy Framework Snippet"
                   onClick={() => copyText(currentComponent.code[activeFramework])}
-                  className="flex items-center gap-1.5 px-3 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md transition cursor-pointer"
+                  className="flex items-center gap-1.5 px-3 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md transition cursor-pointer"
                 >
                   {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
                   <span>{copied ? 'Copied' : 'Copy'}</span>
@@ -1611,10 +1818,10 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
 
             {/* Props Table */}
             <div id="props-reference" className="space-y-3">
-              <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">Props Reference</h3>
-              <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 overflow-hidden shadow-sm">
+              <h3 className="text-lg font-semibold text-zinc-950 dark:text-white">Props Reference</h3>
+              <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 overflow-hidden shadow-sm">
                 <table className="w-full text-left text-xs">
-                  <thead className="bg-zinc-100 dark:bg-zinc-900/80 border-b border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
+                  <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
                     <tr>
                       <th className="p-3 font-semibold">Prop</th>
                       <th className="p-3 font-semibold">Type</th>
@@ -1622,9 +1829,9 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
                       <th className="p-3 font-semibold">Description</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-900/40">
+                  <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-900">
                     {currentComponent.props.map((p) => (
-                      <tr key={p.name} className="hover:bg-zinc-50 dark:hover:bg-zinc-900/60">
+                      <tr key={p.name} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
                         <td className="p-3 font-mono font-semibold" style={{ color: activeTheme.accentHex }}>{p.name}</td>
                         <td className="p-3 font-mono text-zinc-500">{p.type}</td>
                         <td className="p-3 font-mono text-zinc-400">{p.default}</td>
@@ -1637,7 +1844,7 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
             </div>
 
             {/* Markdown Documentation */}
-            <div className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900/40 p-8 markdown-body text-zinc-800 dark:text-zinc-200 shadow-sm">
+            <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 markdown-body text-zinc-800 dark:text-zinc-200 shadow-sm">
               <ReactMarkdown>{currentComponent.markdownDoc}</ReactMarkdown>
             </div>
           </div>
@@ -1645,7 +1852,7 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
       </main>
 
       {/* 3. Right "On This Page" Table of Contents */}
-      <aside className="w-56 shrink-0 hidden lg:block space-y-4">
+      <aside aria-label="On this page navigation" className="w-56 shrink-0 hidden lg:block space-y-4">
         <div className="sticky top-24 space-y-3">
           <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
             On this page
@@ -1660,7 +1867,7 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
                       ? 'font-semibold'
                       : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
                   }`}
-                  style={activeSection === s.id ? { color: activeTheme.accentHex, backgroundColor: `${activeTheme.accentHex}15` } : {}}
+                  style={activeSection === s.id ? { color: activeTheme.accentHex } : {}}
                 >
                   {s.title}
                 </a>
@@ -1674,7 +1881,7 @@ function DocsLayout({ activeTheme }: { activeTheme: ThemeConfig }) {
 }
 
 // ----------------------------------------------------------------------------
-// Root App with Direct Router Binding
+// Root App
 // ----------------------------------------------------------------------------
 
 export function App() {
@@ -1682,7 +1889,7 @@ export function App() {
 
   return (
     <div 
-      className="min-h-screen font-sans antialiased selection:bg-orange-500 selection:text-white flex flex-col transition-colors duration-300"
+      className="min-h-screen font-sans antialiased selection:bg-orange-500 selection:text-white flex flex-col transition-colors duration-200"
       style={{
         backgroundColor: isDark ? activeTheme.darkBg : activeTheme.lightBg,
         color: isDark ? '#fafafa' : '#09090b',
