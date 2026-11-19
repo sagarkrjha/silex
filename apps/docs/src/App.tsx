@@ -39,7 +39,9 @@ import {
   PanelLeft,
   FileText,
   AlertTriangle,
-  Cpu
+  Cpu,
+  BadgeAlert,
+  Minus
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import Prism from 'prismjs';
@@ -1406,6 +1408,129 @@ export default Example;`,
 
 let alert: AlertProps = AlertProps::new(AlertVariant::Destructive);
 let classes: String = alert.compute_classes();`,
+    },
+  },
+
+  badge: {
+    id: 'badge',
+    name: 'Badge',
+    category: 'Primitives',
+    icon: <BadgeAlert className="h-4 w-4" />,
+    description: 'Compact status indicators and numerical highlight badges.',
+    markdownDoc: `
+### Overview
+The **Badge** component highlights state, count, or categorical tags. Verified by \`BadgeProps\` in \`silex-ui-core\`.
+    `,
+    preview: (accent: string, accentText: string) => (
+      <div className="flex flex-wrap gap-3 items-center">
+        <span 
+          className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold"
+          style={{ backgroundColor: accent, color: accentText }}
+        >
+          Primary Badge
+        </span>
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 border border-zinc-300 dark:border-zinc-700">
+          Secondary
+        </span>
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold border border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200">
+          Outline
+        </span>
+        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+          Operational
+        </span>
+      </div>
+    ),
+    install: {
+      pnpm: 'pnpm dlx silex-ui add badge',
+      npm: 'npx silex-ui add badge',
+      bun: 'bunx silex-ui add badge',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'variant', type: "'default' | 'primary' | 'secondary' | 'outline' | 'success' | 'destructive'", default: "'primary'", description: 'Aesthetic status styling' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Badge, type BadgeProps } from "@/components/ui/badge";
+
+export interface StatusBadgeProps extends BadgeProps {
+  label: string;
+}
+
+export const Example: React.FC<StatusBadgeProps> = ({ label = "Active" }): React.ReactElement => {
+  return <Badge variant="primary">{label}</Badge>;
+};`,
+      vue: `<template>
+  <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold">Active</span>
+</template>`,
+      svelte: `<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold">Active</span>`,
+      angular: `<span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold">Active</span>`,
+      web: `<silex-badge variant="primary">Active</silex-badge>`,
+      rust: `use silex_ui_core::components::badge::{BadgeProps, BadgeVariant};
+
+let badge: BadgeProps = BadgeProps::new(BadgeVariant::Primary);
+let classes: String = badge.compute_classes();`,
+    },
+  },
+
+  separator: {
+    id: 'separator',
+    name: 'Separator',
+    category: 'Layout',
+    icon: <Minus className="h-4 w-4" />,
+    description: 'Visual divider with orientation support conforming to ARIA separator role.',
+    markdownDoc: `
+### Overview
+The **Separator** component visually or semantically divides content in both horizontal and vertical orientations.
+    `,
+    preview: () => (
+      <div className="w-full max-w-sm space-y-4">
+        <div>
+          <h4 className="text-sm font-semibold text-zinc-950 dark:text-white">Silex Design System</h4>
+          <p className="text-xs text-zinc-600 dark:text-zinc-400">High performance polyglot component primitives.</p>
+        </div>
+        <div role="separator" aria-orientation="horizontal" className="h-[1px] w-full bg-zinc-200 dark:bg-zinc-800" />
+        <div className="flex h-5 items-center space-x-4 text-xs text-zinc-700 dark:text-zinc-300">
+          <span>Docs</span>
+          <div role="separator" aria-orientation="vertical" className="h-full w-[1px] bg-zinc-200 dark:bg-zinc-800" />
+          <span>Source</span>
+          <div role="separator" aria-orientation="vertical" className="h-full w-[1px] bg-zinc-200 dark:bg-zinc-800" />
+          <span>Changelog</span>
+        </div>
+      </div>
+    ),
+    install: {
+      pnpm: 'pnpm dlx silex-ui add separator',
+      npm: 'npx silex-ui add separator',
+      bun: 'bunx silex-ui add separator',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", description: 'Axis orientation of the divider' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Separator } from "@/components/ui/separator";
+
+export const Example: React.FC = (): React.ReactElement => {
+  return (
+    <div className="space-y-4">
+      <p className="text-sm">Above separator</p>
+      <Separator orientation="horizontal" />
+      <p className="text-sm">Below separator</p>
+    </div>
+  );
+};`,
+      vue: `<template>
+  <div role="separator" class="h-[1px] w-full bg-border" />
+</template>`,
+      svelte: `<div role="separator" class="h-[1px] w-full bg-border"></div>`,
+      angular: `<div role="separator" class="h-[1px] w-full bg-border"></div>`,
+      web: `<silex-separator orientation="horizontal"></silex-separator>`,
+      rust: `use silex_ui_core::components::separator::{SeparatorProps, SeparatorOrientation};
+
+let sep: SeparatorProps = SeparatorProps::new(SeparatorOrientation::Horizontal);
+let classes: String = sep.compute_classes();`,
     },
   },
 };

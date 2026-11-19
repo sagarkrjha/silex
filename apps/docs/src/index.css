@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
   :root {
     --bg-page: #ffffff;
@@ -7,7 +9,8 @@
     --border-subtle: #e4e4e7;
     --card-surface: #ffffff;
     --muted-surface: #f4f4f5;
-    --muted-text: #71717a;
+    --text-muted: #52525b;
+    --text-subtle: #71717a;
     --code-surface: #f4f4f5;
     --code-border: #e4e4e7;
     --code-text: #18181b;
@@ -19,7 +22,8 @@
     --border-subtle: #27272a;
     --card-surface: #121215;
     --muted-surface: #18181b;
-    --muted-text: #a1a1aa;
+    --text-muted: #a1a1aa;
+    --text-subtle: #71717a;
     --code-surface: #0d0f12;
     --code-border: #1e293b;
     --code-text: #e2e8f0;
@@ -27,13 +31,45 @@
 
   html {
     scroll-behavior: smooth;
+    background-color: var(--bg-page);
+    color: var(--text-page);
   }
 
   body {
     background-color: var(--bg-page);
     color: var(--text-page);
+    min-height: 100vh;
     transition: background-color 0.2s ease, color 0.2s ease;
   }
+}
+
+/* Dynamic theme helper utility classes */
+.bg-theme-page {
+  background-color: var(--bg-page);
+}
+
+.bg-theme-surface {
+  background-color: var(--card-surface);
+}
+
+.bg-theme-muted {
+  background-color: var(--muted-surface);
+}
+
+.text-theme-main {
+  color: var(--text-page);
+}
+
+.text-theme-muted {
+  color: var(--text-muted);
+}
+
+.text-theme-subtle {
+  color: var(--text-subtle);
+}
+
+.border-theme {
+  border-color: var(--border-subtle);
 }
 
 /* Prism syntax highlighting styles - High Contrast Solid Colors */

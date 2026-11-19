@@ -47,6 +47,26 @@ function AccessibleSwitch({ checked, onChange }: { checked: boolean; onChange: (
   );
 }
 
+// Test badge accessibility
+function AccessibleBadge({ label }: { label: string }) {
+  return (
+    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100">
+      {label}
+    </span>
+  );
+}
+
+// Test separator accessibility
+function AccessibleSeparator({ orientation = 'horizontal' }: { orientation?: 'horizontal' | 'vertical' }) {
+  return (
+    <div
+      role="separator"
+      aria-orientation={orientation}
+      className={orientation === 'horizontal' ? 'h-[1px] w-full bg-zinc-200 dark:bg-zinc-800' : 'h-5 w-[1px] bg-zinc-200 dark:bg-zinc-800'}
+    />
+  );
+}
+
 describe('Accessibility & Axe-Core Audit', () => {
   it('AccessibleButton must pass axe accessibility checks with 0 violations', async () => {
     const { container } = render(<AccessibleButton label="Confirm Action" />);
@@ -62,6 +82,18 @@ describe('Accessibility & Axe-Core Audit', () => {
 
   it('AccessibleSwitch must pass axe accessibility checks with 0 violations', async () => {
     const { container } = render(<AccessibleSwitch checked={true} onChange={() => {}} />);
+    const results = await axe.run(container);
+    expect(results.violations).toEqual([]);
+  });
+
+  it('AccessibleBadge must pass axe accessibility checks with 0 violations', async () => {
+    const { container } = render(<AccessibleBadge label="Status: Operational" />);
+    const results = await axe.run(container);
+    expect(results.violations).toEqual([]);
+  });
+
+  it('AccessibleSeparator must pass axe accessibility checks with 0 violations', async () => {
+    const { container } = render(<AccessibleSeparator orientation="horizontal" />);
     const results = await axe.run(container);
     expect(results.violations).toEqual([]);
   });
