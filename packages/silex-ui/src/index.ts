@@ -392,3 +392,31 @@ export function getContrastRatio(hex1: string, hex2: string): number {
 export function cn(...inputs: (string | undefined | null | false)[]): string {
   return inputs.filter(Boolean).join(" ").trim();
 }
+
+/**
+ * Animated Transition Presets
+ */
+export const transitions = {
+  default: "transition-all duration-200 ease-in-out",
+  fast: "transition-all duration-150 ease-out",
+  smooth: "transition-all duration-300 cubic-bezier(0.16, 1, 0.3, 1)",
+  bounce: "transition-transform duration-200 cubic-bezier(0.34, 1.56, 0.64, 1)",
+};
+
+/**
+ * Motion class generator for accessible micro-interactions
+ */
+export function motionProps(type: "hover-lift" | "pulse" | "shimmer" | "slide-up") {
+  switch (type) {
+    case "hover-lift":
+      return "transition-transform duration-200 hover:-translate-y-0.5 active:translate-y-0 motion-reduce:transform-none";
+    case "pulse":
+      return "animate-pulse-subtle motion-reduce:animate-none";
+    case "shimmer":
+      return "animate-shimmer motion-reduce:animate-none";
+    case "slide-up":
+      return "animate-slide-in-up motion-reduce:animate-none";
+    default:
+      return "";
+  }
+}

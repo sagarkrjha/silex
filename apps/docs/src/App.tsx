@@ -1140,6 +1140,41 @@ The **Dialog** component interrupts the user with a mandatory or informative lay
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Animated Entrance & Scale',
+        description: 'Smooth CSS scale-in and backdrop fade animation on open.',
+        render: (accent: string, accentText: string) => (
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md max-w-sm animate-slide-in-up">
+              <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
+                <span className="text-xs font-bold text-zinc-900 dark:text-white">Motion Dialog</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded font-mono" style={{ backgroundColor: accent, color: accentText }}>Active</span>
+              </div>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400 py-3">Modal states animate smoothly with zero layout shift.</p>
+              <div className="flex justify-end gap-2">
+                <button type="button" className="px-3 py-1 text-xs rounded border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Dismiss</button>
+                <button type="button" className="px-3 py-1 text-xs rounded font-semibold" style={{ backgroundColor: accent, color: accentText }}>Save</button>
+              </div>
+            </div>
+          </div>
+        ),
+      },
+      {
+        name: 'Destructive Confirmation Dialog',
+        description: 'High-contrast prompt state for irreversible operations.',
+        render: () => (
+          <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/5 max-w-sm space-y-3">
+            <div className="text-xs font-bold text-red-700 dark:text-red-400">Revoke Access Tokens?</div>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">This action cannot be undone. Active sessions will be terminated immediately.</p>
+            <div className="flex justify-end gap-2">
+              <button type="button" className="px-3 py-1 text-xs rounded border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Cancel</button>
+              <button type="button" className="px-3 py-1 text-xs rounded font-semibold bg-red-600 text-white hover:bg-red-700 transition">Revoke</button>
+            </div>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add dialog',
       npm: 'npx silex-ui add dialog',
@@ -1278,6 +1313,31 @@ The **Sheet** component extends dialog semantics into sliding drawer panels. Ide
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Slide-in Right Drawer',
+        description: 'Animated off-canvas drawer with GPU-accelerated transition.',
+        render: (accent: string, accentText: string) => (
+          <div className="w-full max-w-md p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3 shadow-md animate-slide-in-up">
+            <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <span className="text-xs font-bold text-zinc-900 dark:text-white">Navigation Drawer</span>
+              <button type="button" className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-white">Close</button>
+            </div>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400">Responsive sliding sheet for mobile navigation and contextual settings.</p>
+          </div>
+        ),
+      },
+      {
+        name: 'Bottom Action Sheet',
+        description: 'Compact modal sheet docked to the viewport bottom for quick mobile actions.',
+        render: (accent: string, accentText: string) => (
+          <div className="w-full max-w-md p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-between">
+            <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200">Selected Item: 3 elements</span>
+            <button type="button" className="px-3 py-1 rounded text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>Export All</button>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add sheet',
       npm: 'npx silex-ui add sheet',
@@ -1533,6 +1593,43 @@ The **Switch** component provides accessible on/off toggle behavior conforming t
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Motion Powered Toggle',
+        description: 'Smooth toggle switch with spring-like thumb transition.',
+        render: (accent: string) => (
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-2">
+              <div className="w-11 h-6 rounded-full relative p-0.5 transition-colors duration-200" style={{ backgroundColor: accent }}>
+                <div className="w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 translate-x-5" />
+              </div>
+              <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200">Active</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-11 h-6 rounded-full relative p-0.5 bg-zinc-300 dark:bg-zinc-700 transition-colors duration-200">
+                <div className="w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 translate-x-0" />
+              </div>
+              <span className="text-xs font-medium text-zinc-500">Disabled</span>
+            </div>
+          </div>
+        ),
+      },
+      {
+        name: 'Inline Setting Switch',
+        description: 'Labeled configuration toggle with contextual description.',
+        render: (accent: string) => (
+          <div className="w-full max-w-md p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between">
+            <div>
+              <div className="text-xs font-semibold text-zinc-900 dark:text-white">Telemetry Reporting</div>
+              <div className="text-[11px] text-zinc-500">Anonymous performance and crash metrics</div>
+            </div>
+            <div className="w-9 h-5 rounded-full relative p-0.5 transition-colors" style={{ backgroundColor: accent }}>
+              <div className="w-4 h-4 rounded-full bg-white shadow-xs transition-transform translate-x-4" />
+            </div>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add switch',
       npm: 'npx silex-ui add switch',
@@ -1913,6 +2010,31 @@ The **Separator** component visually or semantically divides content in both hor
         </div>
       </div>
     ),
+        variants: [
+      {
+        name: 'Labeled Section Divider',
+        description: 'Horizontal line split by a centered typography badge.',
+        render: () => (
+          <div className="w-full max-w-md relative flex items-center justify-center py-2">
+            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-zinc-300 dark:border-zinc-800" /></div>
+            <span className="relative px-2 bg-zinc-50 dark:bg-zinc-950 text-[10px] font-mono uppercase text-zinc-400">OR CONTINUE WITH</span>
+          </div>
+        ),
+      },
+      {
+        name: 'Vertical Inline Separators',
+        description: 'Vertical divider for navigation bars and toolbar action items.',
+        render: () => (
+          <div className="flex items-center gap-3 text-xs text-zinc-600 dark:text-zinc-400">
+            <span>Dashboard</span>
+            <div className="h-4 w-[1px] bg-zinc-300 dark:bg-zinc-700" />
+            <span>Settings</span>
+            <div className="h-4 w-[1px] bg-zinc-300 dark:bg-zinc-700" />
+            <span>Profile</span>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add separator',
       npm: 'npx silex-ui add separator',
@@ -1985,6 +2107,33 @@ The **Accordion** component organizes content into collapsible panels, backed by
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Animated Multi-Item Accordion',
+        description: 'Smooth height transition with rotated chevron feedback.',
+        render: (accent: string) => (
+          <div className="w-full max-w-md divide-y divide-zinc-200 dark:divide-zinc-800 border border-zinc-300 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 overflow-hidden">
+            <div className="p-3.5 flex items-center justify-between font-semibold text-xs text-zinc-900 dark:text-white">
+              <span>Deterministic State Machines</span>
+              <div className="text-orange-500 text-xs">Collapse</div>
+            </div>
+            <div className="p-3.5 text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-950">
+              Rust-compiled state machines verify transition validity at compile time.
+            </div>
+          </div>
+        ),
+      },
+      {
+        name: 'Compact FAQ Item',
+        description: 'Single-question disclosure card with clear hover state.',
+        render: () => (
+          <div className="w-full max-w-md p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between text-xs text-zinc-800 dark:text-zinc-200">
+            <span>Can Silex components be used without WebAssembly?</span>
+            <span className="text-zinc-400 font-mono">+</span>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add accordion',
       npm: 'npx silex-ui add accordion',
@@ -2074,6 +2223,30 @@ The **Tooltip** component surfaces informative hints with zero runtime layout sh
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Animated Micro-Tooltip',
+        description: 'Subtle slide-up and fade-in tooltip triggered on hover or focus.',
+        render: (accent: string, accentText: string) => (
+          <div className="flex flex-col items-center gap-2 py-2">
+            <div className="px-2.5 py-1 rounded bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 text-[11px] font-medium shadow-lg animate-slide-in-up">
+              <span>Ctrl + S to save changes</span>
+            </div>
+            <button type="button" className="px-3 py-1.5 rounded text-xs border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Hover Target</button>
+          </div>
+        ),
+      },
+      {
+        name: 'Action Shortcut Tip',
+        description: 'Tooltip with keyboard key symbol indicators.',
+        render: () => (
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-200 text-xs shadow-md">
+            <span>Quick Search</span>
+            <kbd className="px-1.5 py-0.5 text-[10px] bg-zinc-700 rounded font-mono">Cmd + K</kbd>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add tooltip',
       npm: 'npx silex-ui add tooltip',
@@ -2150,6 +2323,29 @@ The **Avatar** component renders a profile image with graceful fallback to user 
         </div>
       </div>
     ),
+        variants: [
+      {
+        name: 'Avatar Group with Overlap',
+        description: 'Stacked team avatar sequence with negative horizontal margins.',
+        render: (accent: string, accentText: string) => (
+          <div className="flex items-center -space-x-2">
+            <div className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-950 font-bold text-xs flex items-center justify-center" style={{ backgroundColor: accent, color: accentText }}>SJ</div>
+            <div className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-950 font-bold text-xs flex items-center justify-center bg-zinc-700 text-white">AK</div>
+            <div className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-950 font-bold text-xs flex items-center justify-center bg-zinc-800 text-zinc-300 text-[10px]">+4</div>
+          </div>
+        ),
+      },
+      {
+        name: 'Status Indicator Avatar',
+        description: 'Avatar with active online presence indicator badge.',
+        render: (accent: string, accentText: string) => (
+          <div className="relative inline-block">
+            <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs" style={{ backgroundColor: accent, color: accentText }}>DEV</div>
+            <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full" />
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add avatar',
       npm: 'npx silex-ui add avatar',
@@ -2225,6 +2421,31 @@ The **Checkbox** component provides an accessible binary or indeterminate select
         </label>
       );
     },
+        variants: [
+      {
+        name: 'Animated Checked State',
+        description: 'Smooth SVG checkmark draw-in and solid accent fill.',
+        render: (accent: string, accentText: string) => (
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-4 rounded flex items-center justify-center text-xs font-bold transition-colors" style={{ backgroundColor: accent, color: accentText }}>V</div>
+            <span className="text-xs font-medium text-zinc-900 dark:text-white">Accept deterministic licensing terms</span>
+          </div>
+        ),
+      },
+      {
+        name: 'Card Select Option',
+        description: 'Full-card checkbox container with hover feedback.',
+        render: (accent: string) => (
+          <div className="w-full max-w-sm p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center gap-3 cursor-pointer hover:border-zinc-400 transition">
+            <div className="w-4 h-4 rounded border border-zinc-400 dark:border-zinc-600" />
+            <div>
+              <div className="text-xs font-semibold text-zinc-900 dark:text-white">Production Mode</div>
+              <div className="text-[11px] text-zinc-500">Minify bundle output and strip test harnesses</div>
+            </div>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add checkbox',
       npm: 'npx silex-ui add checkbox',
@@ -2381,6 +2602,35 @@ The **Table** component arranges structured rows and columns with semantic capti
         </table>
       </div>
     ),
+        variants: [
+      {
+        name: 'Striped Responsive Table',
+        description: 'High-contrast alternating row fills with numeric alignment.',
+        render: () => (
+          <div className="w-full max-w-md rounded-lg border border-zinc-300 dark:border-zinc-800 overflow-hidden text-xs">
+            <table className="w-full text-left">
+              <thead className="bg-zinc-100 dark:bg-zinc-900 font-semibold text-zinc-700 dark:text-zinc-300">
+                <tr><th className="p-2">Module</th><th className="p-2">Size</th><th className="p-2 text-right">Status</th></tr>
+              </thead>
+              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+                <tr className="bg-white dark:bg-zinc-900"><td className="p-2 font-mono">silex_core.wasm</td><td className="p-2">18.4 kB</td><td className="p-2 text-right text-emerald-600 font-semibold">Ready</td></tr>
+                <tr className="bg-zinc-50 dark:bg-zinc-950"><td className="p-2 font-mono">silex_cli</td><td className="p-2">1.2 MB</td><td className="p-2 text-right text-emerald-600 font-semibold">Ready</td></tr>
+              </tbody>
+            </table>
+          </div>
+        ),
+      },
+      {
+        name: 'Compact Key-Value Grid',
+        description: 'Dense tabular summary for property inspection.',
+        render: () => (
+          <div className="w-full max-w-md grid grid-cols-2 gap-2 text-xs p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+            <span className="text-zinc-500">Compiler Target</span><span className="font-mono text-zinc-900 dark:text-white text-right">wasm32-unknown</span>
+            <span className="text-zinc-500">Contrast Target</span><span className="font-mono text-zinc-900 dark:text-white text-right">WCAG 2.2 AA</span>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add table',
       npm: 'npx silex-ui add table',
@@ -2474,6 +2724,31 @@ The **Progress** component displays task completion percentage backed by the \`P
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Animated Shimmer Progress Bar',
+        description: 'Smooth sliding progress fill with subtle animated light sweep.',
+        render: (accent: string) => (
+          <div className="w-full max-w-md space-y-1.5">
+            <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400"><span>Build Optimization</span><span>72%</span></div>
+            <div className="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden relative">
+              <div className="h-full rounded-full animate-shimmer transition-all duration-500" style={{ width: '72%', backgroundColor: accent }} />
+            </div>
+          </div>
+        ),
+      },
+      {
+        name: 'Multi-Segment Step Indicator',
+        description: 'Divided step bar showing discrete pipeline phases.',
+        render: (accent: string) => (
+          <div className="w-full max-w-md flex gap-1.5">
+            <div className="flex-1 h-2 rounded-full" style={{ backgroundColor: accent }} />
+            <div className="flex-1 h-2 rounded-full" style={{ backgroundColor: accent }} />
+            <div className="flex-1 h-2 rounded-full bg-zinc-300 dark:bg-zinc-800" />
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add progress',
       npm: 'npx silex-ui add progress',
@@ -2524,6 +2799,30 @@ The **Skeleton** component displays a subtle pulse animation previewing layout s
         </div>
       </div>
     ),
+        variants: [
+      {
+        name: 'Pulsing Card Skeleton',
+        description: 'Lightweight placeholder shapes with subtle pulse animation preventing layout jumps.',
+        render: () => (
+          <div className="w-full max-w-sm p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3">
+            <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
+            <div className="w-3/4 h-3 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
+            <div className="w-1/2 h-2.5 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
+          </div>
+        ),
+      },
+      {
+        name: 'Text Content Skeleton Line Stack',
+        description: 'Multiple text line placeholders simulating incoming paragraphs.',
+        render: () => (
+          <div className="w-full max-w-md space-y-2">
+            <div className="w-full h-2 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
+            <div className="w-5/6 h-2 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
+            <div className="w-4/6 h-2 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add skeleton',
       npm: 'npx silex-ui add skeleton',
@@ -2600,6 +2899,29 @@ The **Tabs** component organizes multiple related views into a compact tab bar c
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Underline Motion Tabs',
+        description: 'Sliding indicator active underline tab bar with keyboard navigation.',
+        render: (accent: string) => (
+          <div className="flex gap-6 border-b border-zinc-200 dark:border-zinc-800 text-xs font-semibold">
+            <button type="button" className="pb-2 border-b-2 transition-colors" style={{ borderColor: accent, color: accent }}>Architecture</button>
+            <button type="button" className="pb-2 border-b-2 border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-white">Tokens</button>
+            <button type="button" className="pb-2 border-b-2 border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-white">Telemetry</button>
+          </div>
+        ),
+      },
+      {
+        name: 'Pill Segmented Switcher',
+        description: 'Contained button switch tabs with smooth active background switch.',
+        render: (accent: string, accentText: string) => (
+          <div className="inline-flex p-1 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-xs font-medium">
+            <button type="button" className="px-3 py-1 rounded-md font-semibold shadow-xs" style={{ backgroundColor: accent, color: accentText }}>Active Tab</button>
+            <button type="button" className="px-3 py-1 rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white">History</button>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add tabs',
       npm: 'npx silex-ui add tabs',
@@ -2690,6 +3012,29 @@ The **Select** component displays a collapsed trigger opening a menu of selectab
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Polymorphic Select Trigger',
+        description: 'Accessible dropdown trigger button with dynamic chevron indicator.',
+        render: (accent: string) => (
+          <div className="w-full max-w-xs flex items-center justify-between p-2.5 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-900 dark:text-white">
+            <span>Framework: React 19</span>
+            <span className="text-zinc-400">v</span>
+          </div>
+        ),
+      },
+      {
+        name: 'Option List with Active Highlight',
+        description: 'Open option items container with clear active state.',
+        render: (accent: string, accentText: string) => (
+          <div className="w-full max-w-xs rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 text-xs space-y-0.5 shadow-md">
+            <div className="px-2.5 py-1.5 rounded font-medium" style={{ backgroundColor: accent, color: accentText }}>React 19 (TSX)</div>
+            <div className="px-2.5 py-1.5 rounded text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">Vue 3 (SFC)</div>
+            <div className="px-2.5 py-1.5 rounded text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">Svelte 5 (Runes)</div>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add select',
       npm: 'npx silex-ui add select',
@@ -2767,6 +3112,33 @@ The **Slider** component provides an accessible numerical range scrubber, powere
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Motion Track Range Slider',
+        description: 'Smooth sliding thumb with hover-lift micro-interaction.',
+        render: (accent: string) => (
+          <div className="w-full max-w-xs space-y-2">
+            <div className="flex justify-between text-xs text-zinc-500"><span>Scale</span><span>65%</span></div>
+            <div className="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 relative flex items-center">
+              <div className="h-full rounded-full" style={{ width: '65%', backgroundColor: accent }} />
+              <div className="w-4 h-4 rounded-full bg-white shadow-md border border-zinc-300 absolute left-[65%] -translate-x-1/2 hover:scale-110 transition-transform cursor-pointer" />
+            </div>
+          </div>
+        ),
+      },
+      {
+        name: 'Discrete Stepped Slider',
+        description: 'Fixed notch slider for discrete values.',
+        render: (accent: string) => (
+          <div className="w-full max-w-xs space-y-1.5">
+            <div className="flex justify-between text-[10px] font-mono text-zinc-400"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
+            <div className="w-full h-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800 relative">
+              <div className="h-full rounded-full" style={{ width: '50%', backgroundColor: accent }} />
+            </div>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add slider',
       npm: 'npx silex-ui add slider',
@@ -2826,6 +3198,29 @@ The **Toggle** component exposes a simple push button with persistent pressed st
         </button>
       );
     },
+        variants: [
+      {
+        name: 'Pressed State Toggle Button',
+        description: 'Two-state button with visual active depression feedback.',
+        render: (accent: string, accentText: string) => (
+          <div className="flex gap-2">
+            <button type="button" className="px-3 py-1.5 rounded-md text-xs font-semibold shadow-xs" style={{ backgroundColor: accent, color: accentText }}>Pressed</button>
+            <button type="button" className="px-3 py-1.5 rounded-md text-xs font-medium border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Unpressed</button>
+          </div>
+        ),
+      },
+      {
+        name: 'Icon Formatting Toggle Group',
+        description: 'Rich text alignment toggles with single-choice selection.',
+        render: (accent: string, accentText: string) => (
+          <div className="inline-flex rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden text-xs">
+            <button type="button" className="px-2.5 py-1 font-semibold" style={{ backgroundColor: accent, color: accentText }}>Left</button>
+            <button type="button" className="px-2.5 py-1 text-zinc-600 dark:text-zinc-400 border-l border-zinc-200 dark:border-zinc-800">Center</button>
+            <button type="button" className="px-2.5 py-1 text-zinc-600 dark:text-zinc-400 border-l border-zinc-200 dark:border-zinc-800">Right</button>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add toggle',
       npm: 'npx silex-ui add toggle',
@@ -2898,6 +3293,29 @@ The **Popover** component displays floating panels alongside an anchor trigger w
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Animated Floating Popover',
+        description: 'Micro-card container positioned above trigger with subtle slide-in animation.',
+        render: (accent: string, accentText: string) => (
+          <div className="p-3.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl max-w-xs space-y-2 animate-slide-in-up">
+            <div className="text-xs font-bold text-zinc-900 dark:text-white">Dimensions & Sizing</div>
+            <p className="text-xs text-zinc-500">Set default padding and gutter values for component containers.</p>
+            <button type="button" className="w-full py-1 rounded text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>Apply Config</button>
+          </div>
+        ),
+      },
+      {
+        name: 'Contextual Action Popover',
+        description: 'Quick menu containing categorized actions.',
+        render: () => (
+          <div className="p-1.5 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md text-xs divide-y divide-zinc-100 dark:divide-zinc-800">
+            <div className="p-1.5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded">Copy Link</div>
+            <div className="p-1.5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded">Download SVG</div>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add popover',
       npm: 'npx silex-ui add popover',
@@ -2987,6 +3405,29 @@ The **Sidebar** component provides a structured collapsible vertical navigation 
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Collapsible Nav Sidebar',
+        description: 'Multi-section vertical navigation with toggleable categories.',
+        render: (accent: string) => (
+          <div className="w-full max-w-xs p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2 text-xs">
+            <div className="font-bold text-[10px] uppercase text-zinc-400">Components</div>
+            <div className="p-1.5 rounded font-semibold text-orange-600 dark:text-orange-400 bg-orange-500/10">Button (Primary)</div>
+            <div className="p-1.5 rounded text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800">Dialog (Modal)</div>
+          </div>
+        ),
+      },
+      {
+        name: 'Icon-Only Mini Sidebar',
+        description: 'Condensed dock layout with tooltips for minimal screen footprints.',
+        render: () => (
+          <div className="flex flex-col gap-2 p-2 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs w-10 items-center">
+            <span className="p-1 font-bold text-orange-500">M</span>
+            <span className="p-1 text-zinc-500 hover:text-zinc-900 dark:hover:text-white">S</span>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add sidebar',
       npm: 'npx silex-ui add sidebar',
@@ -3071,6 +3512,30 @@ The **Navbar** provides a semantic, accessible top header with backdrop blur and
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Sticky Header with Theme Switcher',
+        description: 'Compact top navigation bar with brand mark and action triggers.',
+        render: (accent: string, accentText: string) => (
+          <div className="w-full max-w-md p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between text-xs">
+            <span className="font-bold text-zinc-900 dark:text-white">Silex UI</span>
+            <div className="flex items-center gap-2">
+              <span className="text-zinc-500">Docs</span>
+              <button type="button" className="px-2.5 py-1 rounded font-semibold" style={{ backgroundColor: accent, color: accentText }}>Install</button>
+            </div>
+          </div>
+        ),
+      },
+      {
+        name: 'Breadcrumb Navigation Bar',
+        description: 'Hierarchical navigation path for deep documentation views.',
+        render: () => (
+          <div className="flex items-center gap-2 text-xs text-zinc-500">
+            <span>Home</span><span>/</span><span>Docs</span><span>/</span><span className="text-zinc-900 dark:text-white font-medium">Components</span>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add navbar',
       npm: 'npx silex-ui add navbar',
@@ -3137,6 +3602,28 @@ The **Grid** component computes responsive column allocations and gap classes cl
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Responsive Multi-Column Card Grid',
+        description: 'Flexible grid container scaling from 1 column on mobile to 2 on tablet and 3 on desktop.',
+        render: () => (
+          <div className="w-full max-w-md grid grid-cols-2 gap-2 text-xs">
+            <div className="p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-medium">Card Item A</div>
+            <div className="p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-medium">Card Item B</div>
+          </div>
+        ),
+      },
+      {
+        name: 'Asymmetric Split Container',
+        description: 'Two-column layout with 1/3 sidebar and 2/3 main viewport distribution.',
+        render: () => (
+          <div className="w-full max-w-md flex gap-2 text-xs">
+            <div className="w-1/3 p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 font-mono">Nav 33%</div>
+            <div className="w-2/3 p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-mono">Content 67%</div>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add grid',
       npm: 'npx silex-ui add grid',
@@ -3206,6 +3693,34 @@ The **List** component standardizes row-oriented records, menu options, or divid
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Interactive Action List',
+        description: 'Selectable item rows with chevron feedback and active state styling.',
+        render: (accent: string) => (
+          <div className="w-full max-w-md divide-y divide-zinc-200 dark:divide-zinc-800 border border-zinc-300 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 overflow-hidden text-xs">
+            <div className="p-2.5 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/60 cursor-pointer">
+              <span className="font-medium text-zinc-900 dark:text-white">Tailwind v4 Configuration</span>
+              <span className="text-zinc-400">--</span>
+            </div>
+            <div className="p-2.5 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/60 cursor-pointer">
+              <span className="font-medium text-zinc-900 dark:text-white">WebAssembly ABI Bindings</span>
+              <span className="text-zinc-400">--</span>
+            </div>
+          </div>
+        ),
+      },
+      {
+        name: 'Badge Key-Value Item List',
+        description: 'Dense status summary rows.',
+        render: () => (
+          <div className="w-full max-w-md p-2 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex justify-between items-center text-xs">
+            <span className="text-zinc-600 dark:text-zinc-400">Memory Leak Test</span>
+            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold">0 LEAKS</span>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add list',
       npm: 'npx silex-ui add list',
@@ -3307,6 +3822,37 @@ The **Carousel** component manages sequential slide presentations with \`Carouse
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Multi-Slide Animated Deck',
+        description: 'Interactive slide container with previous and next transition buttons.',
+        render: (accent: string, accentText: string) => (
+          <div className="w-full max-w-md p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3 shadow-md">
+            <div className="flex justify-between items-center text-xs font-semibold">
+              <span>Slide 2 of 4</span>
+              <div className="flex gap-1">
+                <button type="button" className="px-2 py-0.5 rounded border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">&lt;</button>
+                <button type="button" className="px-2 py-0.5 rounded font-semibold" style={{ backgroundColor: accent, color: accentText }}>&gt;</button>
+              </div>
+            </div>
+            <div className="h-16 rounded-lg bg-zinc-100 dark:bg-zinc-950 flex items-center justify-center text-xs text-zinc-500">
+              Accessible Slide Viewport Container
+            </div>
+          </div>
+        ),
+      },
+      {
+        name: 'Dot Indicators Carousel Bar',
+        description: 'Carousel state with pagination dot indicators.',
+        render: (accent: string) => (
+          <div className="flex items-center gap-1.5 py-2">
+            <div className="w-6 h-1.5 rounded-full" style={{ backgroundColor: accent }} />
+            <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+            <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add carousel',
       npm: 'npx silex-ui add carousel',
@@ -3392,6 +3938,26 @@ The **Background** component renders calm, human-friendly decorative textures (g
         </div>
       );
     },
+        variants: [
+      {
+        name: 'Subtle Dotted Radial Canvas',
+        description: 'Consistent design system background pattern with calculated eye-comfort dots.',
+        render: () => (
+          <div className="w-full max-w-md h-20 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 flex items-center justify-center">
+            <span className="text-xs font-mono text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-900 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800">16px Dotted Mesh</span>
+          </div>
+        ),
+      },
+      {
+        name: 'Solid Stone Surface Card',
+        description: 'High-contrast anti-glare flat solid background.',
+        render: () => (
+          <div className="w-full max-w-md p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-xs text-zinc-800 dark:text-zinc-200">
+            Flat Solid Neutral Background (Zero Gradients)
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add background',
       npm: 'npx silex-ui add background',
@@ -3424,6 +3990,192 @@ export const Example: React.FC = () => {
 
 let cls = BackgroundComputer::compute_classes("dots");
 assert!(cls.contains("bg-zinc-50"));`,
+    },
+  },
+  'motion-card': {
+    id: 'motion-card',
+    name: 'Motion Card',
+    category: 'Motion',
+    icon: <Sparkles className="h-4 w-4" />,
+    description: 'Hardware-accelerated reactive surface with floating elevation and entrance gestures.',
+    markdownDoc: `
+### Overview
+The **Motion Card** component combines deterministic state with GPU-accelerated CSS keyframe dynamics. It features smooth entrance reveals, spring-like hover elevation, and full prefers-reduced-motion accessibility guarantees.
+
+### Features
+- **GPU Transform Animations**: Operates strictly on transform and opacity to prevent layout shifts.
+- **Micro-Interactions**: Hover lifts with subtle shadows and depressed active states.
+- **Accessibility**: Automatic fallback to static layouts when reduced motion is preferred by the operating system.
+    `,
+    preview: (accent: string, accentText: string) => (
+      <div className="w-full max-w-sm p-5 rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer">
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: accent }} />
+            <span className="text-xs font-bold text-zinc-900 dark:text-white">Motion Surface</span>
+          </div>
+          <span className="text-[10px] px-2 py-0.5 rounded-full font-mono font-medium" style={{ backgroundColor: accent, color: accentText }}>60 FPS</span>
+        </div>
+        <p className="text-xs text-zinc-600 dark:text-zinc-400 py-4 leading-relaxed">
+          Fluid interactive surfaces respond immediately to hover triggers without reflowing neighboring DOM elements.
+        </p>
+        <div className="flex items-center justify-between text-xs font-semibold" style={{ color: accent }}>
+          <span>Explore Details</span>
+          <span>&rarr;</span>
+        </div>
+      </div>
+    ),
+    variants: [
+      {
+        name: 'Floating Gentle Card',
+        description: 'Subtle ambient float animation for highlighted dashboards and heroes.',
+        render: (accent: string, accentText: string) => (
+          <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm animate-float-gentle max-w-xs text-center space-y-2">
+            <div className="text-xs font-bold text-zinc-900 dark:text-white">Continuous Float Micro-Interaction</div>
+            <p className="text-[11px] text-zinc-500">Zero JS dependencies; pure CSS hardware accelerated.</p>
+            <button type="button" className="px-3 py-1 text-xs rounded font-semibold" style={{ backgroundColor: accent, color: accentText }}>Action</button>
+          </div>
+        ),
+      },
+      {
+        name: 'Slide-In Entrance Card',
+        description: 'Spring entrance trigger on viewport mount.',
+        render: () => (
+          <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm animate-slide-in-up max-w-xs text-xs space-y-1.5">
+            <div className="font-semibold text-zinc-900 dark:text-white">Staggered Mount Reveal</div>
+            <div className="text-zinc-500">Translates along Y axis with cubic bezier ease-out.</div>
+          </div>
+        ),
+      },
+    ],
+    install: {
+      pnpm: 'pnpm dlx silex-ui add motion-card',
+      npm: 'npx silex-ui add motion-card',
+      bun: 'bunx silex-ui add motion-card',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'animation', type: "'float' | 'slide-up' | 'lift'", default: "'lift'", description: 'Type of motion interaction applied' },
+      { name: 'className', type: 'string', default: "''", description: 'Tailwind CSS classes merged via cn()' },
+    ],
+    code: {
+      react: `export function MotionCard({ className, children }: { className?: string; children: React.ReactNode }) {
+  return (
+    <div className={cn("p-5 rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl motion-reduce:transform-none", className)}>
+      {children}
+    </div>
+  );
+}`,
+      vue: `<template>
+  <div class="p-5 rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl motion-reduce:transform-none">
+    <slot />
+  </div>
+</template>`,
+      svelte: `<div class="p-5 rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl motion-reduce:transform-none">
+  <slot />
+</div>`,
+      angular: `@Component({
+  selector: 'silex-motion-card',
+  template: '<div class="p-5 rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl motion-reduce:transform-none"><ng-content></ng-content></div>'
+})
+export class MotionCardComponent {}`,
+      web: `<div class="p-5 rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl motion-reduce:transform-none">
+  <slot></slot>
+</div>`,
+      rust: `// Motion Card Primitive - Silex Rust Core
+pub struct MotionCardProps {
+    pub animation: String,
+    pub class_name: String,
+}`,
+    },
+  },
+
+  'motion-marquee': {
+    id: 'motion-marquee',
+    name: 'Motion Marquee',
+    category: 'Motion',
+    icon: <GalleryHorizontal className="h-4 w-4" />,
+    description: 'Infinitely looping ticker strip for partner logos, tech stacks, and live metrics.',
+    markdownDoc: `
+### Overview
+The **Motion Marquee** component provides smooth, non-blocking horizontal ticker loops. Built with twin duplicated child stacks to guarantee continuous seamless looping without visible seams or layout stutters.
+    `,
+    preview: (accent: string, accentText: string) => (
+      <div className="w-full max-w-md overflow-hidden rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 p-2 relative">
+        <div className="animate-marquee gap-4 flex items-center">
+          {['React 19', 'Rust WASM', 'Tailwind v4', 'Svelte 5', 'Vue 3', 'Angular 19', 'React 19', 'Rust WASM', 'Tailwind v4'].map((item, idx) => (
+            <span key={idx} className="px-3 py-1 rounded-md text-xs font-mono font-semibold bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 shrink-0">
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+    ),
+    variants: [
+      {
+        name: 'Fast Velocity Metric Marquee',
+        description: 'Rapid ticker for live performance logs and build status.',
+        render: () => (
+          <div className="w-full max-w-md overflow-hidden rounded-lg bg-zinc-900 p-2 text-white text-xs font-mono">
+            <div className="animate-marquee gap-6 flex">
+              <span>WCAG AA: PASS</span>
+              <span>MEMORY LEAKS: 0</span>
+              <span>TEST SUITES: 16/16</span>
+              <span>FPS: 60</span>
+              <span>WCAG AA: PASS</span>
+              <span>MEMORY LEAKS: 0</span>
+            </div>
+          </div>
+        ),
+      },
+    ],
+    install: {
+      pnpm: 'pnpm dlx silex-ui add motion-marquee',
+      npm: 'npx silex-ui add motion-marquee',
+      bun: 'bunx silex-ui add motion-marquee',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'speed', type: "'slow' | 'normal' | 'fast'", default: "'normal'", description: 'Scroll animation velocity' },
+      { name: 'pauseOnHover', type: 'boolean', default: 'true', description: 'Halts motion on pointer hover' },
+      { name: 'className', type: 'string', default: "''", description: 'Tailwind CSS classes merged via cn()' },
+    ],
+    code: {
+      react: `export function MotionMarquee({ children, className }: { children: React.ReactNode; className?: string }) {
+  return (
+    <div className={cn("overflow-hidden w-full relative", className)}>
+      <div className="animate-marquee gap-4 flex items-center motion-reduce:transform-none">
+        {children}
+      </div>
+    </div>
+  );
+}`,
+      vue: `<template>
+  <div class="overflow-hidden w-full relative">
+    <div class="animate-marquee gap-4 flex items-center motion-reduce:transform-none">
+      <slot />
+    </div>
+  </div>
+</template>`,
+      svelte: `<div class="overflow-hidden w-full relative">
+  <div class="animate-marquee gap-4 flex items-center motion-reduce:transform-none">
+    <slot />
+  </div>
+</div>`,
+      angular: `@Component({
+  selector: 'silex-motion-marquee',
+  template: '<div class="overflow-hidden w-full relative"><div class="animate-marquee gap-4 flex items-center motion-reduce:transform-none"><ng-content></ng-content></div></div>'
+})
+export class MotionMarqueeComponent {}`,
+      web: `<div class="overflow-hidden w-full relative">
+  <div class="animate-marquee gap-4 flex items-center motion-reduce:transform-none">
+    <slot></slot>
+  </div>
+</div>`,
+      rust: `// Motion Marquee Component
+pub struct MarqueeProps {
+    pub speed: u32,
+}`,
     },
   },
 };
@@ -3878,13 +4630,14 @@ function DocsLayout({
     }));
   };
 
-  const categories = ['Primitives', 'Form Controls', 'Overlays', 'Feedback', 'Layout', 'Surfaces'];
+  const categories = ['Primitives', 'Form Controls', 'Overlays', 'Feedback', 'Layout', 'Surfaces', 'Motion'];
 
   const copyText = (txt: string) => {
     navigator.clipboard.writeText(txt);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  };
+  
+};
 
   const currentComponent = componentId ? COMPONENTS_DATA[componentId] : null;
 
