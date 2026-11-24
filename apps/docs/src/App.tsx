@@ -341,14 +341,15 @@ function ComponentPlayground({ component, activeTheme, defaultSnippet }: Compone
   const [copied, setCopied] = useState(false);
 
   // Dynamic Playground Prop Controls State
-  const [variantIndex, setVariantIndex] = useState(0);
+  // 0 = Default Component Implementation, 1..N = Variants
+  const [selectedVariantIdx, setSelectedVariantIdx] = useState<number>(0);
   const [buttonSize, setButtonSize] = useState<'sm' | 'md' | 'lg'>('md');
   const [isDisabled, setIsDisabled] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [customText, setCustomText] = useState('');
 
   const resetPlayground = () => {
-    setVariantIndex(0);
+    setSelectedVariantIdx(0);
     setButtonSize('md');
     setIsDisabled(false);
     setIsLoading(false);
@@ -356,9 +357,15 @@ function ComponentPlayground({ component, activeTheme, defaultSnippet }: Compone
     setViewport('desktop');
   };
 
-  const currentVariant = component.variants && component.variants[variantIndex];
+  const hasVariants = component.variants && component.variants.length > 0;
+  // If selectedVariantIdx == 0, render component.preview; if > 0, render component.variants[selectedVariantIdx - 1].render
+  const isDefaultView = selectedVariantIdx === 0;
+  const activeVariant = hasVariants && selectedVariantIdx > 0 ? component.variants![selectedVariantIdx - 1] : null;
 
   // Dynamically generated JSX representation of playground configuration
+  const variantName = activeVariant ? activeVariant.name.toLowerCase().replace(/\s+/g, '-') : 'default';
+  const sizeClass = buttonSize === 'sm' ? 'scale-90' : buttonSize === 'lg' ? 'scale-105' : 'scale-100';
+
   const generatedCode = `// Generated Silex Code for <${component.name} />
 // Theme: ${activeTheme.name} | Viewport: ${viewport}
 import { ${component.name} } from "@/components/ui/${component.id}";
@@ -366,12 +373,12 @@ import { ${component.name} } from "@/components/ui/${component.id}";
 export const Configured${component.name.replace(/\s+/g, '')} = () => {
   return (
     <${component.name}
-      variant="${currentVariant ? currentVariant.name.toLowerCase().replace(/\s+/g, '-') : 'default'}"
+      variant="${variantName}"
       size="${buttonSize}"
       disabled={${isDisabled}}
       loading={${isLoading}}
     >
-      ${customText || component.name}
+      ${customText || (activeVariant ? activeVariant.name : component.name)}
     </${component.name}>
   );
 };`;
@@ -494,17 +501,41 @@ export const Configured${component.name.replace(/\s+/g, '')} = () => {
       {/* Main Sandbox Area */}
       {activeTab === 'preview' ? (
         <div className="flex flex-col">
+          {/* Active Preset Indicator Badge */}
+          <div className="px-4 py-2 border-b border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/60 flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-zinc-900 dark:text-white">Active Preview:</span>
+              <span className="px-2 py-0.5 rounded font-mono font-bold bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20">
+                {isDefaultView ? 'Default Base Component' : activeVariant?.name}
+              </span>
+            </div>
+            {customText && (
+              <span className="text-[11px] font-mono text-zinc-500">Label: "{customText}"</span>
+            )}
+          </div>
+
           {/* Fluid Responsive Canvas Container with Standard Dotted Background */}
           <div className="p-6 sm:p-10 flex items-center justify-center min-h-[300px] bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 transition-all">
             <div className={`w-full flex justify-center text-zinc-900 dark:text-white transition-all duration-300 ${viewportWidthClass}`}>
-              <ErrorBoundary>
-                <ComponentPreviewRenderer
-                  key={`${component.id}-${variantIndex}-${buttonSize}-${isDisabled}-${isLoading}`}
-                  previewFn={component.preview}
-                  accent={activeTheme.accentHex}
-                  accentText={activeTheme.accentTextHex}
-                />
-              </ErrorBoundary>
+              <div className={`transition-all duration-200 ${sizeClass} ${isDisabled ? 'opacity-40 pointer-events-none' : ''} ${isLoading ? 'animate-pulse' : ''}`}>
+                <ErrorBoundary key={`${component.id}-${selectedVariantIdx}-${buttonSize}-${isDisabled}-${isLoading}-${customText}`}>
+                  {isDefaultView ? (
+                    <ComponentPreviewRenderer
+                      previewFn={component.preview}
+                      accent={activeTheme.accentHex}
+                      accentText={activeTheme.accentTextHex}
+                    />
+                  ) : (
+                    activeVariant && (
+                      <ComponentPreviewRenderer
+                        previewFn={activeVariant.render}
+                        accent={activeTheme.accentHex}
+                        accentText={activeTheme.accentTextHex}
+                      />
+                    )
+                  )}
+                </ErrorBoundary>
+              </div>
             </div>
           </div>
 
@@ -515,25 +546,24 @@ export const Configured${component.name.replace(/\s+/g, '')} = () => {
                 <Sliders className="h-3.5 w-3.5" style={{ color: activeTheme.accentHex }} />
                 <span>Component Property Controls</span>
               </span>
-              <span className="text-[11px] font-mono text-zinc-400">Reactive State Sandbox</span>
+              <span className="text-[11px] font-mono text-zinc-400">Live Interactive Reactive State</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
-              {/* Variant Selector */}
-              {component.variants && component.variants.length > 0 && (
-                <div className="space-y-1">
-                  <label className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">Variant Selection</label>
-                  <select
-                    value={variantIndex}
-                    onChange={(e) => setVariantIndex(Number(e.target.value))}
-                    className="w-full p-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-xs focus:outline-none"
-                  >
-                    {component.variants.map((v, i) => (
-                      <option key={i} value={i}>{v.name}</option>
-                    ))}
-                  </select>
-                </div>
-              )}
+              {/* Variant Selector - Select any variant or default */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">Preview Variant / Variety</label>
+                <select
+                  value={selectedVariantIdx}
+                  onChange={(e) => setSelectedVariantIdx(Number(e.target.value))}
+                  className="w-full p-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-xs focus:outline-none cursor-pointer"
+                >
+                  <option value={0}>Default Base View</option>
+                  {component.variants && component.variants.map((v, i) => (
+                    <option key={i + 1} value={i + 1}>{v.name}</option>
+                  ))}
+                </select>
+              </div>
 
               {/* Size Selector */}
               <div className="space-y-1">
@@ -557,24 +587,24 @@ export const Configured${component.name.replace(/\s+/g, '')} = () => {
               {/* Boolean Toggles */}
               <div className="space-y-1">
                 <label className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">Interactive States</label>
-                <div className="flex gap-2 items-center pt-1">
+                <div className="flex gap-3 items-center pt-1">
                   <label className="flex items-center gap-1.5 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={isDisabled}
                       onChange={(e) => setIsDisabled(e.target.checked)}
-                      className="rounded accent-orange-500"
+                      className="rounded accent-orange-500 cursor-pointer"
                     />
-                    <span className="text-[11px] text-zinc-700 dark:text-zinc-300">Disabled</span>
+                    <span className="text-[11px] text-zinc-700 dark:text-zinc-300 select-none">Disabled</span>
                   </label>
                   <label className="flex items-center gap-1.5 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={isLoading}
                       onChange={(e) => setIsLoading(e.target.checked)}
-                      className="rounded accent-orange-500"
+                      className="rounded accent-orange-500 cursor-pointer"
                     />
-                    <span className="text-[11px] text-zinc-700 dark:text-zinc-300">Loading</span>
+                    <span className="text-[11px] text-zinc-700 dark:text-zinc-300 select-none">Loading</span>
                   </label>
                 </div>
               </div>
@@ -584,7 +614,7 @@ export const Configured${component.name.replace(/\s+/g, '')} = () => {
                 <label className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">Custom Label / Text</label>
                 <input
                   type="text"
-                  placeholder={component.name}
+                  placeholder={activeVariant ? activeVariant.name : component.name}
                   value={customText}
                   onChange={(e) => setCustomText(e.target.value)}
                   className="w-full p-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-xs focus:outline-none"
@@ -605,7 +635,6 @@ export const Configured${component.name.replace(/\s+/g, '')} = () => {
 // ----------------------------------------------------------------------------
 // Error Boundary
 // ----------------------------------------------------------------------------
-
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
   { hasError: boolean; error: Error | null }
@@ -6039,6 +6068,28 @@ export function DocSidebar({
   componentsData,
   className = "",
 }: DocSidebarProps) {
+  // Mapping each documentation category to proper Lucide React icons
+  const getCategoryIcon = (cat: string, iconClass = "h-3.5 w-3.5") => {
+    switch (cat) {
+      case 'Primitives':
+        return <SquareCode className={iconClass} />;
+      case 'Form Controls':
+        return <Sliders className={iconClass} />;
+      case 'Overlays':
+        return <Layers className={iconClass} />;
+      case 'Feedback':
+        return <AlertTriangle className={iconClass} />;
+      case 'Layout':
+        return <LayoutGrid className={iconClass} />;
+      case 'Surfaces':
+        return <GalleryHorizontal className={iconClass} />;
+      case 'Motion':
+        return <Zap className={iconClass} />;
+      default:
+        return <Boxes className={iconClass} />;
+    }
+  };
+
   const sidebarNavContent = (
     <div className="space-y-4 text-sm">
       {/* Search Bar */}
@@ -6111,7 +6162,7 @@ export function DocSidebar({
                 className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
               >
                 <div className="flex items-center gap-2">
-                  <Boxes className="h-3.5 w-3.5" />
+                  {getCategoryIcon(category, "h-3.5 w-3.5 text-zinc-500 group-hover:text-zinc-950 dark:group-hover:text-white transition-colors")}
                   <span>{category}</span>
                   <span className="text-[10px] font-normal lowercase tracking-normal text-zinc-400 dark:text-zinc-500">
                     ({catComponents.length})
@@ -6180,31 +6231,62 @@ export function DocSidebar({
         </div>
       )}
 
-      {/* Desktop Aside */}
+      {/* Independent Fixed Desktop Aside with Dedicated Scrollbar */}
       <aside 
         aria-label="Documentation Navigation"
-        className={`shrink-0 transition-all duration-300 ${
-          sidebarCollapsed ? 'w-12' : 'w-64'
-        } space-y-6 hidden md:block ${className}`}
+        className={`hidden md:block fixed top-16 bottom-0 z-30 border-r border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md transition-all duration-300 overflow-y-auto scrollbar-thin ${
+          sidebarCollapsed ? 'w-14' : 'w-64'
+        } ${className}`}
       >
-        <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          {!sidebarCollapsed && (
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-              Documentation
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={onToggleCollapse}
-            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
-            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-          </button>
-        </div>
+        <div className="p-4 space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
+            {!sidebarCollapsed && (
+              <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+                Documentation
+              </span>
+            )}
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+              title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+            </button>
+          </div>
 
-        {!sidebarCollapsed && sidebarNavContent}
+          {!sidebarCollapsed ? (
+            sidebarNavContent
+          ) : (
+            <div className="flex flex-col items-center gap-2.5 py-2">
+              {/* Getting started icon */}
+              <button
+                type="button"
+                onClick={onToggleCollapse}
+                className="w-9 h-9 rounded-lg flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition cursor-pointer"
+                title="Expand Getting Started"
+              >
+                <FileText className="h-4 w-4" />
+              </button>
+
+              <div className="w-6 border-t border-zinc-200 dark:border-zinc-800 my-1" />
+
+              {/* Category icons */}
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={onToggleCollapse}
+                  className="w-9 h-9 rounded-lg flex items-center justify-center bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 transition cursor-pointer group"
+                  title={`Expand ${cat} (${Object.values(componentsData).filter(c => c.category === cat).length})`}
+                >
+                  {getCategoryIcon(cat, "h-4 w-4 transition-transform group-hover:scale-110")}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </aside>
     </>
   );
@@ -6229,39 +6311,47 @@ export function MainLayout({
   tableOfContents,
   onOpenMobileDrawer,
   currentLabel,
+  sidebarCollapsed = false,
   className = "",
-}: MainLayoutProps) {
+}: MainLayoutProps & { sidebarCollapsed?: boolean }) {
   return (
-    <div className={`max-w-[1440px] mx-auto px-4 sm:px-6 flex-1 w-full flex flex-col md:flex-row gap-6 md:gap-8 py-6 md:py-8 ${className}`}>
-      {/* Mobile Breadcrumb & Drawer Trigger Bar */}
-      {onOpenMobileDrawer && (
-        <div className="md:hidden flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
-          <button
-            type="button"
-            onClick={onOpenMobileDrawer}
-            className="inline-flex items-center gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-700 transition cursor-pointer"
-          >
-            <PanelLeft className="h-4 w-4" />
-            <span>Documentation Index</span>
-          </button>
-          {currentLabel && (
-            <span className="text-xs font-mono text-zinc-500">
-              {currentLabel}
-            </span>
-          )}
-        </div>
-      )}
-
-      {/* Decoupled Sidebar Slot */}
+    <div className={`min-h-[calc(100vh-4rem)] w-full flex flex-col ${className}`}>
+      {/* Decoupled Fixed Sidebar (renders completely independently) */}
       {sidebar}
 
-      {/* Main Content Area */}
-      <main className="flex-1 min-w-0 space-y-8">
-        {children}
-      </main>
+      {/* Main Content Viewport Wrapper with dynamic margin offset for the fixed sidebar */}
+      <div className={`flex-1 transition-all duration-300 ${
+        sidebarCollapsed ? 'md:ml-14' : 'md:ml-64'
+      }`}>
+        <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex flex-col lg:flex-row gap-8">
+          {/* Mobile Breadcrumb & Drawer Trigger Bar */}
+          {onOpenMobileDrawer && (
+            <div className="md:hidden flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800 w-full">
+              <button
+                type="button"
+                onClick={onOpenMobileDrawer}
+                className="inline-flex items-center gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-700 transition cursor-pointer"
+              >
+                <PanelLeft className="h-4 w-4" />
+                <span>Documentation Index</span>
+              </button>
+              {currentLabel && (
+                <span className="text-xs font-mono text-zinc-500">
+                  {currentLabel}
+                </span>
+              )}
+            </div>
+          )}
 
-      {/* Table of Contents Slot */}
-      {tableOfContents}
+          {/* Main Independent Content Area */}
+          <main className="flex-1 min-w-0 space-y-8">
+            {children}
+          </main>
+
+          {/* Table of Contents Slot */}
+          {tableOfContents}
+        </div>
+      </div>
     </div>
   );
 }
@@ -6441,6 +6531,7 @@ function DocsLayout({
 
   return (
     <MainLayout
+      sidebarCollapsed={sidebarCollapsed}
       onOpenMobileDrawer={() => setMobileDocsDrawerOpen(true)}
       currentLabel={currentComponent ? currentComponent.name : docSlug ? docSlug.toUpperCase() : 'Docs'}
       sidebar={

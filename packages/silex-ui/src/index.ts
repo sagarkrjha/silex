@@ -420,3 +420,126 @@ export function motionProps(type: "hover-lift" | "pulse" | "shimmer" | "slide-up
       return "";
   }
 }
+
+/**
+ * Preview and Developer Documentation Types & State Helpers
+ * Mirrors the silex-core Rust WASM types for TypeScript/JavaScript consumers
+ */
+export type PreviewViewport = "mobile" | "tablet" | "desktop" | "fullscreen";
+export type CanvasBackground = "dotted-mesh" | "solid-surface" | "transparent";
+export type CodeLanguage = "typescript" | "javascript" | "rust" | "html" | "css" | "json" | "bash";
+
+export interface ComponentPreviewerConfig {
+  viewport?: PreviewViewport;
+  background?: CanvasBackground;
+  fullscreen?: boolean;
+  interactive?: boolean;
+  customClass?: string;
+}
+
+export interface CodePreviewConfig {
+  language?: CodeLanguage;
+  showLineNumbers?: boolean;
+  collapsible?: boolean;
+  collapsed?: boolean;
+  copyEnabled?: boolean;
+  customClass?: string;
+}
+
+/**
+ * Computes container CSS classes for ComponentPreviewer
+ */
+export function computePreviewContainerClasses(config: ComponentPreviewerConfig = {}): string {
+  const classes = [
+    "w-full",
+    "rounded-2xl",
+    "border",
+    "border-zinc-300",
+    "dark:border-zinc-800",
+    "overflow-hidden",
+    "transition-all",
+    "duration-200",
+  ];
+  if (config.fullscreen) {
+    classes.push("fixed inset-4 z-50 shadow-2xl");
+  } else {
+    classes.push("shadow-sm");
+  }
+  if (config.customClass) {
+    classes.push(config.customClass);
+  }
+  return classes.join(" ");
+}
+
+/**
+ * Computes canvas background classes for ComponentPreviewer
+ */
+export function computePreviewCanvasClasses(background: CanvasBackground = "dotted-mesh"): string {
+  const base = [
+    "p-6",
+    "sm:p-10",
+    "flex",
+    "items-center",
+    "justify-center",
+    "min-h-[280px]",
+    "transition-all",
+  ];
+  switch (background) {
+    case "solid-surface":
+      return [...base, "bg-zinc-100", "dark:bg-zinc-900", "text-zinc-900", "dark:text-white"].join(" ");
+    case "transparent":
+      return [...base, "bg-transparent"].join(" ");
+    case "dotted-mesh":
+    default:
+      return [
+        ...base,
+        "bg-zinc-50",
+        "dark:bg-zinc-950",
+        "[background-image:radial-gradient(currentColor_1px,transparent_1px)]",
+        "[background-size:16px_16px]",
+        "text-zinc-300",
+        "dark:text-zinc-800",
+      ].join(" ");
+  }
+}
+
+/**
+ * Computes viewport width constraint classes for ComponentPreviewer
+ */
+export function computePreviewViewportClasses(viewport: PreviewViewport = "desktop"): string {
+  switch (viewport) {
+    case "mobile":
+      return "max-w-[375px] w-full transition-all duration-300";
+    case "tablet":
+      return "max-w-[720px] w-full transition-all duration-300";
+    case "fullscreen":
+      return "w-full max-w-5xl transition-all duration-300";
+    case "desktop":
+    default:
+      return "w-full transition-all duration-300";
+  }
+}
+
+/**
+ * Computes container classes for CodePreview
+ */
+export function computeCodeContainerClasses(config: CodePreviewConfig = {}): string {
+  const classes = [
+    "relative",
+    "rounded-xl",
+    "border",
+    "border-zinc-300",
+    "dark:border-zinc-800",
+    "bg-zinc-900",
+    "text-zinc-100",
+    "overflow-hidden",
+    "font-mono",
+    "text-xs",
+    "sm:text-sm",
+  ];
+  if (config.customClass) {
+    classes.push(config.customClass);
+  }
+  return classes.join(" ");
+}
+
