@@ -303,6 +303,13 @@ export const components = [
   "alert",
   "separator",
   "accordion",
+  "tooltip",
+  "avatar",
+  "checkbox",
+  "textarea",
+  "table",
+  "progress",
+  "skeleton",
 ] as const;
 
 export type ComponentName = typeof components[number];

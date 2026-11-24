@@ -35,7 +35,8 @@ fn main() {
         Some(Commands::Add { name }) => {
             let available = [
                 "button", "dialog", "sheet", "card", "alert", "badge",
-                "switch", "accordion", "input", "separator", "table", "tooltip"
+                "switch", "accordion", "input", "separator", "table", "tooltip",
+                "avatar", "checkbox", "textarea", "progress", "skeleton"
             ];
             if available.contains(&name.as_str()) {
                 println!("Adding {} to your project...", name.bold());
@@ -53,15 +54,20 @@ fn main() {
             let components = [
                 ("accordion", "Accessible collapsible disclosure sections"),
                 ("alert", "Contextual feedback messages and banners"),
+                ("avatar", "Profile representations with fallback states"),
                 ("badge", "Compact status and numerical indicators"),
                 ("button", "Interactive actions with variants and loading state"),
                 ("card", "Structured container with headers, footers and hover states"),
+                ("checkbox", "Accessible binary and indeterminate control"),
                 ("dialog", "Modal dialog with backdrop and animations"),
                 ("input", "Text and numeric form inputs with validation styles"),
+                ("progress", "Deterministic completion and percentage bars"),
                 ("separator", "Visual divider with orientation support"),
                 ("sheet", "Slide-out modal drawer with 4-directional support"),
+                ("skeleton", "Loading placeholder wireframe animations"),
                 ("switch", "Toggleable boolean switch state control"),
                 ("table", "Responsive, accessible data display table"),
+                ("textarea", "Multiline resizable form text inputs"),
                 ("tooltip", "Contextual hover tooltip with directional arrows"),
             ];
             for (comp, desc) in components {

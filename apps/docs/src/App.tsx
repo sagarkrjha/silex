@@ -42,7 +42,15 @@ import {
   Cpu,
   BadgeAlert,
   Minus,
-  Menu
+  Menu,
+  MessageSquare,
+  User,
+  CheckSquare,
+  AlignLeft,
+  Table as TableIcon,
+  BarChart2,
+  Loader2,
+  ChevronRightSquare
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import Prism from 'prismjs';
@@ -1642,6 +1650,589 @@ export const Example: React.FC = (): React.ReactElement => {
 
 let sep: SeparatorProps = SeparatorProps::new(SeparatorOrientation::Horizontal);
 let classes: String = sep.compute_classes();`,
+    },
+  },
+
+  accordion: {
+    id: 'accordion',
+    name: 'Accordion',
+    category: 'Surfaces',
+    icon: <ChevronRightSquare className="h-4 w-4" />,
+    description: 'Vertically stacked interactive disclosure headings with expandable panels.',
+    markdownDoc: `
+### Overview
+The **Accordion** component organizes content into collapsible panels, backed by the verified \`AccordionState\` state machine in \`silex-ui-core\`.
+    `,
+    preview: (accent: string) => {
+      const [openItem, setOpenItem] = useState<string | null>('item-1');
+      return (
+        <div className="w-full max-w-md border border-zinc-200 dark:border-zinc-800 rounded-lg divide-y divide-zinc-200 dark:divide-zinc-800">
+          {[
+            { id: 'item-1', title: 'What is Silex UI?', content: 'Silex is a native Rust-powered UI engine and polyglot component library with guaranteed WCAG contrast.' },
+            { id: 'item-2', title: 'How does theme switching work?', content: 'Tokens are compiled to solid contrast variables dynamically without layout shift or eye fatigue.' },
+          ].map((item) => (
+            <div key={item.id}>
+              <button
+                type="button"
+                onClick={() => setOpenItem(openItem === item.id ? null : item.id)}
+                className="w-full flex items-center justify-between p-4 text-sm font-medium text-zinc-900 dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-900/50 transition"
+              >
+                <span>{item.title}</span>
+                <ChevronDown className={`h-4 w-4 text-zinc-500 transition-transform ${openItem === item.id ? 'rotate-180' : ''}`} style={openItem === item.id ? { color: accent } : {}} />
+              </button>
+              {openItem === item.id && (
+                <div className="p-4 pt-0 text-xs text-zinc-600 dark:text-zinc-400">
+                  {item.content}
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add accordion',
+      npm: 'npx silex-ui add accordion',
+      bun: 'bunx silex-ui add accordion',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'type', type: "'single' | 'multiple'", default: "'single'", description: 'Determines whether one or multiple items can be expanded' },
+    ],
+    code: {
+      react: `import React, { useState } from "react";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+
+export const Example: React.FC = () => {
+  return (
+    <Accordion type="single" collapsible>
+      <AccordionItem value="item-1">
+        <AccordionTrigger>What is Silex?</AccordionTrigger>
+        <AccordionContent>A native Rust-powered component engine.</AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  );
+};`,
+      vue: `<template>
+  <Accordion type="single">
+    <AccordionItem value="item-1">
+      <AccordionTrigger>What is Silex?</AccordionTrigger>
+      <AccordionContent>A native Rust-powered component engine.</AccordionContent>
+    </AccordionItem>
+  </Accordion>
+</template>`,
+      svelte: `<Accordion type="single">
+  <AccordionItem value="item-1">
+    <AccordionTrigger>What is Silex?</AccordionTrigger>
+    <AccordionContent>A native Rust-powered component engine.</AccordionContent>
+  </AccordionItem>
+</Accordion>`,
+      angular: `<silex-accordion type="single">
+  <silex-accordion-item title="What is Silex?">A native Rust-powered component engine.</silex-accordion-item>
+</silex-accordion>`,
+      web: `<silex-accordion type="single">
+  <silex-accordion-item title="What is Silex?">A native Rust-powered component engine.</silex-accordion-item>
+</silex-accordion>`,
+      rust: `use silex_ui_core::{AccordionState, AccordionType};
+
+let mut acc = AccordionState::new(AccordionType::Single);
+acc.toggle("item-1");
+assert!(acc.is_open("item-1"));`,
+    },
+  },
+
+  tooltip: {
+    id: 'tooltip',
+    name: 'Tooltip',
+    category: 'Overlays',
+    icon: <MessageSquare className="h-4 w-4" />,
+    description: 'Popup element displaying contextual information when a trigger receives focus or hover.',
+    markdownDoc: `
+### Overview
+The **Tooltip** component surfaces informative hints with zero runtime layout shift, managed via \`TooltipState\` in \`silex-ui-core\`.
+    `,
+    preview: (accent: string, accentText: string) => {
+      const [visible, setVisible] = useState(false);
+      return (
+        <div className="relative inline-block">
+          <button
+            type="button"
+            onMouseEnter={() => setVisible(true)}
+            onMouseLeave={() => setVisible(false)}
+            onFocus={() => setVisible(true)}
+            onBlur={() => setVisible(false)}
+            aria-describedby="tooltip-demo"
+            className="px-4 py-2 text-xs font-semibold rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100"
+          >
+            Hover or Focus Me
+          </button>
+          {visible && (
+            <div
+              id="tooltip-demo"
+              role="tooltip"
+              className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-1.5 text-xs rounded-md shadow-lg z-50 whitespace-nowrap animate-in fade-in-0 zoom-in-95"
+              style={{ backgroundColor: accent, color: accentText }}
+            >
+              Instant Rust-evaluated tooltip
+            </div>
+          )}
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add tooltip',
+      npm: 'npx silex-ui add tooltip',
+      bun: 'bunx silex-ui add tooltip',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'side', type: "'top' | 'right' | 'bottom' | 'left'", default: "'top'", description: 'Preferred direction of the tooltip popup' },
+      { name: 'delayMs', type: 'number', default: '200', description: 'Delay before revealing the tooltip' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
+
+export const Example: React.FC = () => {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button type="button">Hover</button>
+      </TooltipTrigger>
+      <TooltipContent side="top">
+        <p>Instant Rust-evaluated tooltip</p>
+      </TooltipContent>
+    </Tooltip>
+  );
+};`,
+      vue: `<template>
+  <Tooltip side="top">
+    <template #trigger><button type="button">Hover</button></template>
+    <p>Instant Rust-evaluated tooltip</p>
+  </Tooltip>
+</template>`,
+      svelte: `<Tooltip side="top">
+  {#snippet trigger()}<button type="button">Hover</button>{/snippet}
+  <p>Instant Rust-evaluated tooltip</p>
+</Tooltip>`,
+      angular: `<silex-tooltip content="Instant Rust-evaluated tooltip" side="top">
+  <button type="button">Hover</button>
+</silex-tooltip>`,
+      web: `<silex-tooltip content="Instant Rust-evaluated tooltip" side="top">
+  <button type="button">Hover</button>
+</silex-tooltip>`,
+      rust: `use silex_ui_core::components::tooltip::{TooltipState, TooltipSide};
+
+let mut tip = TooltipState::new(TooltipSide::Top);
+tip.show();
+assert!(tip.is_open());`,
+    },
+  },
+
+  avatar: {
+    id: 'avatar',
+    name: 'Avatar',
+    category: 'Primitives',
+    icon: <User className="h-4 w-4" />,
+    description: 'Image element with fallback initials representing a user or organization.',
+    markdownDoc: `
+### Overview
+The **Avatar** component renders a profile image with graceful fallback to user initials, conforming to WCAG contrast standards.
+    `,
+    preview: (accent: string, accentText: string) => (
+      <div className="flex gap-4 items-center">
+        <div 
+          className="h-10 w-10 rounded-full flex items-center justify-center font-bold text-sm select-none border border-zinc-200 dark:border-zinc-800"
+          style={{ backgroundColor: accent, color: accentText }}
+        >
+          SX
+        </div>
+        <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800 flex items-center justify-center font-bold text-sm text-zinc-700 dark:text-zinc-200 border border-zinc-300 dark:border-zinc-700 select-none">
+          JD
+        </div>
+        <div className="h-10 w-10 rounded-full bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center text-zinc-500 border border-zinc-300 dark:border-zinc-800 select-none">
+          <User className="h-5 w-5" />
+        </div>
+      </div>
+    ),
+    install: {
+      pnpm: 'pnpm dlx silex-ui add avatar',
+      npm: 'npx silex-ui add avatar',
+      bun: 'bunx silex-ui add avatar',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'size', type: "'sm' | 'md' | 'lg' | 'xl'", default: "'md'", description: 'Dimensions of the avatar container' },
+      { name: 'fallback', type: 'string', default: "''", description: 'Initials or label shown when image fails or is absent' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
+export const Example: React.FC = () => {
+  return (
+    <Avatar>
+      <AvatarImage src="/avatar.png" alt="@silex" />
+      <AvatarFallback>SX</AvatarFallback>
+    </Avatar>
+  );
+};`,
+      vue: `<template>
+  <Avatar src="/avatar.png" fallback="SX" />
+</template>`,
+      svelte: `<Avatar src="/avatar.png" fallback="SX" />`,
+      angular: `<silex-avatar src="/avatar.png" fallback="SX"></silex-avatar>`,
+      web: `<silex-avatar src="/avatar.png" fallback="SX"></silex-avatar>`,
+      rust: `use silex_ui_core::components::avatar::{AvatarProps, AvatarSize};
+
+let avatar = AvatarProps::new(AvatarSize::Md);
+let classes = avatar.compute_classes();`,
+    },
+  },
+
+  checkbox: {
+    id: 'checkbox',
+    name: 'Checkbox',
+    category: 'Form Controls',
+    icon: <CheckSquare className="h-4 w-4" />,
+    description: 'Control that allows the user to toggle between checked and unchecked options.',
+    markdownDoc: `
+### Overview
+The **Checkbox** component provides an accessible binary or indeterminate selection trigger conforming to WAI-ARIA checkbox specification.
+    `,
+    preview: (accent: string, accentText: string) => {
+      const [checked, setChecked] = useState(true);
+      return (
+        <label className="flex items-center gap-3 cursor-pointer select-none">
+          <div
+            role="checkbox"
+            aria-checked={checked}
+            tabIndex={0}
+            onClick={() => setChecked(!checked)}
+            onKeyDown={(e) => {
+              if (e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                setChecked(!checked);
+              }
+            }}
+            className="h-5 w-5 rounded border flex items-center justify-center transition focus:outline-none focus:ring-2 focus:ring-offset-2"
+            style={{
+              backgroundColor: checked ? accent : 'transparent',
+              borderColor: checked ? accent : '#a1a1aa',
+              color: accentText,
+            }}
+          >
+            {checked && <Check className="h-3.5 w-3.5 stroke-[3]" />}
+          </div>
+          <span className="text-sm font-medium text-zinc-900 dark:text-zinc-100">
+            Accept terms and continuous delivery agreement
+          </span>
+        </label>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add checkbox',
+      npm: 'npx silex-ui add checkbox',
+      bun: 'bunx silex-ui add checkbox',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'checked', type: 'boolean', default: 'false', description: 'Controlled checked state' },
+      { name: 'disabled', type: 'boolean', default: 'false', description: 'Prevents interaction' },
+    ],
+    code: {
+      react: `import React, { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+
+export const Example: React.FC = () => {
+  const [agreed, setAgreed] = useState(false);
+  return (
+    <div className="flex items-center space-x-2">
+      <Checkbox id="terms" checked={agreed} onCheckedChange={(val) => setAgreed(!!val)} />
+      <label htmlFor="terms">Accept terms and conditions</label>
+    </div>
+  );
+};`,
+      vue: `<template>
+  <label><Checkbox v-model="agreed" /> Accept terms</label>
+</template>`,
+      svelte: `<label><Checkbox bind:checked={agreed} /> Accept terms</label>`,
+      angular: `<label><silex-checkbox [(checked)]="agreed"></silex-checkbox> Accept terms</label>`,
+      web: `<silex-checkbox label="Accept terms"></silex-checkbox>`,
+      rust: `use silex_ui_core::components::checkbox::CheckboxState;
+
+let mut cb = CheckboxState::new(false);
+cb.toggle();
+assert!(cb.is_checked());`,
+    },
+  },
+
+  textarea: {
+    id: 'textarea',
+    name: 'Textarea',
+    category: 'Form Controls',
+    icon: <AlignLeft className="h-4 w-4" />,
+    description: 'Multiline plain-text editing control for longer text entries.',
+    markdownDoc: `
+### Overview
+The **Textarea** component standardizes multiline form text entry with accessible focus borders and optional auto-sizing.
+    `,
+    preview: (accent: string) => (
+      <div className="w-full max-w-sm space-y-2">
+        <label htmlFor="bio-input" className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+          Architecture Notes
+        </label>
+        <textarea
+          id="bio-input"
+          rows={3}
+          placeholder="Document distributed consensus details..."
+          className="w-full px-3 py-2 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none"
+          style={{ outlineColor: accent }}
+        />
+      </div>
+    ),
+    install: {
+      pnpm: 'pnpm dlx silex-ui add textarea',
+      npm: 'npx silex-ui add textarea',
+      bun: 'bunx silex-ui add textarea',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'rows', type: 'number', default: '4', description: 'Number of visible text rows' },
+      { name: 'disabled', type: 'boolean', default: 'false', description: 'Disables editing' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Textarea } from "@/components/ui/textarea";
+
+export const Example: React.FC = () => {
+  return <Textarea placeholder="Type your message here..." rows={4} />;
+};`,
+      vue: `<template>
+  <Textarea placeholder="Type your message here..." :rows="4" />
+</template>`,
+      svelte: `<Textarea placeholder="Type your message here..." rows={4} />`,
+      angular: `<silex-textarea placeholder="Type your message here..." [rows]="4"></silex-textarea>`,
+      web: `<silex-textarea placeholder="Type your message here..." rows="4"></silex-textarea>`,
+      rust: `use silex_ui_core::components::textarea::TextareaProps;
+
+let ta = TextareaProps::new(4);
+let classes = ta.compute_classes();`,
+    },
+  },
+
+  table: {
+    id: 'table',
+    name: 'Table',
+    category: 'Primitives',
+    icon: <TableIcon className="h-4 w-4" />,
+    description: 'Responsive, accessible tabular presentation for multi-dimensional data.',
+    markdownDoc: `
+### Overview
+The **Table** component arranges structured rows and columns with semantic caption, header, body, and footer containers.
+    `,
+    preview: (accent: string) => (
+      <div className="w-full max-w-md border border-zinc-200 dark:border-zinc-800 rounded-lg overflow-hidden">
+        <table className="w-full text-xs text-left">
+          <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
+            <tr>
+              <th className="p-2.5 font-semibold">Service</th>
+              <th className="p-2.5 font-semibold">Status</th>
+              <th className="p-2.5 font-semibold">Latency</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+            <tr>
+              <td className="p-2.5 font-medium text-zinc-900 dark:text-zinc-100">Auth Gateway</td>
+              <td className="p-2.5 font-semibold" style={{ color: accent }}>Operational</td>
+              <td className="p-2.5 text-zinc-500 font-mono">1.2ms</td>
+            </tr>
+            <tr>
+              <td className="p-2.5 font-medium text-zinc-900 dark:text-zinc-100">Redis Cluster</td>
+              <td className="p-2.5 font-semibold" style={{ color: accent }}>Operational</td>
+              <td className="p-2.5 text-zinc-500 font-mono">0.4ms</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    ),
+    install: {
+      pnpm: 'pnpm dlx silex-ui add table',
+      npm: 'npx silex-ui add table',
+      bun: 'bunx silex-ui add table',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'variant', type: "'default' | 'striped' | 'bordered'", default: "'default'", description: 'Tabular visual styling variant' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
+
+export const Example: React.FC = () => {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Service</TableHead>
+          <TableHead>Status</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        <TableRow>
+          <TableCell>Auth Gateway</TableCell>
+          <TableCell>Operational</TableCell>
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+};`,
+      vue: `<template>
+  <Table>
+    <TableHead>...</TableHead>
+    <TableBody>...</TableBody>
+  </Table>
+</template>`,
+      svelte: `<Table>
+  <TableHead>...</TableHead>
+  <TableBody>...</TableBody>
+</Table>`,
+      angular: `<silex-table>...</silex-table>`,
+      web: `<silex-table>...</silex-table>`,
+      rust: `use silex_ui_core::components::table::{TableProps, TableVariant};
+
+let table = TableProps::new(TableVariant::Default);
+let classes = table.compute_classes();`,
+    },
+  },
+
+  progress: {
+    id: 'progress',
+    name: 'Progress',
+    category: 'Feedback',
+    icon: <BarChart2 className="h-4 w-4" />,
+    description: 'Deterministic or indeterminate visual indicator of task completion percentage.',
+    markdownDoc: `
+### Overview
+The **Progress** component displays task completion percentage backed by the \`ProgressState\` machine.
+    `,
+    preview: (accent: string) => {
+      const [val, setVal] = useState(65);
+      return (
+        <div className="w-full max-w-sm space-y-3">
+          <div className="flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <span>Migration Progress</span>
+            <span className="font-mono">{val}%</span>
+          </div>
+          <div className="h-2 w-full bg-zinc-200 dark:bg-zinc-800 rounded-full overflow-hidden">
+            <div 
+              className="h-full transition-all duration-300 rounded-full"
+              style={{ width: `${val}%`, backgroundColor: accent }}
+            />
+          </div>
+          <div className="flex gap-2 justify-end">
+            <button
+              type="button"
+              onClick={() => setVal((v) => Math.max(0, v - 15))}
+              className="px-2 py-1 text-[11px] rounded border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            >
+              -15%
+            </button>
+            <button
+              type="button"
+              onClick={() => setVal((v) => Math.min(100, v + 15))}
+              className="px-2 py-1 text-[11px] rounded border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            >
+              +15%
+            </button>
+          </div>
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add progress',
+      npm: 'npx silex-ui add progress',
+      bun: 'bunx silex-ui add progress',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'value', type: 'number', default: '0', description: 'Current progress percentage value (0 to 100)' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Progress } from "@/components/ui/progress";
+
+export const Example: React.FC = () => {
+  return <Progress value={65} />;
+};`,
+      vue: `<template>
+  <Progress :value="65" />
+</template>`,
+      svelte: `<Progress value={65} />`,
+      angular: `<silex-progress [value]="65"></silex-progress>`,
+      web: `<silex-progress value="65"></silex-progress>`,
+      rust: `use silex_ui_core::components::progress::ProgressState;
+
+let mut prog = ProgressState::new(65);
+assert_eq!(prog.value(), 65);`,
+    },
+  },
+
+  skeleton: {
+    id: 'skeleton',
+    name: 'Skeleton',
+    category: 'Feedback',
+    icon: <Loader2 className="h-4 w-4" />,
+    description: 'Animated placeholder wireframe displaying during asynchronous content resolution.',
+    markdownDoc: `
+### Overview
+The **Skeleton** component displays a subtle pulse animation previewing layout shapes while data is fetching.
+    `,
+    preview: () => (
+      <div className="w-full max-w-sm space-y-3">
+        <div className="flex items-center space-x-4">
+          <div className="h-12 w-12 rounded-full bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
+          <div className="space-y-2 flex-1">
+            <div className="h-4 w-3/4 bg-zinc-200 dark:bg-zinc-800 rounded animate-pulse" />
+            <div className="h-3 w-1/2 bg-zinc-200 dark:bg-zinc-800 rounded animate-pulse" />
+          </div>
+        </div>
+      </div>
+    ),
+    install: {
+      pnpm: 'pnpm dlx silex-ui add skeleton',
+      npm: 'npx silex-ui add skeleton',
+      bun: 'bunx silex-ui add skeleton',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'className', type: 'string', default: "''", description: 'Tailwind dimensions and styling classes' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Skeleton } from "@/components/ui/skeleton";
+
+export const Example: React.FC = () => {
+  return (
+    <div className="flex items-center space-x-4">
+      <Skeleton className="h-12 w-12 rounded-full" />
+      <div className="space-y-2">
+        <Skeleton className="h-4 w-[250px]" />
+        <Skeleton className="h-4 w-[200px]" />
+      </div>
+    </div>
+  );
+};`,
+      vue: `<template>
+  <Skeleton class="h-12 w-12 rounded-full" />
+</template>`,
+      svelte: `<Skeleton class="h-12 w-12 rounded-full" />`,
+      angular: `<silex-skeleton class="h-12 w-12 rounded-full"></silex-skeleton>`,
+      web: `<silex-skeleton class="h-12 w-12 rounded-full"></silex-skeleton>`,
+      rust: `use silex_ui_core::components::skeleton::SkeletonProps;
+
+let skel = SkeletonProps::new(true);
+let classes = skel.compute_classes();`,
     },
   },
 };

@@ -67,6 +67,42 @@ function AccessibleSeparator({ orientation = 'horizontal' }: { orientation?: 'ho
   );
 }
 
+// Test checkbox accessibility
+function AccessibleCheckbox({ label, checked }: { label: string; checked: boolean }) {
+  return (
+    <label className="flex items-center gap-2">
+      <input type="checkbox" checked={checked} onChange={() => {}} aria-label={label} />
+      <span>{label}</span>
+    </label>
+  );
+}
+
+// Test textarea accessibility
+function AccessibleTextarea({ label }: { label: string }) {
+  return (
+    <div>
+      <label htmlFor="test-textarea">{label}</label>
+      <textarea id="test-textarea" aria-label={label} />
+    </div>
+  );
+}
+
+// Test progress accessibility
+function AccessibleProgress({ value, label }: { value: number; label: string }) {
+  return (
+    <div
+      role="progressbar"
+      aria-valuenow={value}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={label}
+      className="h-2 w-full bg-zinc-200"
+    >
+      <div style={{ width: `${value}%` }} />
+    </div>
+  );
+}
+
 describe('Accessibility & Axe-Core Audit', () => {
   it('AccessibleButton must pass axe accessibility checks with 0 violations', async () => {
     const { container } = render(<AccessibleButton label="Confirm Action" />);
@@ -94,6 +130,24 @@ describe('Accessibility & Axe-Core Audit', () => {
 
   it('AccessibleSeparator must pass axe accessibility checks with 0 violations', async () => {
     const { container } = render(<AccessibleSeparator orientation="horizontal" />);
+    const results = await axe.run(container);
+    expect(results.violations).toEqual([]);
+  });
+
+  it('AccessibleCheckbox must pass axe accessibility checks with 0 violations', async () => {
+    const { container } = render(<AccessibleCheckbox label="Subscribe to updates" checked={true} />);
+    const results = await axe.run(container);
+    expect(results.violations).toEqual([]);
+  });
+
+  it('AccessibleTextarea must pass axe accessibility checks with 0 violations', async () => {
+    const { container } = render(<AccessibleTextarea label="User feedback" />);
+    const results = await axe.run(container);
+    expect(results.violations).toEqual([]);
+  });
+
+  it('AccessibleProgress must pass axe accessibility checks with 0 violations', async () => {
+    const { container } = render(<AccessibleProgress value={75} label="Upload progress" />);
     const results = await axe.run(container);
     expect(results.violations).toEqual([]);
   });
