@@ -278,6 +278,11 @@ export interface ComponentDoc {
   description: string;
   markdownDoc: string;
   preview: (accentColor: string, accentTextColor: string) => React.ReactNode;
+  variants?: {
+    name: string;
+    description: string;
+    render: (accentColor: string, accentTextColor: string) => React.ReactNode;
+  }[];
   install: {
     npm: string;
     pnpm: string;
@@ -900,6 +905,77 @@ The **Button** component serves as the primary interactive element in the Silex 
         </button>
       </div>
     ),
+    variants: [
+      {
+        name: 'Icon and Label Buttons',
+        description: 'Action triggers embedded with iconography for clear contextual feedback.',
+        render: (accent: string, accentText: string) => (
+          <div className="flex flex-wrap gap-3 items-center">
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-xs"
+              style={{ backgroundColor: accent, color: accentText }}
+            >
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Deploy Build</span>
+            </button>
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-medium border border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+            >
+              <Terminal className="h-3.5 w-3.5" />
+              <span>Terminal CLI</span>
+            </button>
+          </div>
+        ),
+      },
+      {
+        name: 'Sizes & Densities',
+        description: 'Compact (32px), Standard (36px), and Expansive (44px) button heights.',
+        render: (accent: string, accentText: string) => (
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="button" className="h-8 px-2.5 rounded text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>
+              Small (h-8)
+            </button>
+            <button type="button" className="h-9 px-3.5 rounded-md text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>
+              Default (h-9)
+            </button>
+            <button type="button" className="h-11 px-5 rounded-lg text-sm font-semibold" style={{ backgroundColor: accent, color: accentText }}>
+              Large (h-11)
+            </button>
+          </div>
+        ),
+      },
+      {
+        name: 'Full-Width Responsive Stack',
+        description: 'Fluid buttons that expand to 100% on narrow mobile viewports and collapse to auto on desktop.',
+        render: (accent: string, accentText: string) => (
+          <div className="w-full flex flex-col sm:flex-row gap-2">
+            <button type="button" className="w-full sm:w-auto px-4 py-2 rounded-md text-xs font-semibold shadow-xs text-center" style={{ backgroundColor: accent, color: accentText }}>
+              Confirm Transaction
+            </button>
+            <button type="button" className="w-full sm:w-auto px-4 py-2 rounded-md text-xs font-medium border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-center">
+              Cancel
+            </button>
+          </div>
+        ),
+      },
+      {
+        name: 'Loading & Disabled States',
+        description: 'Non-interactive visual cues with animated SVG spinners preventing double submits.',
+        render: () => (
+          <div className="flex flex-wrap gap-3 items-center">
+            <button type="button" disabled className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed opacity-70">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              <span>Processing...</span>
+            </button>
+            <button type="button" disabled className="px-3.5 py-1.5 rounded-md text-xs font-medium border border-zinc-200 dark:border-zinc-800 text-zinc-400 cursor-not-allowed">
+              Disabled Action
+            </button>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add button',
       npm: 'npx silex-ui add button',
@@ -1302,6 +1378,41 @@ The **Card** container standardizes visual containment for metrics, charts, and 
         <p className="text-xs text-zinc-500 dark:text-zinc-400">Zero dropped connections across 48 global nodes.</p>
       </div>
     ),
+    variants: [
+      {
+        name: 'Interactive Action Card',
+        description: 'Clickable container with hover borders and trailing chevron indicator.',
+        render: (accent: string) => (
+          <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 bg-white dark:bg-zinc-900 p-4 shadow-xs transition cursor-pointer flex items-center justify-between">
+            <div className="space-y-1">
+              <span className="font-semibold text-xs text-zinc-900 dark:text-white block">Audit Report #842</span>
+              <span className="text-[11px] text-zinc-500 block">Passed 28/28 criteria</span>
+            </div>
+            <ChevronRight className="h-4 w-4 text-zinc-400" />
+          </div>
+        ),
+      },
+      {
+        name: 'Header & Footer Action Card',
+        description: 'Standardized card partition with contextual header and call-to-action footer.',
+        render: (accent: string, accentText: string) => (
+          <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-800 shadow-xs">
+            <div className="p-3.5 flex items-center justify-between">
+              <span className="font-bold text-xs text-zinc-900 dark:text-white">Team Seat Allocation</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-100 dark:bg-zinc-800">Pro Tier</span>
+            </div>
+            <div className="p-3.5 text-xs text-zinc-600 dark:text-zinc-400">
+              8 of 10 seats claimed this billing cycle.
+            </div>
+            <div className="p-3 bg-zinc-50 dark:bg-zinc-950 flex justify-end">
+              <button type="button" className="px-3 py-1 rounded text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>
+                Upgrade
+              </button>
+            </div>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add card',
       npm: 'npx silex-ui add card',
@@ -1512,6 +1623,36 @@ The **Input** component standardizes text field styles, focus states, and input 
         />
       </div>
     ),
+    variants: [
+      {
+        name: 'Input with Leading Icon',
+        description: 'Search field with integrated SVG icon indicator.',
+        render: () => (
+          <div className="w-full max-w-sm relative">
+            <Search className="h-4 w-4 absolute left-3 top-2.5 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="Search components, tokens..."
+              className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md text-xs text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none"
+            />
+          </div>
+        ),
+      },
+      {
+        name: 'Validation Error State',
+        description: 'High-contrast red border with contextual warning message.',
+        render: () => (
+          <div className="w-full max-w-sm space-y-1">
+            <input
+              type="email"
+              defaultValue="invalid-email-format"
+              className="w-full px-3 py-1.5 bg-red-50/50 dark:bg-red-950/20 border border-red-500 rounded-md text-xs text-red-900 dark:text-red-200 focus:outline-none"
+            />
+            <span className="text-[10px] text-red-600 dark:text-red-400">Please provide a valid email address</span>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add input',
       npm: 'npx silex-ui add input',
@@ -1573,6 +1714,38 @@ The **Alert** component highlights critical status messages, warnings, and confi
         <p className="text-xs text-red-600 dark:text-red-300 pl-6">Worker node eu-west-1a was drained for kernel upgrades.</p>
       </div>
     ),
+    variants: [
+      {
+        name: 'Success & Operational Alert',
+        description: 'Green positive confirmation for deployments and verified transactions.',
+        render: () => (
+          <div role="alert" className="w-full max-w-md rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-3.5 text-emerald-800 dark:text-emerald-300 space-y-1">
+            <div className="flex items-center gap-2 font-semibold text-xs">
+              <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+              <span>Deployment Published Successfully</span>
+            </div>
+            <p className="text-[11px] text-emerald-700 dark:text-emerald-400/90 pl-6">
+              All 28 component bundles were compiled and pushed to the edge registry.
+            </p>
+          </div>
+        ),
+      },
+      {
+        name: 'Informational Tip Alert',
+        description: 'Neutral context callout with subtle sky tone for guidance.',
+        render: () => (
+          <div role="alert" className="w-full max-w-md rounded-lg border border-sky-500/40 bg-sky-500/10 p-3.5 text-sky-800 dark:text-sky-300 space-y-1">
+            <div className="flex items-center gap-2 font-semibold text-xs">
+              <Sparkles className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+              <span>Zero-Runtime Optimization</span>
+            </div>
+            <p className="text-[11px] text-sky-700 dark:text-sky-400/90 pl-6">
+              Silex compiles state machines down to pure WASM bytecode with 0 runtime JS bloat.
+            </p>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add alert',
       npm: 'npx silex-ui add alert',
@@ -1649,6 +1822,38 @@ The **Badge** component highlights state, count, or categorical tags. Verified b
         </span>
       </div>
     ),
+    variants: [
+      {
+        name: 'Pill Badges with Dot Indicators',
+        description: 'Compact status markers featuring pulsating or solid status dots.',
+        render: (accent: string) => (
+          <div className="flex flex-wrap gap-2.5 items-center">
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
+              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: accent }} />
+              <span>Production Edge</span>
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+              <span>Healthy</span>
+            </span>
+          </div>
+        ),
+      },
+      {
+        name: 'Square Monospace Version Tags',
+        description: 'Square tags suited for package releases, git commits, and telemetry metrics.',
+        render: () => (
+          <div className="flex flex-wrap gap-2 items-center">
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300">
+              v0.1.0-alpha
+            </span>
+            <span className="px-2 py-0.5 rounded text-[11px] font-mono border border-orange-500/30 bg-orange-500/10 text-orange-600 dark:text-orange-400">
+              git:main#fa9b391
+            </span>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add badge',
       npm: 'npx silex-ui add badge',
@@ -2081,6 +2286,36 @@ The **Textarea** component standardizes multiline form text entry with accessibl
         />
       </div>
     ),
+    variants: [
+      {
+        name: 'Input with Leading Icon',
+        description: 'Search field with integrated SVG icon indicator.',
+        render: () => (
+          <div className="w-full max-w-sm relative">
+            <Search className="h-4 w-4 absolute left-3 top-2.5 text-zinc-400" />
+            <input
+              type="text"
+              placeholder="Search components, tokens..."
+              className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md text-xs text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none"
+            />
+          </div>
+        ),
+      },
+      {
+        name: 'Validation Error State',
+        description: 'High-contrast red border with contextual warning message.',
+        render: () => (
+          <div className="w-full max-w-sm space-y-1">
+            <input
+              type="email"
+              defaultValue="invalid-email-format"
+              className="w-full px-3 py-1.5 bg-red-50/50 dark:bg-red-950/20 border border-red-500 rounded-md text-xs text-red-900 dark:text-red-200 focus:outline-none"
+            />
+            <span className="text-[10px] text-red-600 dark:text-red-400">Please provide a valid email address</span>
+          </div>
+        ),
+      },
+    ],
     install: {
       pnpm: 'pnpm dlx silex-ui add textarea',
       npm: 'npx silex-ui add textarea',
@@ -3657,6 +3892,9 @@ function DocsLayout({
   const sections = currentComponent ? [
     { id: 'overview', title: 'Overview' },
     { id: 'interactive-preview', title: 'Interactive Preview' },
+    ...(currentComponent.variants && currentComponent.variants.length > 0
+      ? [{ id: 'component-varieties', title: 'Component Varieties' }]
+      : []),
     { id: 'installation', title: 'Installation' },
     { id: 'polyglot-usage', title: 'Multi-Framework Usage' },
     { id: 'props-reference', title: 'Props Table' },
@@ -3992,6 +4230,42 @@ function DocsLayout({
                 </div>
               </div>
             </div>
+
+            {/* Component Varieties Gallery */}
+            {currentComponent.variants && currentComponent.variants.length > 0 && (
+              <div id="component-varieties" className="space-y-4">
+                <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                  <Boxes className="h-4 w-4" style={{ color: activeTheme.accentHex }} />
+                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
+                    Component Varieties & Layout Patterns
+                  </h3>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  {currentComponent.variants.map((v) => (
+                    <div
+                      key={v.name}
+                      className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3 shadow-xs"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="font-semibold text-xs text-zinc-900 dark:text-white">{v.name}</span>
+                        <span className="text-[10px] font-mono text-zinc-400">Variant</span>
+                      </div>
+                      <p className="text-xs text-zinc-500 dark:text-zinc-400">{v.description}</p>
+                      <div className="pt-2 flex items-center justify-center p-4 rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800/80 min-h-[90px]">
+                        <ErrorBoundary>
+                          <ComponentPreviewRenderer
+                            previewFn={v.render}
+                            accent={activeTheme.accentHex}
+                            accentText={activeTheme.accentTextHex}
+                          />
+                        </ErrorBoundary>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Installation Box */}
             <div id="installation" className="space-y-3">
