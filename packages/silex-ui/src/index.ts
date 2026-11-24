@@ -384,3 +384,11 @@ export function getContrastRatio(hex1: string, hex2: string): number {
 
   return (lighter + 0.05) / (darker + 0.05);
 }
+
+/**
+ * Developer utility to merge Tailwind CSS class names with custom user overrides.
+ * Mimics clsx/cn utility, cleanly merging responsive classes (e.g. `sm:flex-row md:w-64`) without duplicate whitespace.
+ */
+export function cn(...inputs: (string | undefined | null | false)[]): string {
+  return inputs.filter(Boolean).join(" ").trim();
+}

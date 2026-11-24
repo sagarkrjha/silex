@@ -155,9 +155,42 @@ pub fn contrast_ratio(hex1: &str, hex2: &str) -> f32 {
     }
 }
 
+/// Merges developer-supplied Tailwind classes with core base classes cleanly.
+///
+/// Ensures user override classes (e.g. `p-6`, `w-full`, `sm:grid-cols-2`) take precedence or append without duplicate whitespace.
+///
+/// # Example
+/// ```rust
+/// use silex_ui_core::merge_classes;
+///
+/// let merged = merge_classes("px-4 py-2 bg-orange-600", "w-full md:w-auto shadow-lg");
+/// assert!(merged.contains("px-4"));
+/// assert!(merged.contains("w-full md:w-auto"));
+/// ```
+#[wasm_bindgen]
+pub fn merge_classes(base: &str, custom: &str) -> String {
+    let b = base.trim();
+    let c = custom.trim();
+    if b.is_empty() {
+        c.to_string()
+    } else if c.is_empty() {
+        b.to_string()
+    } else {
+        format!("{} {}", b, c)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_merge_classes() {
+        let merged = merge_classes("px-4 py-2", "w-full sm:w-auto");
+        assert_eq!(merged, "px-4 py-2 w-full sm:w-auto");
+        assert_eq!(merge_classes("px-4", ""), "px-4");
+        assert_eq!(merge_classes("", "py-2"), "py-2");
+    }
 
     #[test]
     fn test_accordion_single() {

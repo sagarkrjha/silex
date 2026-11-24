@@ -90,6 +90,11 @@ impl ButtonProps {
         format!("{} {} {}", base, variant_cls, size_cls)
     }
 
+    /// Computes classes merged with developer custom Tailwind classes (responsive & overrides).
+    pub fn compute_classes_with_custom(&self, custom_classes: &str) -> String {
+        crate::merge_classes(&self.compute_classes(), custom_classes)
+    }
+
     /// Renders semantic HTML representation of the button.
     pub fn render_html(&self, label: &str) -> String {
         let classes = self.compute_classes();

@@ -909,6 +909,7 @@ The **Button** component serves as the primary interactive element in the Silex 
     props: [
       { name: 'variant', type: "'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive'", default: "'primary'", description: 'Visual aesthetic variant' },
       { name: 'size', type: "'sm' | 'md' | 'lg'", default: "'md'", description: 'Sizing scale' },
+      { name: 'className', type: 'string', default: "''", description: 'Custom responsive Tailwind CSS classes merged via cn()' },
       { name: 'disabled', type: 'boolean', default: 'false', description: 'Prevents interactions and dims appearance' },
     ],
     code: {
@@ -916,17 +917,23 @@ The **Button** component serves as the primary interactive element in the Silex 
 import { Button, type ButtonProps } from "@/components/ui/button";
 
 export interface ButtonDemoProps {
+  className?: string;
   onAction?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
-export const Example: React.FC<ButtonDemoProps> = ({ onAction }): React.ReactElement => {
+export const Example: React.FC<ButtonDemoProps> = ({ className, onAction }): React.ReactElement => {
   return (
-    <div className="flex gap-4">
-      <Button variant="primary" onClick={onAction}>
-        Primary Action
+    <div className="flex flex-col sm:flex-row gap-4 w-full">
+      {/* Devs can customize with responsive Tailwind classes */}
+      <Button 
+        variant="primary" 
+        className="w-full sm:w-auto shadow-md hover:scale-[1.02] transition"
+        onClick={onAction}
+      >
+        Responsive Action
       </Button>
-      <Button variant="secondary">Secondary</Button>
-      <Button variant="outline">Outline</Button>
+      <Button variant="secondary" className="w-full sm:w-auto">Secondary</Button>
+      <Button variant="outline" className="w-full sm:w-auto">Outline</Button>
     </div>
   );
 };

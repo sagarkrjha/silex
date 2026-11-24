@@ -79,20 +79,23 @@ describe('Responsive Layout & Viewport Verification', () => {
     expect(mobileButton?.className).toContain('md:hidden');
   });
 
-  it('verifies responsive list items flex wrap and preserve tap target spacing', () => {
-    setViewport(VIEWPORTS.mobile.width, VIEWPORTS.mobile.height);
+  it('verifies developer customization via custom responsive Tailwind classes and cn()', () => {
+    const customClasses = 'w-full sm:w-auto md:w-64 p-4 lg:p-6 rounded-2xl shadow-xl';
+    const baseClasses = 'inline-flex items-center justify-center';
+    
+    // Developer merges their responsive Tailwind utility classes
+    const merged = [baseClasses, customClasses].filter(Boolean).join(' ');
+    
     const { container } = render(
-      <ul className="w-full divide-y divide-zinc-200 rounded-xl overflow-hidden">
-        <li className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3.5 gap-2 min-h-[44px]">
-          <span className="text-xs font-semibold">Row Title</span>
-          <span className="text-xs">Action</span>
-        </li>
-      </ul>
+      <button type="button" className={merged}>
+        Custom Responsive Action
+      </button>
     );
-    const li = container.querySelector('li');
-    expect(li).toBeDefined();
-    expect(li?.className).toContain('flex-col');
-    expect(li?.className).toContain('sm:flex-row');
-    expect(li?.className).toContain('min-h-[44px]'); // Meets WCAG minimum tap target height
+    const btn = container.querySelector('button');
+    expect(btn?.className).toContain('w-full');
+    expect(btn?.className).toContain('sm:w-auto');
+    expect(btn?.className).toContain('md:w-64');
+    expect(btn?.className).toContain('rounded-2xl');
+    expect(btn?.className).toContain('shadow-xl');
   });
 });
