@@ -69,6 +69,14 @@ import {
   Split,
   Eye,
   Code
+,
+  ChevronLeft,
+  ChevronUp,
+  Minimize2,
+  RotateCcw,
+  Play,
+  Pause,
+  Image as ImageIcon
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import Prism from 'prismjs';
@@ -314,6 +322,284 @@ function ComponentPreviewRenderer({
   accentText: string;
 }) {
   return <>{previewFn(accent, accentText)}</>;
+}
+
+// ----------------------------------------------------------------------------
+// Interactive Component Playground
+// ----------------------------------------------------------------------------
+
+interface ComponentPlaygroundProps {
+  component: ComponentDoc;
+  activeTheme: ThemeConfig;
+  defaultSnippet: string;
+}
+
+function ComponentPlayground({ component, activeTheme, defaultSnippet }: ComponentPlaygroundProps) {
+  const [activeTab, setActiveTab] = useState<'preview' | 'code'>('preview');
+  const [viewport, setViewport] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Dynamic Playground Prop Controls State
+  const [variantIndex, setVariantIndex] = useState(0);
+  const [buttonSize, setButtonSize] = useState<'sm' | 'md' | 'lg'>('md');
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [customText, setCustomText] = useState('');
+
+  const resetPlayground = () => {
+    setVariantIndex(0);
+    setButtonSize('md');
+    setIsDisabled(false);
+    setIsLoading(false);
+    setCustomText('');
+    setViewport('desktop');
+  };
+
+  const currentVariant = component.variants && component.variants[variantIndex];
+
+  // Dynamically generated JSX representation of playground configuration
+  const generatedCode = `// Generated Silex Code for <${component.name} />
+// Theme: ${activeTheme.name} | Viewport: ${viewport}
+import { ${component.name} } from "@/components/ui/${component.id}";
+
+export const Configured${component.name.replace(/\s+/g, '')} = () => {
+  return (
+    <${component.name}
+      variant="${currentVariant ? currentVariant.name.toLowerCase().replace(/\s+/g, '-') : 'default'}"
+      size="${buttonSize}"
+      disabled={${isDisabled}}
+      loading={${isLoading}}
+    >
+      ${customText || component.name}
+    </${component.name}>
+  );
+};`;
+
+  const copyCode = () => {
+    navigator.clipboard.writeText(activeTab === 'code' ? generatedCode : defaultSnippet);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const viewportWidthClass = 
+    viewport === 'mobile' ? 'max-w-[375px]' :
+    viewport === 'tablet' ? 'max-w-[720px]' : 'w-full';
+
+  return (
+    <div className={`rounded-2xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-sm overflow-hidden transition-all duration-200 ${
+      isFullscreen ? 'fixed inset-4 z-50 overflow-y-auto' : ''
+    }`}>
+      {/* Playground Header & Toolbar */}
+      <div className="p-3.5 border-b border-zinc-200 dark:border-zinc-800 flex flex-wrap items-center justify-between gap-2 bg-zinc-50/70 dark:bg-zinc-900/70 backdrop-blur-xs">
+        {/* Left: Preview / Code tabs */}
+        <div className="inline-flex p-1 rounded-lg bg-zinc-200/70 dark:bg-zinc-800 text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => setActiveTab('preview')}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition cursor-pointer ${
+              activeTab === 'preview'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
+            }`}
+          >
+            <Eye className="h-3.5 w-3.5" />
+            <span>Interactive Playground</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('code')}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-md transition cursor-pointer ${
+              activeTab === 'code'
+                ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white'
+            }`}
+          >
+            <Code className="h-3.5 w-3.5" />
+            <span>Generated Code</span>
+          </button>
+        </div>
+
+        {/* Right: Viewport Controls, Reset, Fullscreen, Copy */}
+        <div className="flex items-center gap-1.5">
+          {/* Responsive Viewport Switcher */}
+          <div className="hidden sm:inline-flex items-center p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-800/80 text-xs">
+            <button
+              type="button"
+              onClick={() => setViewport('mobile')}
+              title="Mobile Viewport (375px)"
+              className={`p-1.5 rounded transition cursor-pointer ${
+                viewport === 'mobile' ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs font-bold' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+              }`}
+            >
+              <Smartphone className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewport('tablet')}
+              title="Tablet Viewport (720px)"
+              className={`p-1.5 rounded transition cursor-pointer ${
+                viewport === 'tablet' ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs font-bold' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+              }`}
+            >
+              <Tablet className="h-3.5 w-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewport('desktop')}
+              title="Desktop Viewport (100%)"
+              className={`p-1.5 rounded transition cursor-pointer ${
+                viewport === 'desktop' ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs font-bold' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+              }`}
+            >
+              <Monitor className="h-3.5 w-3.5" />
+            </button>
+          </div>
+
+          {/* Reset Props Button */}
+          <button
+            type="button"
+            onClick={resetPlayground}
+            title="Reset Playground Controls"
+            className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg border border-zinc-300 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            <span className="hidden md:inline">Reset</span>
+          </button>
+
+          {/* Fullscreen Toggle */}
+          <button
+            type="button"
+            onClick={() => setIsFullscreen(!isFullscreen)}
+            title={isFullscreen ? "Exit Fullscreen" : "Fullscreen Preview"}
+            className="p-1.5 rounded-lg border border-zinc-300 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+          >
+            {isFullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+          </button>
+
+          {/* Copy Code */}
+          <button
+            type="button"
+            onClick={copyCode}
+            title="Copy Generated Code"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer hover:opacity-90"
+            style={{ backgroundColor: activeTheme.accentHex, color: activeTheme.accentTextHex }}
+          >
+            {copied ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+            <span>{copied ? 'Copied' : 'Copy Code'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Main Sandbox Area */}
+      {activeTab === 'preview' ? (
+        <div className="flex flex-col">
+          {/* Fluid Responsive Canvas Container with Standard Dotted Background */}
+          <div className="p-6 sm:p-10 flex items-center justify-center min-h-[300px] bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 transition-all">
+            <div className={`w-full flex justify-center text-zinc-900 dark:text-white transition-all duration-300 ${viewportWidthClass}`}>
+              <ErrorBoundary>
+                <ComponentPreviewRenderer
+                  key={`${component.id}-${variantIndex}-${buttonSize}-${isDisabled}-${isLoading}`}
+                  previewFn={component.preview}
+                  accent={activeTheme.accentHex}
+                  accentText={activeTheme.accentTextHex}
+                />
+              </ErrorBoundary>
+            </div>
+          </div>
+
+          {/* Dynamic Interactive Property Controls Drawer */}
+          <div className="p-4 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-bold uppercase tracking-wider text-zinc-500 flex items-center gap-1.5">
+                <Sliders className="h-3.5 w-3.5" style={{ color: activeTheme.accentHex }} />
+                <span>Component Property Controls</span>
+              </span>
+              <span className="text-[11px] font-mono text-zinc-400">Reactive State Sandbox</span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              {/* Variant Selector */}
+              {component.variants && component.variants.length > 0 && (
+                <div className="space-y-1">
+                  <label className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">Variant Selection</label>
+                  <select
+                    value={variantIndex}
+                    onChange={(e) => setVariantIndex(Number(e.target.value))}
+                    className="w-full p-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-xs focus:outline-none"
+                  >
+                    {component.variants.map((v, i) => (
+                      <option key={i} value={i}>{v.name}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {/* Size Selector */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">Scale / Density</label>
+                <div className="flex gap-1">
+                  {(['sm', 'md', 'lg'] as const).map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setButtonSize(s)}
+                      className={`flex-1 py-1 rounded text-[11px] font-mono border transition cursor-pointer ${
+                        buttonSize === s ? 'bg-zinc-200 dark:bg-zinc-800 font-bold' : 'border-zinc-300 dark:border-zinc-700 text-zinc-500'
+                      }`}
+                    >
+                      {s.toUpperCase()}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Boolean Toggles */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">Interactive States</label>
+                <div className="flex gap-2 items-center pt-1">
+                  <label className="flex items-center gap-1.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isDisabled}
+                      onChange={(e) => setIsDisabled(e.target.checked)}
+                      className="rounded accent-orange-500"
+                    />
+                    <span className="text-[11px] text-zinc-700 dark:text-zinc-300">Disabled</span>
+                  </label>
+                  <label className="flex items-center gap-1.5 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={isLoading}
+                      onChange={(e) => setIsLoading(e.target.checked)}
+                      className="rounded accent-orange-500"
+                    />
+                    <span className="text-[11px] text-zinc-700 dark:text-zinc-300">Loading</span>
+                  </label>
+                </div>
+              </div>
+
+              {/* Text Input Prop */}
+              <div className="space-y-1">
+                <label className="text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">Custom Label / Text</label>
+                <input
+                  type="text"
+                  placeholder={component.name}
+                  value={customText}
+                  onChange={(e) => setCustomText(e.target.value)}
+                  className="w-full p-1.5 rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white text-xs focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="p-4 bg-zinc-950 font-mono text-xs overflow-x-auto text-zinc-200">
+          <CodeHighlight code={generatedCode} language="typescript" />
+        </div>
+      )}
+    </div>
+  );
 }
 
 // ----------------------------------------------------------------------------
@@ -1010,73 +1296,107 @@ The **Button** component serves as the primary interactive element in the Silex 
     ),
     variants: [
       {
-        name: 'Icon and Label Buttons',
-        description: 'Action triggers embedded with iconography for clear contextual feedback.',
-        render: (accent: string, accentText: string) => (
-          <div className="flex flex-wrap gap-3 items-center">
+        name: 'Icon and Label Buttons with Click Counter',
+        description: 'Action triggers with live click feedback and stateful interaction.',
+        render: (accent: string, accentText: string) => {
+          const [count, setCount] = useState(0);
+          return (
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setCount(prev => prev + 1)}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition hover:opacity-90 cursor-pointer"
+                style={{ backgroundColor: accent, color: accentText }}
+              >
+                <Zap className="h-3.5 w-3.5" />
+                <span>Clicked {count} times</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setCount(0)}
+                className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 text-xs font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer text-zinc-700 dark:text-zinc-200"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                <span>Reset</span>
+              </button>
+            </div>
+          );
+        },
+      },
+      {
+        name: 'Sizes & Densities with Interactive Switcher',
+        description: 'Dynamically switch between sm, md, and lg button scales.',
+        render: (accent: string, accentText: string) => {
+          const [size, setSize] = useState<'sm' | 'md' | 'lg'>('md');
+          return (
+            <div className="flex flex-col items-center gap-3">
+              <div className="flex gap-1.5 border border-zinc-200 dark:border-zinc-800 rounded-lg p-1 bg-zinc-50 dark:bg-zinc-900">
+                {(['sm', 'md', 'lg'] as const).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSize(s)}
+                    className={`px-2 py-0.5 rounded text-[11px] font-mono transition cursor-pointer ${size === s ? 'bg-zinc-200 dark:bg-zinc-800 font-bold' : 'text-zinc-500'}`}
+                  >
+                    {s.toUpperCase()}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                className={`font-semibold rounded-lg shadow-xs transition ${
+                  size === 'sm' ? 'px-2.5 py-1 text-xs' : size === 'lg' ? 'px-5 py-2.5 text-sm' : 'px-3.5 py-1.5 text-xs'
+                }`}
+                style={{ backgroundColor: accent, color: accentText }}
+              >
+                Rendered Size: {size.toUpperCase()}
+              </button>
+            </div>
+          );
+        },
+      },
+      {
+        name: 'Full-Width Responsive Action',
+        description: 'Adapts fluidly across screen widths with instant confirmation state.',
+        render: (accent: string, accentText: string) => {
+          const [saved, setSaved] = useState(false);
+          return (
+            <div className="w-full max-w-xs space-y-2">
+              <button
+                type="button"
+                onClick={() => setSaved(!saved)}
+                className="w-full py-2 px-4 rounded-lg text-xs font-semibold shadow-xs transition hover:opacity-90 cursor-pointer flex items-center justify-center gap-2"
+                style={{ backgroundColor: saved ? '#10b981' : accent, color: accentText }}
+              >
+                {saved ? <Check className="h-4 w-4" /> : <Terminal className="h-4 w-4" />}
+                <span>{saved ? 'Changes Committed' : 'Save Configuration'}</span>
+              </button>
+            </div>
+          );
+        },
+      },
+      {
+        name: 'Loading & Disabled State Simulation',
+        description: 'Interactive button showcasing spinner animation and disabled cursor feedback.',
+        render: (accent: string, accentText: string) => {
+          const [loading, setLoading] = useState(false);
+          const handleClick = () => {
+            setLoading(true);
+            setTimeout(() => setLoading(false), 1500);
+          };
+          return (
             <button
               type="button"
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-xs"
+              disabled={loading}
+              onClick={handleClick}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-semibold shadow-xs transition disabled:opacity-75 disabled:cursor-not-allowed cursor-pointer"
               style={{ backgroundColor: accent, color: accentText }}
             >
-              <Sparkles className="h-3.5 w-3.5" />
-              <span>Deploy Build</span>
+              {loading && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+              <span>{loading ? 'Compiling Rust WASM...' : 'Trigger Pipeline'}</span>
             </button>
-            <button
-              type="button"
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-medium border border-zinc-300 dark:border-zinc-700 text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
-            >
-              <Terminal className="h-3.5 w-3.5" />
-              <span>Terminal CLI</span>
-            </button>
-          </div>
-        ),
-      },
-      {
-        name: 'Sizes & Densities',
-        description: 'Compact (32px), Standard (36px), and Expansive (44px) button heights.',
-        render: (accent: string, accentText: string) => (
-          <div className="flex flex-wrap items-center gap-3">
-            <button type="button" className="h-8 px-2.5 rounded text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>
-              Small (h-8)
-            </button>
-            <button type="button" className="h-9 px-3.5 rounded-md text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>
-              Default (h-9)
-            </button>
-            <button type="button" className="h-11 px-5 rounded-lg text-sm font-semibold" style={{ backgroundColor: accent, color: accentText }}>
-              Large (h-11)
-            </button>
-          </div>
-        ),
-      },
-      {
-        name: 'Full-Width Responsive Stack',
-        description: 'Fluid buttons that expand to 100% on narrow mobile viewports and collapse to auto on desktop.',
-        render: (accent: string, accentText: string) => (
-          <div className="w-full flex flex-col sm:flex-row gap-2">
-            <button type="button" className="w-full sm:w-auto px-4 py-2 rounded-md text-xs font-semibold shadow-xs text-center" style={{ backgroundColor: accent, color: accentText }}>
-              Confirm Transaction
-            </button>
-            <button type="button" className="w-full sm:w-auto px-4 py-2 rounded-md text-xs font-medium border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 text-center">
-              Cancel
-            </button>
-          </div>
-        ),
-      },
-      {
-        name: 'Loading & Disabled States',
-        description: 'Non-interactive visual cues with animated SVG spinners preventing double submits.',
-        render: () => (
-          <div className="flex flex-wrap gap-3 items-center">
-            <button type="button" disabled className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-md text-xs font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-400 cursor-not-allowed opacity-70">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              <span>Processing...</span>
-            </button>
-            <button type="button" disabled className="px-3.5 py-1.5 rounded-md text-xs font-medium border border-zinc-200 dark:border-zinc-800 text-zinc-400 cursor-not-allowed">
-              Disabled Action
-            </button>
-          </div>
-        ),
+          );
+        },
       },
     ],
     install: {
@@ -1245,37 +1565,59 @@ The **Dialog** component interrupts the user with a mandatory or informative lay
     },
         variants: [
       {
-        name: 'Animated Entrance & Scale',
-        description: 'Smooth CSS scale-in and backdrop fade animation on open.',
-        render: (accent: string, accentText: string) => (
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md max-w-sm animate-slide-in-up">
-              <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
-                <span className="text-xs font-bold text-zinc-900 dark:text-white">Motion Dialog</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded font-mono" style={{ backgroundColor: accent, color: accentText }}>Active</span>
-              </div>
-              <p className="text-xs text-zinc-600 dark:text-zinc-400 py-3">Modal states animate smoothly with zero layout shift.</p>
-              <div className="flex justify-end gap-2">
-                <button type="button" className="px-3 py-1 text-xs rounded border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Dismiss</button>
-                <button type="button" className="px-3 py-1 text-xs rounded font-semibold" style={{ backgroundColor: accent, color: accentText }}>Save</button>
-              </div>
+        name: 'Animated Entrance & Scale with Live Trigger',
+        description: 'Interactive modal trigger demonstrating GPU-accelerated backdrop fade and smooth scale transitions.',
+        render: (accent: string, accentText: string) => {
+          const [isOpen, setIsOpen] = useState(false);
+          return (
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={() => setIsOpen(true)}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition hover:opacity-90 cursor-pointer"
+                style={{ backgroundColor: accent, color: accentText }}
+              >
+                Open Animated Dialog
+              </button>
+              {isOpen && (
+                <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl max-w-sm animate-slide-in-up space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
+                    <span className="text-xs font-bold text-zinc-900 dark:text-white">Motion Dialog</span>
+                    <button type="button" onClick={() => setIsOpen(false)} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white cursor-pointer">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400">Modal states animate smoothly with zero layout shift.</p>
+                  <div className="flex justify-end gap-2">
+                    <button type="button" onClick={() => setIsOpen(false)} className="px-3 py-1 text-xs rounded border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 cursor-pointer">Dismiss</button>
+                    <button type="button" onClick={() => setIsOpen(false)} className="px-3 py-1 text-xs rounded font-semibold cursor-pointer" style={{ backgroundColor: accent, color: accentText }}>Save</button>
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ),
+          );
+        },
       },
       {
-        name: 'Destructive Confirmation Dialog',
-        description: 'High-contrast prompt state for irreversible operations.',
-        render: () => (
-          <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/5 max-w-sm space-y-3">
-            <div className="text-xs font-bold text-red-700 dark:text-red-400">Revoke Access Tokens?</div>
-            <p className="text-xs text-zinc-600 dark:text-zinc-400">This action cannot be undone. Active sessions will be terminated immediately.</p>
-            <div className="flex justify-end gap-2">
-              <button type="button" className="px-3 py-1 text-xs rounded border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Cancel</button>
-              <button type="button" className="px-3 py-1 text-xs rounded font-semibold bg-red-600 text-white hover:bg-red-700 transition">Revoke</button>
+        name: 'Destructive Confirmation Dialog with Reversible State',
+        description: 'High-contrast prompt state for irreversible operations with interactive confirmation simulation.',
+        render: () => {
+          const [confirmed, setConfirmed] = useState(false);
+          return (
+            <div className="p-4 rounded-xl border border-red-500/30 bg-red-500/5 max-w-sm space-y-3">
+              <div className="text-xs font-bold text-red-700 dark:text-red-400">
+                {confirmed ? 'Tokens Revoked Successfully' : 'Revoke Access Tokens?'}
+              </div>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400">
+                {confirmed ? 'All existing user sessions have been terminated.' : 'This action cannot be undone. Active sessions will be terminated immediately.'}
+              </p>
+              <div className="flex justify-end gap-2">
+                <button type="button" onClick={() => setConfirmed(false)} className="px-3 py-1 text-xs rounded border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 cursor-pointer">Reset</button>
+                <button type="button" onClick={() => setConfirmed(true)} className="px-3 py-1 text-xs rounded font-semibold bg-red-600 text-white hover:bg-red-700 transition cursor-pointer">Revoke</button>
+              </div>
             </div>
-          </div>
-        ),
+          );
+        },
       },
     ],
     install: {
@@ -1418,27 +1760,52 @@ The **Sheet** component extends dialog semantics into sliding drawer panels. Ide
     },
         variants: [
       {
-        name: 'Slide-in Right Drawer',
-        description: 'Animated off-canvas drawer with GPU-accelerated transition.',
-        render: (accent: string, accentText: string) => (
-          <div className="w-full max-w-md p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3 shadow-md animate-slide-in-up">
-            <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
-              <span className="text-xs font-bold text-zinc-900 dark:text-white">Navigation Drawer</span>
-              <button type="button" className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-white">Close</button>
+        name: 'Slide-in Right Drawer with Toggle',
+        description: 'Interactive off-canvas drawer with GPU-accelerated transition and backdrop dismiss.',
+        render: (accent: string, accentText: string) => {
+          const [open, setOpen] = useState(false);
+          return (
+            <div className="w-full max-w-md space-y-3">
+              <button
+                type="button"
+                onClick={() => setOpen(!open)}
+                className="px-3.5 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer"
+                style={{ backgroundColor: accent, color: accentText }}
+              >
+                {open ? 'Close Right Drawer' : 'Open Right Drawer'}
+              </button>
+              {open && (
+                <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3 shadow-xl animate-slide-in-up">
+                  <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
+                    <span className="text-xs font-bold text-zinc-900 dark:text-white">Workspace Drawer</span>
+                    <button type="button" onClick={() => setOpen(false)} className="text-xs text-zinc-500 hover:text-zinc-900 dark:hover:text-white cursor-pointer">
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                  <p className="text-xs text-zinc-600 dark:text-zinc-400">Contextual inspector panel rendered cleanly with zero layout shift.</p>
+                </div>
+              )}
             </div>
-            <p className="text-xs text-zinc-600 dark:text-zinc-400">Responsive sliding sheet for mobile navigation and contextual settings.</p>
-          </div>
-        ),
+          );
+        },
       },
       {
-        name: 'Bottom Action Sheet',
-        description: 'Compact modal sheet docked to the viewport bottom for quick mobile actions.',
-        render: (accent: string, accentText: string) => (
-          <div className="w-full max-w-md p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-between">
-            <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200">Selected Item: 3 elements</span>
-            <button type="button" className="px-3 py-1 rounded text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>Export All</button>
-          </div>
-        ),
+        name: 'Bottom Action Sheet with Counter',
+        description: 'Interactive modal sheet docked to the viewport bottom with item selection.',
+        render: (accent: string, accentText: string) => {
+          const [count, setCount] = useState(3);
+          return (
+            <div className="w-full max-w-md p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200">Selected: {count} elements</span>
+                <button type="button" onClick={() => setCount(prev => prev + 1)} className="px-1.5 py-0.5 rounded text-[10px] font-mono border bg-white dark:bg-zinc-800 cursor-pointer">+1</button>
+              </div>
+              <button type="button" className="px-3 py-1 rounded text-xs font-semibold cursor-pointer hover:opacity-90" style={{ backgroundColor: accent, color: accentText }}>
+                Export All
+              </button>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -1543,37 +1910,88 @@ The **Card** container standardizes visual containment for metrics, charts, and 
     ),
     variants: [
       {
-        name: 'Interactive Action Card',
-        description: 'Clickable container with hover borders and trailing chevron indicator.',
-        render: (accent: string) => (
-          <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 bg-white dark:bg-zinc-900 p-4 shadow-xs transition cursor-pointer flex items-center justify-between">
-            <div className="space-y-1">
-              <span className="font-semibold text-xs text-zinc-900 dark:text-white block">Audit Report #842</span>
-              <span className="text-[11px] text-zinc-500 block">Passed 28/28 criteria</span>
+        name: 'Interactive Action Card with Media Thumbnail',
+        description: 'Clickable container with placeholder image header, hover lift, and trailing action trigger.',
+        render: (accent: string, accentText: string) => {
+          const [liked, setLiked] = useState(false);
+          return (
+            <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 bg-white dark:bg-zinc-900 overflow-hidden shadow-xs transition duration-200 flex flex-col">
+              <div className="relative h-32 w-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                <img
+                  src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=500&auto=format&fit=crop&q=80"
+                  alt="Audit Visualization Card"
+                  className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                  loading="lazy"
+                />
+                <button
+                  type="button"
+                  onClick={() => setLiked(!liked)}
+                  className={`absolute top-2 right-2 p-1.5 rounded-full backdrop-blur-md transition ${liked ? 'bg-red-500 text-white' : 'bg-zinc-950/60 text-white hover:bg-zinc-950/80'}`}
+                  aria-label="Favorite audit item"
+                >
+                  <Heart className={`h-3.5 w-3.5 ${liked ? 'fill-current' : ''}`} />
+                </button>
+              </div>
+              <div className="p-4 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-xs text-zinc-900 dark:text-white">Audit Report #842</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded font-mono font-medium bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                    28/28 Passed
+                  </span>
+                </div>
+                <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                  Autonomous audit verified zero runtime memory leaks across all test matrices.
+                </p>
+                <div className="pt-2 flex items-center justify-between border-t border-zinc-100 dark:border-zinc-800">
+                  <span className="text-[10px] text-zinc-400 font-mono">Updated 2m ago</span>
+                  <button type="button" className="text-xs font-semibold hover:underline flex items-center gap-1 cursor-pointer" style={{ color: accent }}>
+                    <span>View Logs</span>
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
             </div>
-            <ChevronRight className="h-4 w-4 text-zinc-400" />
-          </div>
-        ),
+          );
+        },
       },
       {
         name: 'Header & Footer Action Card',
-        description: 'Standardized card partition with contextual header and call-to-action footer.',
-        render: (accent: string, accentText: string) => (
-          <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-800 shadow-xs">
-            <div className="p-3.5 flex items-center justify-between">
-              <span className="font-bold text-xs text-zinc-900 dark:text-white">Team Seat Allocation</span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-100 dark:bg-zinc-800">Pro Tier</span>
+        description: 'Standardized card partition with contextual header, seat slider, and interactive upgrade button.',
+        render: (accent: string, accentText: string) => {
+          const [seats, setSeats] = useState(8);
+          return (
+            <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-800 shadow-xs">
+              <div className="p-3.5 flex items-center justify-between">
+                <span className="font-bold text-xs text-zinc-900 dark:text-white">Team Seat Allocation</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-zinc-100 dark:bg-zinc-800">Pro Tier</span>
+              </div>
+              <div className="p-3.5 space-y-2 text-xs text-zinc-600 dark:text-zinc-400">
+                <div className="flex justify-between items-center">
+                  <span>{seats} of 10 seats claimed this billing cycle</span>
+                  <span className="font-mono font-semibold text-zinc-900 dark:text-white">{Math.round((seats / 10) * 100)}%</span>
+                </div>
+                <input
+                  type="range"
+                  min="1"
+                  max="10"
+                  value={seats}
+                  onChange={(e) => setSeats(Number(e.target.value))}
+                  className="w-full accent-orange-500 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg cursor-pointer"
+                />
+              </div>
+              <div className="p-3 bg-zinc-50 dark:bg-zinc-950 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setSeats(prev => Math.min(10, prev + 1))}
+                  className="px-3 py-1 rounded text-xs font-semibold cursor-pointer hover:opacity-90 transition"
+                  style={{ backgroundColor: accent, color: accentText }}
+                >
+                  Add Seat
+                </button>
+              </div>
             </div>
-            <div className="p-3.5 text-xs text-zinc-600 dark:text-zinc-400">
-              8 of 10 seats claimed this billing cycle.
-            </div>
-            <div className="p-3 bg-zinc-50 dark:bg-zinc-950 flex justify-end">
-              <button type="button" className="px-3 py-1 rounded text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>
-                Upgrade
-              </button>
-            </div>
-          </div>
-        ),
+          );
+        },
       },
     ],
     install: {
@@ -1698,39 +2116,56 @@ The **Switch** component provides accessible on/off toggle behavior conforming t
     },
         variants: [
       {
-        name: 'Motion Powered Toggle',
-        description: 'Smooth toggle switch with spring-like thumb transition.',
-        render: (accent: string) => (
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-2">
-              <div className="w-11 h-6 rounded-full relative p-0.5 transition-colors duration-200" style={{ backgroundColor: accent }}>
-                <div className="w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 translate-x-5" />
+        name: 'Motion Powered Toggle with Live State',
+        description: 'Click to toggle switch state with smooth spring-like thumb transition.',
+        render: (accent: string) => {
+          const [active, setActive] = useState(true);
+          return (
+            <div className="flex items-center gap-4 cursor-pointer" onClick={() => setActive(!active)}>
+              <div
+                className={`w-11 h-6 rounded-full relative p-0.5 transition-colors duration-200 ${
+                  active ? '' : 'bg-zinc-300 dark:bg-zinc-700'
+                }`}
+                style={active ? { backgroundColor: accent } : {}}
+              >
+                <div
+                  className={`w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                    active ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
               </div>
-              <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200">Active</span>
+              <span className="text-xs font-medium text-zinc-800 dark:text-zinc-200">
+                {active ? 'Engine Active' : 'Engine Idle'}
+              </span>
             </div>
-            <div className="flex items-center gap-2">
-              <div className="w-11 h-6 rounded-full relative p-0.5 bg-zinc-300 dark:bg-zinc-700 transition-colors duration-200">
-                <div className="w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-200 translate-x-0" />
-              </div>
-              <span className="text-xs font-medium text-zinc-500">Disabled</span>
-            </div>
-          </div>
-        ),
+          );
+        },
       },
       {
-        name: 'Inline Setting Switch',
-        description: 'Labeled configuration toggle with contextual description.',
-        render: (accent: string) => (
-          <div className="w-full max-w-md p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between">
-            <div>
-              <div className="text-xs font-semibold text-zinc-900 dark:text-white">Telemetry Reporting</div>
-              <div className="text-[11px] text-zinc-500">Anonymous performance and crash metrics</div>
+        name: 'Inline Setting Switch with Toggle',
+        description: 'Labeled configuration toggle with active status confirmation.',
+        render: (accent: string) => {
+          const [telemetry, setTelemetry] = useState(true);
+          return (
+            <div
+              onClick={() => setTelemetry(!telemetry)}
+              className="w-full max-w-md p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between cursor-pointer hover:border-zinc-400 dark:hover:border-zinc-600 transition"
+            >
+              <div>
+                <div className="text-xs font-semibold text-zinc-900 dark:text-white">Telemetry Reporting</div>
+                <div className="text-[11px] text-zinc-500">Status: {telemetry ? 'Enabled' : 'Disabled'}</div>
+              </div>
+              <div
+                className={`w-9 h-5 rounded-full relative p-0.5 transition-colors ${
+                  telemetry ? '' : 'bg-zinc-300 dark:bg-zinc-700'
+                }`}
+                style={telemetry ? { backgroundColor: accent } : {}}
+              >
+                <div className={`w-4 h-4 rounded-full bg-white shadow-xs transition-transform ${telemetry ? 'translate-x-4' : 'translate-x-0'}`} />
+              </div>
             </div>
-            <div className="w-9 h-5 rounded-full relative p-0.5 transition-colors" style={{ backgroundColor: accent }}>
-              <div className="w-4 h-4 rounded-full bg-white shadow-xs transition-transform translate-x-4" />
-            </div>
-          </div>
-        ),
+          );
+        },
       },
     ],
     install: {
@@ -1825,32 +2260,51 @@ The **Input** component standardizes text field styles, focus states, and input 
     ),
     variants: [
       {
-        name: 'Input with Leading Icon',
-        description: 'Search field with integrated SVG icon indicator.',
-        render: () => (
-          <div className="w-full max-w-sm relative">
-            <Search className="h-4 w-4 absolute left-3 top-2.5 text-zinc-400" />
-            <input
-              type="text"
-              placeholder="Search components, tokens..."
-              className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md text-xs text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none"
-            />
-          </div>
-        ),
+        name: 'Input with Live Character Counter',
+        description: 'Search field with integrated SVG icon indicator and interactive character length feedback.',
+        render: () => {
+          const [val, setVal] = useState('');
+          return (
+            <div className="w-full max-w-sm space-y-1">
+              <div className="relative">
+                <Search className="h-4 w-4 absolute left-3 top-2.5 text-zinc-400" />
+                <input
+                  type="text"
+                  value={val}
+                  onChange={(e) => setVal(e.target.value)}
+                  placeholder="Type to test live state..."
+                  className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md text-xs text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none"
+                />
+              </div>
+              <div className="text-[10px] text-zinc-400 font-mono text-right">{val.length} / 40 characters</div>
+            </div>
+          );
+        },
       },
       {
-        name: 'Validation Error State',
-        description: 'High-contrast red border with contextual warning message.',
-        render: () => (
-          <div className="w-full max-w-sm space-y-1">
-            <input
-              type="email"
-              defaultValue="invalid-email-format"
-              className="w-full px-3 py-1.5 bg-red-50/50 dark:bg-red-950/20 border border-red-500 rounded-md text-xs text-red-900 dark:text-red-200 focus:outline-none"
-            />
-            <span className="text-[10px] text-red-600 dark:text-red-400">Please provide a valid email address</span>
-          </div>
-        ),
+        name: 'Validation Error State with Live Fix',
+        description: 'High-contrast red border with contextual warning message and instant validation.',
+        render: () => {
+          const [email, setEmail] = useState('invalid-email-format');
+          const isValid = email.includes('@') && email.includes('.');
+          return (
+            <div className="w-full max-w-sm space-y-1">
+              <input
+                type="text"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className={`w-full px-3 py-1.5 rounded-md text-xs focus:outline-none border ${
+                  isValid
+                    ? 'border-emerald-500 bg-emerald-50/20 text-emerald-900 dark:text-emerald-200'
+                    : 'border-red-500 bg-red-50/50 dark:bg-red-950/20 text-red-900 dark:text-red-200'
+                }`}
+              />
+              <span className={`text-[10px] ${isValid ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`}>
+                {isValid ? 'Email format valid' : 'Please provide a valid email address with @'}
+              </span>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -1916,34 +2370,68 @@ The **Alert** component highlights critical status messages, warnings, and confi
     ),
     variants: [
       {
-        name: 'Success & Operational Alert',
-        description: 'Green positive confirmation for deployments and verified transactions.',
-        render: () => (
-          <div role="alert" className="w-full max-w-md rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-3.5 text-emerald-800 dark:text-emerald-300 space-y-1">
-            <div className="flex items-center gap-2 font-semibold text-xs">
-              <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
-              <span>Deployment Published Successfully</span>
+        name: 'Success & Operational Alert with Dismiss Action',
+        description: 'Green positive confirmation for deployments with interactive dismiss action.',
+        render: () => {
+          const [dismissed, setDismissed] = useState(false);
+          if (dismissed) {
+            return (
+              <button
+                type="button"
+                onClick={() => setDismissed(false)}
+                className="px-3 py-1.5 rounded-lg border border-emerald-500/30 text-xs text-emerald-600 font-semibold hover:bg-emerald-50 dark:hover:bg-emerald-950/20 cursor-pointer transition"
+              >
+                Restore Alert
+              </button>
+            );
+          }
+          return (
+            <div role="alert" className="w-full max-w-md rounded-lg border border-emerald-500/40 bg-emerald-500/10 p-3.5 text-emerald-800 dark:text-emerald-300 space-y-1">
+              <div className="flex items-center justify-between font-semibold text-xs">
+                <div className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+                  <span>Deployment Published Successfully</span>
+                </div>
+                <button type="button" onClick={() => setDismissed(true)} className="text-emerald-600 hover:text-emerald-950 dark:hover:text-white cursor-pointer">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              </div>
+              <p className="text-[11px] text-emerald-700 dark:text-emerald-400/90 pl-6">
+                All 28 component bundles were compiled and pushed to the edge registry.
+              </p>
             </div>
-            <p className="text-[11px] text-emerald-700 dark:text-emerald-400/90 pl-6">
-              All 28 component bundles were compiled and pushed to the edge registry.
-            </p>
-          </div>
-        ),
+          );
+        },
       },
       {
-        name: 'Informational Tip Alert',
-        description: 'Neutral context callout with subtle sky tone for guidance.',
-        render: () => (
-          <div role="alert" className="w-full max-w-md rounded-lg border border-sky-500/40 bg-sky-500/10 p-3.5 text-sky-800 dark:text-sky-300 space-y-1">
-            <div className="flex items-center gap-2 font-semibold text-xs">
-              <Sparkles className="h-4 w-4 text-sky-600 dark:text-sky-400" />
-              <span>Zero-Runtime Optimization</span>
+        name: 'Informational Tip Alert with Copy Snippet',
+        description: 'Neutral context callout with subtle sky tone and click-to-copy tip action.',
+        render: () => {
+          const [copied, setCopied] = useState(false);
+          return (
+            <div role="alert" className="w-full max-w-md rounded-lg border border-sky-500/40 bg-sky-500/10 p-3.5 text-sky-800 dark:text-sky-300 space-y-1">
+              <div className="flex items-center justify-between font-semibold text-xs">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-sky-600 dark:text-sky-400" />
+                  <span>Zero-Runtime Optimization</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000);
+                  }}
+                  className="text-[10px] font-mono px-2 py-0.5 rounded bg-sky-500/20 text-sky-700 dark:text-sky-300 hover:bg-sky-500/30 cursor-pointer"
+                >
+                  {copied ? 'Copied' : 'Copy'}
+                </button>
+              </div>
+              <p className="text-[11px] text-sky-700 dark:text-sky-400/90 pl-6">
+                Silex compiles state machines down to pure WASM bytecode with 0 runtime JS bloat.
+              </p>
             </div>
-            <p className="text-[11px] text-sky-700 dark:text-sky-400/90 pl-6">
-              Silex compiles state machines down to pure WASM bytecode with 0 runtime JS bloat.
-            </p>
-          </div>
-        ),
+          );
+        },
       },
     ],
     install: {
@@ -2024,34 +2512,50 @@ The **Badge** component highlights state, count, or categorical tags. Verified b
     ),
     variants: [
       {
-        name: 'Pill Badges with Dot Indicators',
-        description: 'Compact status markers featuring pulsating or solid status dots.',
-        render: (accent: string) => (
-          <div className="flex flex-wrap gap-2.5 items-center">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700">
-              <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: accent }} />
-              <span>Production Edge</span>
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-emerald-500/30">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-              <span>Healthy</span>
-            </span>
-          </div>
-        ),
+        name: 'Pill Badges with Interactive Dot Toggle',
+        description: 'Compact status markers with toggleable health state indicator.',
+        render: (accent: string) => {
+          const [healthy, setHealthy] = useState(true);
+          return (
+            <div className="flex flex-wrap gap-2.5 items-center select-none">
+              <span
+                onClick={() => setHealthy(!healthy)}
+                className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium border cursor-pointer transition ${
+                  healthy
+                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400'
+                }`}
+              >
+                <span className={`h-1.5 w-1.5 rounded-full ${healthy ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                <span>Status: {healthy ? 'Healthy (Edge)' : 'Degraded'}</span>
+              </span>
+            </div>
+          );
+        },
       },
       {
-        name: 'Square Monospace Version Tags',
-        description: 'Square tags suited for package releases, git commits, and telemetry metrics.',
-        render: () => (
-          <div className="flex flex-wrap gap-2 items-center">
-            <span className="px-2 py-0.5 rounded text-[11px] font-mono border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300">
-              v0.1.0-alpha
-            </span>
-            <span className="px-2 py-0.5 rounded text-[11px] font-mono border border-orange-500/30 bg-orange-500/10 text-orange-600 dark:text-orange-400">
-              git:main#fa9b391
-            </span>
-          </div>
-        ),
+        name: 'Square Monospace Version Tags with Copy',
+        description: 'Square tags suited for package releases with click-to-copy version.',
+        render: () => {
+          const [copied, setCopied] = useState(false);
+          const ver = 'v0.1.0-alpha';
+          return (
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  navigator.clipboard.writeText(ver);
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 2000);
+                }}
+                className="px-2 py-0.5 rounded text-[11px] font-mono border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:border-zinc-400 cursor-pointer transition flex items-center gap-1.5"
+              >
+                <span>{ver}</span>
+                <span className="text-[10px] text-zinc-400">{copied ? '(Copied)' : '(Click)'}</span>
+              </button>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -2115,27 +2619,54 @@ The **Separator** component visually or semantically divides content in both hor
     ),
         variants: [
       {
-        name: 'Labeled Section Divider',
-        description: 'Horizontal line split by a centered typography badge.',
-        render: () => (
-          <div className="w-full max-w-md relative flex items-center justify-center py-2">
-            <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-zinc-300 dark:border-zinc-800" /></div>
-            <span className="relative px-2 bg-zinc-50 dark:bg-zinc-950 text-[10px] font-mono uppercase text-zinc-400">OR CONTINUE WITH</span>
-          </div>
-        ),
+        name: 'Labeled Section Divider with Toggle Mode',
+        description: 'Horizontal line split by a centered typography badge with toggleable label.',
+        render: () => {
+          const [mode, setMode] = useState<'auth' | 'continue'>('continue');
+          return (
+            <div className="w-full max-w-md space-y-2">
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setMode(mode === 'continue' ? 'auth' : 'continue')}
+                  className="text-[10px] font-mono text-zinc-500 hover:underline cursor-pointer"
+                >
+                  Switch Label
+                </button>
+              </div>
+              <div className="relative flex items-center justify-center py-2">
+                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-zinc-300 dark:border-zinc-800" /></div>
+                <span className="relative px-2 bg-zinc-50 dark:bg-zinc-950 text-[10px] font-mono uppercase text-zinc-400">
+                  {mode === 'continue' ? 'OR CONTINUE WITH' : 'AUTHENTICATE VIA GITHUB'}
+                </span>
+              </div>
+            </div>
+          );
+        },
       },
       {
-        name: 'Vertical Inline Separators',
-        description: 'Vertical divider for navigation bars and toolbar action items.',
-        render: () => (
-          <div className="flex items-center gap-3 text-xs text-zinc-600 dark:text-zinc-400">
-            <span>Dashboard</span>
-            <div className="h-4 w-[1px] bg-zinc-300 dark:bg-zinc-700" />
-            <span>Settings</span>
-            <div className="h-4 w-[1px] bg-zinc-300 dark:bg-zinc-700" />
-            <span>Profile</span>
-          </div>
-        ),
+        name: 'Vertical Inline Separators with Active Crumb',
+        description: 'Vertical divider for navigation bars with selectable items.',
+        render: (accent: string) => {
+          const [crumb, setCrumb] = useState('Settings');
+          return (
+            <div className="flex items-center gap-3 text-xs text-zinc-600 dark:text-zinc-400 select-none">
+              {['Dashboard', 'Settings', 'Profile'].map((item, idx) => (
+                <React.Fragment key={item}>
+                  {idx > 0 && <div className="h-4 w-[1px] bg-zinc-300 dark:bg-zinc-700" />}
+                  <button
+                    type="button"
+                    onClick={() => setCrumb(item)}
+                    className={`cursor-pointer transition ${crumb === item ? 'font-bold' : 'hover:text-zinc-900 dark:hover:text-white'}`}
+                    style={crumb === item ? { color: accent } : {}}
+                  >
+                    {item}
+                  </button>
+                </React.Fragment>
+              ))}
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -2212,29 +2743,62 @@ The **Accordion** component organizes content into collapsible panels, backed by
     },
         variants: [
       {
-        name: 'Animated Multi-Item Accordion',
-        description: 'Smooth height transition with rotated chevron feedback.',
-        render: (accent: string) => (
-          <div className="w-full max-w-md divide-y divide-zinc-200 dark:divide-zinc-800 border border-zinc-300 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 overflow-hidden">
-            <div className="p-3.5 flex items-center justify-between font-semibold text-xs text-zinc-900 dark:text-white">
-              <span>Deterministic State Machines</span>
-              <div className="text-orange-500 text-xs">Collapse</div>
+        name: 'Animated Multi-Item Accordion with Interactive Expand',
+        description: 'Smooth height transition with rotated chevron feedback and multi-row collapse.',
+        render: (accent: string) => {
+          const [expanded, setExpanded] = useState<string | null>('item-1');
+          const items = [
+            { id: 'item-1', title: 'Deterministic State Machines', body: 'Rust-compiled state machines verify transition validity at compile time.' },
+            { id: 'item-2', title: 'Cross-Framework Code Generation', body: 'Polyglot bindings generate native JSX, SFCs, and template syntax.' },
+          ];
+          return (
+            <div className="w-full max-w-md divide-y divide-zinc-200 dark:divide-zinc-800 border border-zinc-300 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 overflow-hidden text-xs">
+              {items.map((it) => {
+                const isOpen = expanded === it.id;
+                return (
+                  <div key={it.id}>
+                    <button
+                      type="button"
+                      onClick={() => setExpanded(isOpen ? null : it.id)}
+                      className="w-full p-3.5 flex items-center justify-between font-semibold text-zinc-900 dark:text-white cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-800/40 transition"
+                    >
+                      <span>{it.title}</span>
+                      <ChevronDown className={`h-4 w-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} style={isOpen ? { color: accent } : {}} />
+                    </button>
+                    {isOpen && (
+                      <div className="p-3.5 pt-0 text-zinc-600 dark:text-zinc-400 bg-zinc-50/50 dark:bg-zinc-950/50 leading-relaxed">
+                        {it.body}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
-            <div className="p-3.5 text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-950">
-              Rust-compiled state machines verify transition validity at compile time.
-            </div>
-          </div>
-        ),
+          );
+        },
       },
       {
-        name: 'Compact FAQ Item',
-        description: 'Single-question disclosure card with clear hover state.',
-        render: () => (
-          <div className="w-full max-w-md p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between text-xs text-zinc-800 dark:text-zinc-200">
-            <span>Can Silex components be used without WebAssembly?</span>
-            <span className="text-zinc-400 font-mono">+</span>
-          </div>
-        ),
+        name: 'Compact FAQ Item with Click to Reveal',
+        description: 'Single-question disclosure card with clear hover and active state.',
+        render: () => {
+          const [open, setOpen] = useState(false);
+          return (
+            <div className="w-full max-w-md p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs space-y-2">
+              <div
+                onClick={() => setOpen(!open)}
+                className="flex items-center justify-between text-zinc-800 dark:text-zinc-200 cursor-pointer"
+              >
+                <span className="font-medium">Can Silex components be used without WebAssembly?</span>
+                <span className="text-zinc-400 font-mono font-bold">{open ? '-' : '+'}</span>
+              </div>
+              {open && (
+                <div className="pt-2 text-[11px] text-zinc-500 border-t border-zinc-100 dark:border-zinc-800">
+                  Yes, standard Tailwind v4 CSS classes and lightweight TS helpers run independently.
+                </div>
+              )}
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -2328,26 +2892,48 @@ The **Tooltip** component surfaces informative hints with zero runtime layout sh
     },
         variants: [
       {
-        name: 'Animated Micro-Tooltip',
-        description: 'Subtle slide-up and fade-in tooltip triggered on hover or focus.',
-        render: (accent: string, accentText: string) => (
-          <div className="flex flex-col items-center gap-2 py-2">
-            <div className="px-2.5 py-1 rounded bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 text-[11px] font-medium shadow-lg animate-slide-in-up">
-              <span>Ctrl + S to save changes</span>
+        name: 'Animated Micro-Tooltip with Live Hover & Click',
+        description: 'Subtle slide-up tooltip triggered on hover or button click.',
+        render: (accent: string, accentText: string) => {
+          const [show, setShow] = useState(false);
+          return (
+            <div className="flex flex-col items-center gap-2 py-2">
+              {show && (
+                <div className="px-2.5 py-1 rounded bg-zinc-900 dark:bg-zinc-100 text-zinc-100 dark:text-zinc-900 text-[11px] font-medium shadow-lg animate-slide-in-up">
+                  <span>Ctrl + S to save changes</span>
+                </div>
+              )}
+              <button
+                type="button"
+                onMouseEnter={() => setShow(true)}
+                onMouseLeave={() => setShow(false)}
+                onClick={() => setShow(!show)}
+                className="px-3 py-1.5 rounded text-xs border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+              >
+                {show ? 'Tooltip Active' : 'Hover / Click Target'}
+              </button>
             </div>
-            <button type="button" className="px-3 py-1.5 rounded text-xs border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Hover Target</button>
-          </div>
-        ),
+          );
+        },
       },
       {
-        name: 'Action Shortcut Tip',
-        description: 'Tooltip with keyboard key symbol indicators.',
-        render: () => (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-200 text-xs shadow-md">
-            <span>Quick Search</span>
-            <kbd className="px-1.5 py-0.5 text-[10px] bg-zinc-700 rounded font-mono">Cmd + K</kbd>
-          </div>
-        ),
+        name: 'Action Shortcut Tip with Execution',
+        description: 'Tooltip with keyboard shortcut and click-to-trigger search.',
+        render: () => {
+          const [activated, setActivated] = useState(false);
+          return (
+            <div
+              onClick={() => {
+                setActivated(true);
+                setTimeout(() => setActivated(false), 1500);
+              }}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-zinc-800 text-zinc-200 text-xs shadow-md cursor-pointer hover:bg-zinc-700 transition"
+            >
+              <span>{activated ? 'Searching docs...' : 'Quick Search'}</span>
+              <kbd className="px-1.5 py-0.5 text-[10px] bg-zinc-700 rounded font-mono">Cmd + K</kbd>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -2428,25 +3014,75 @@ The **Avatar** component renders a profile image with graceful fallback to user 
     ),
         variants: [
       {
-        name: 'Avatar Group with Overlap',
-        description: 'Stacked team avatar sequence with negative horizontal margins.',
-        render: (accent: string, accentText: string) => (
-          <div className="flex items-center -space-x-2">
-            <div className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-950 font-bold text-xs flex items-center justify-center" style={{ backgroundColor: accent, color: accentText }}>SJ</div>
-            <div className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-950 font-bold text-xs flex items-center justify-center bg-zinc-700 text-white">AK</div>
-            <div className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-950 font-bold text-xs flex items-center justify-center bg-zinc-800 text-zinc-300 text-[10px]">+4</div>
-          </div>
-        ),
+        name: 'Avatar Group with Photo Thumbnails',
+        description: 'Interactive stacked team avatar sequence with image placeholders and member hover states.',
+        render: (accent: string, accentText: string) => {
+          const [selected, setSelected] = useState<string | null>(null);
+          const team = [
+            { id: '1', name: 'Sarah Chen', img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=80' },
+            { id: '2', name: 'Alex Rivera', img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80' },
+            { id: '3', name: 'Elena Rostova', img: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80' },
+          ];
+          return (
+            <div className="space-y-2">
+              <div className="flex items-center -space-x-2">
+                {team.map((member) => (
+                  <button
+                    key={member.id}
+                    type="button"
+                    onClick={() => setSelected(member.name)}
+                    className="relative w-8 h-8 rounded-full border-2 border-white dark:border-zinc-950 overflow-hidden hover:scale-110 hover:z-10 transition-transform cursor-pointer"
+                    title={member.name}
+                  >
+                    <img src={member.img} alt={member.name} className="w-full h-full object-cover" loading="lazy" />
+                  </button>
+                ))}
+                <div className="w-8 h-8 rounded-full border-2 border-white dark:border-zinc-950 font-bold text-xs flex items-center justify-center bg-zinc-800 text-zinc-300 text-[10px]">
+                  +4
+                </div>
+              </div>
+              {selected && (
+                <div className="text-[11px] font-mono text-zinc-600 dark:text-zinc-400">
+                  Active member: <span className="font-bold text-zinc-900 dark:text-white">{selected}</span>
+                </div>
+              )}
+            </div>
+          );
+        },
       },
       {
-        name: 'Status Indicator Avatar',
-        description: 'Avatar with active online presence indicator badge.',
-        render: (accent: string, accentText: string) => (
-          <div className="relative inline-block">
-            <div className="w-10 h-10 rounded-full flex items-center justify-center font-bold text-xs" style={{ backgroundColor: accent, color: accentText }}>DEV</div>
-            <span className="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 border-2 border-white dark:border-zinc-900 rounded-full" />
-          </div>
-        ),
+        name: 'Status Indicator Avatar with Status Toggle',
+        description: 'Interactive avatar with click-to-toggle presence status indicator.',
+        render: (accent: string, accentText: string) => {
+          const [online, setOnline] = useState(true);
+          return (
+            <div className="flex items-center gap-3">
+              <div
+                onClick={() => setOnline(!online)}
+                className="relative inline-block cursor-pointer group"
+                title="Click to toggle status"
+              >
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-xs">
+                  <img
+                    src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100&auto=format&fit=crop&q=80"
+                    alt="Engineer Profile"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <span
+                  className={`absolute bottom-0 right-0 w-3 h-3 border-2 border-white dark:border-zinc-900 rounded-full transition-colors ${
+                    online ? 'bg-emerald-500' : 'bg-zinc-400'
+                  }`}
+                />
+              </div>
+              <div className="text-xs">
+                <div className="font-semibold text-zinc-900 dark:text-white">Marcus Vance</div>
+                <div className="text-[10px] text-zinc-500">{online ? 'Online & Available' : 'Offline / In Meeting'}</div>
+              </div>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -2526,27 +3162,55 @@ The **Checkbox** component provides an accessible binary or indeterminate select
     },
         variants: [
       {
-        name: 'Animated Checked State',
-        description: 'Smooth SVG checkmark draw-in and solid accent fill.',
-        render: (accent: string, accentText: string) => (
-          <div className="flex items-center gap-2">
-            <div className="w-4 h-4 rounded flex items-center justify-center text-xs font-bold transition-colors" style={{ backgroundColor: accent, color: accentText }}>V</div>
-            <span className="text-xs font-medium text-zinc-900 dark:text-white">Accept deterministic licensing terms</span>
-          </div>
-        ),
+        name: 'Animated Checked State with Toggle',
+        description: 'Interactive checkbox with smooth draw-in and solid accent fill.',
+        render: (accent: string, accentText: string) => {
+          const [checked, setChecked] = useState(true);
+          return (
+            <div className="flex items-center gap-2.5 cursor-pointer" onClick={() => setChecked(!checked)}>
+              <div
+                className={`w-4 h-4 rounded flex items-center justify-center text-xs font-bold transition-colors ${
+                  checked ? '' : 'border border-zinc-400 dark:border-zinc-600'
+                }`}
+                style={checked ? { backgroundColor: accent, color: accentText } : {}}
+              >
+                {checked && <Check className="h-3 w-3 stroke-[3]" />}
+              </div>
+              <span className="text-xs font-medium text-zinc-900 dark:text-white select-none">
+                {checked ? 'Deterministic licensing accepted' : 'Click to accept terms'}
+              </span>
+            </div>
+          );
+        },
       },
       {
-        name: 'Card Select Option',
-        description: 'Full-card checkbox container with hover feedback.',
-        render: (accent: string) => (
-          <div className="w-full max-w-sm p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center gap-3 cursor-pointer hover:border-zinc-400 transition">
-            <div className="w-4 h-4 rounded border border-zinc-400 dark:border-zinc-600" />
-            <div>
-              <div className="text-xs font-semibold text-zinc-900 dark:text-white">Production Mode</div>
-              <div className="text-[11px] text-zinc-500">Minify bundle output and strip test harnesses</div>
+        name: 'Card Select Option with Active Highlight',
+        description: 'Full-card selectable container with live toggle feedback.',
+        render: (accent: string) => {
+          const [active, setActive] = useState(true);
+          return (
+            <div
+              onClick={() => setActive(!active)}
+              className={`w-full max-w-sm p-3 rounded-xl border transition cursor-pointer select-none ${
+                active ? 'border-orange-500 bg-orange-500/5' : 'border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-4 h-4 rounded border flex items-center justify-center transition ${
+                    active ? 'bg-orange-500 border-orange-500 text-white' : 'border-zinc-400'
+                  }`}
+                >
+                  {active && <Check className="h-3 w-3 stroke-[3]" />}
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-zinc-900 dark:text-white">Production Mode</div>
+                  <div className="text-[11px] text-zinc-500">Minify bundle output and strip test harnesses</div>
+                </div>
+              </div>
             </div>
-          </div>
-        ),
+          );
+        },
       },
     ],
     install: {
@@ -2612,32 +3276,53 @@ The **Textarea** component standardizes multiline form text entry with accessibl
     ),
     variants: [
       {
-        name: 'Input with Leading Icon',
-        description: 'Search field with integrated SVG icon indicator.',
-        render: () => (
-          <div className="w-full max-w-sm relative">
-            <Search className="h-4 w-4 absolute left-3 top-2.5 text-zinc-400" />
-            <input
-              type="text"
-              placeholder="Search components, tokens..."
-              className="w-full pl-9 pr-3 py-1.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md text-xs text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:outline-none"
-            />
-          </div>
-        ),
+        name: 'Auto-Expanding Textarea with Live Counter',
+        description: 'Multi-line text area with dynamic character counting and line tracking.',
+        render: () => {
+          const [textVal, setTextVal] = useState('Deterministic WASM state machine configuration.\nVerified zero memory leaks.');
+          return (
+            <div className="w-full max-w-sm space-y-1.5">
+              <textarea
+                rows={3}
+                value={textVal}
+                onChange={(e) => setTextVal(e.target.value)}
+                className="w-full p-2.5 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-lg text-xs text-zinc-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-orange-500 transition font-mono resize-y"
+              />
+              <div className="flex justify-between text-[10px] text-zinc-400 font-mono">
+                <span>Lines: {textVal.split('\n').length}</span>
+                <span>{textVal.length} chars</span>
+              </div>
+            </div>
+          );
+        },
       },
       {
-        name: 'Validation Error State',
-        description: 'High-contrast red border with contextual warning message.',
-        render: () => (
-          <div className="w-full max-w-sm space-y-1">
-            <input
-              type="email"
-              defaultValue="invalid-email-format"
-              className="w-full px-3 py-1.5 bg-red-50/50 dark:bg-red-950/20 border border-red-500 rounded-md text-xs text-red-900 dark:text-red-200 focus:outline-none"
-            />
-            <span className="text-[10px] text-red-600 dark:text-red-400">Please provide a valid email address</span>
-          </div>
-        ),
+        name: 'Form Validation Textarea',
+        description: 'Textarea with error boundary highlighting and quick reset action.',
+        render: () => {
+          const [feedback, setFeedback] = useState('');
+          return (
+            <div className="w-full max-w-sm space-y-2">
+              <textarea
+                rows={2}
+                value={feedback}
+                onChange={(e) => setFeedback(e.target.value)}
+                placeholder="Enter audit issue details (required)..."
+                className={`w-full p-2.5 rounded-lg text-xs focus:outline-none border ${
+                  feedback.length > 5 ? 'border-emerald-500 bg-white dark:bg-zinc-900' : 'border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-950'
+                }`}
+              />
+              <div className="flex justify-between items-center text-[10px]">
+                <span className={feedback.length > 5 ? 'text-emerald-600' : 'text-zinc-500'}>
+                  {feedback.length > 5 ? 'Requirement satisfied' : 'Min 6 characters'}
+                </span>
+                <button type="button" onClick={() => setFeedback('')} className="text-zinc-400 hover:text-zinc-900 dark:hover:text-white underline cursor-pointer">
+                  Clear
+                </button>
+              </div>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -2707,31 +3392,70 @@ The **Table** component arranges structured rows and columns with semantic capti
     ),
         variants: [
       {
-        name: 'Striped Responsive Table',
-        description: 'High-contrast alternating row fills with numeric alignment.',
-        render: () => (
-          <div className="w-full max-w-md rounded-lg border border-zinc-300 dark:border-zinc-800 overflow-hidden text-xs">
-            <table className="w-full text-left">
-              <thead className="bg-zinc-100 dark:bg-zinc-900 font-semibold text-zinc-700 dark:text-zinc-300">
-                <tr><th className="p-2">Module</th><th className="p-2">Size</th><th className="p-2 text-right">Status</th></tr>
-              </thead>
-              <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
-                <tr className="bg-white dark:bg-zinc-900"><td className="p-2 font-mono">silex_core.wasm</td><td className="p-2">18.4 kB</td><td className="p-2 text-right text-emerald-600 font-semibold">Ready</td></tr>
-                <tr className="bg-zinc-50 dark:bg-zinc-950"><td className="p-2 font-mono">silex_cli</td><td className="p-2">1.2 MB</td><td className="p-2 text-right text-emerald-600 font-semibold">Ready</td></tr>
-              </tbody>
-            </table>
-          </div>
-        ),
+        name: 'Striped Responsive Table with Interactive Sorting',
+        description: 'High-contrast alternating row fills with click-to-sort column headers.',
+        render: (accent: string, accentText: string) => {
+          const [sortAsc, setSortAsc] = useState(true);
+          const rows = [
+            { mod: 'silex_core.wasm', size: '18.4 kB', bytes: 18400, status: 'Ready' },
+            { mod: 'silex_cli', size: '1.2 MB', bytes: 1200000, status: 'Ready' },
+            { mod: 'silex_ui', size: '34.2 kB', bytes: 34200, status: 'Ready' },
+          ];
+          const sorted = [...rows].sort((a, b) => sortAsc ? a.bytes - b.bytes : b.bytes - a.bytes);
+          return (
+            <div className="w-full max-w-md rounded-lg border border-zinc-300 dark:border-zinc-800 overflow-hidden text-xs shadow-xs">
+              <table className="w-full text-left">
+                <thead className="bg-zinc-100 dark:bg-zinc-900 font-semibold text-zinc-700 dark:text-zinc-300">
+                  <tr>
+                    <th className="p-2.5">Module</th>
+                    <th
+                      className="p-2.5 cursor-pointer hover:text-zinc-950 dark:hover:text-white flex items-center gap-1 select-none"
+                      onClick={() => setSortAsc(!sortAsc)}
+                    >
+                      <span>Size</span>
+                      <span className="font-mono text-[10px]">{sortAsc ? '▲' : '▼'}</span>
+                    </th>
+                    <th className="p-2.5 text-right">Status</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800">
+                  {sorted.map((r, i) => (
+                    <tr key={r.mod} className={i % 2 === 0 ? 'bg-white dark:bg-zinc-900' : 'bg-zinc-50 dark:bg-zinc-950'}>
+                      <td className="p-2.5 font-mono">{r.mod}</td>
+                      <td className="p-2.5 font-mono text-zinc-500">{r.size}</td>
+                      <td className="p-2.5 text-right text-emerald-600 font-semibold">{r.status}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          );
+        },
       },
       {
-        name: 'Compact Key-Value Grid',
-        description: 'Dense tabular summary for property inspection.',
-        render: () => (
-          <div className="w-full max-w-md grid grid-cols-2 gap-2 text-xs p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900">
-            <span className="text-zinc-500">Compiler Target</span><span className="font-mono text-zinc-900 dark:text-white text-right">wasm32-unknown</span>
-            <span className="text-zinc-500">Contrast Target</span><span className="font-mono text-zinc-900 dark:text-white text-right">WCAG 2.2 AA</span>
-          </div>
-        ),
+        name: 'Compact Key-Value Grid with Filter',
+        description: 'Dense tabular summary with active criteria selector.',
+        render: () => {
+          const [mode, setMode] = useState<'compiler' | 'a11y'>('compiler');
+          return (
+            <div className="w-full max-w-md p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2 text-xs">
+              <div className="flex justify-between items-center pb-1 border-b border-zinc-100 dark:border-zinc-800">
+                <span className="font-semibold text-zinc-900 dark:text-white">Properties</span>
+                <button
+                  type="button"
+                  onClick={() => setMode(mode === 'compiler' ? 'a11y' : 'compiler')}
+                  className="px-2 py-0.5 rounded text-[10px] font-mono border hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+                >
+                  Switch: {mode.toUpperCase()}
+                </button>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <span className="text-zinc-500">{mode === 'compiler' ? 'Target Arch' : 'Contrast Level'}</span>
+                <span className="font-mono text-zinc-900 dark:text-white text-right">{mode === 'compiler' ? 'wasm32-unknown' : 'WCAG 2.2 AA'}</span>
+              </div>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -2829,27 +3553,66 @@ The **Progress** component displays task completion percentage backed by the \`P
     },
         variants: [
       {
-        name: 'Animated Shimmer Progress Bar',
-        description: 'Smooth sliding progress fill with subtle animated light sweep.',
-        render: (accent: string) => (
-          <div className="w-full max-w-md space-y-1.5">
-            <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400"><span>Build Optimization</span><span>72%</span></div>
-            <div className="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden relative">
-              <div className="h-full rounded-full animate-shimmer transition-all duration-500" style={{ width: '72%', backgroundColor: accent }} />
+        name: 'Animated Shimmer Progress Bar with Increment',
+        description: 'Smooth sliding progress fill with interactive percentage increment buttons.',
+        render: (accent: string, accentText: string) => {
+          const [progress, setProgress] = useState(72);
+          return (
+            <div className="w-full max-w-md space-y-2">
+              <div className="flex justify-between items-center text-xs text-zinc-600 dark:text-zinc-400">
+                <span>Build Optimization</span>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono font-bold text-zinc-900 dark:text-white">{progress}%</span>
+                  <button
+                    type="button"
+                    onClick={() => setProgress(prev => (prev >= 100 ? 10 : prev + 15))}
+                    className="px-1.5 py-0.5 rounded text-[10px] font-mono border hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                  >
+                    +15%
+                  </button>
+                </div>
+              </div>
+              <div className="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 overflow-hidden relative">
+                <div
+                  className="h-full rounded-full transition-all duration-300"
+                  style={{ width: `${progress}%`, backgroundColor: accent }}
+                />
+              </div>
             </div>
-          </div>
-        ),
+          );
+        },
       },
       {
-        name: 'Multi-Segment Step Indicator',
-        description: 'Divided step bar showing discrete pipeline phases.',
-        render: (accent: string) => (
-          <div className="w-full max-w-md flex gap-1.5">
-            <div className="flex-1 h-2 rounded-full" style={{ backgroundColor: accent }} />
-            <div className="flex-1 h-2 rounded-full" style={{ backgroundColor: accent }} />
-            <div className="flex-1 h-2 rounded-full bg-zinc-300 dark:bg-zinc-800" />
-          </div>
-        ),
+        name: 'Multi-Segment Step Indicator with Stepper',
+        description: 'Divided step bar showing discrete pipeline phases with interactive advance.',
+        render: (accent: string, accentText: string) => {
+          const [currentStep, setCurrentStep] = useState(2);
+          return (
+            <div className="w-full max-w-md space-y-2">
+              <div className="flex justify-between text-xs text-zinc-600 dark:text-zinc-400">
+                <span>Phase {currentStep} of 3</span>
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep(prev => (prev % 3) + 1)}
+                  className="text-[10px] font-mono text-zinc-500 hover:text-zinc-900 dark:hover:text-white underline cursor-pointer"
+                >
+                  Advance Phase
+                </button>
+              </div>
+              <div className="flex gap-1.5">
+                {[1, 2, 3].map((step) => (
+                  <div
+                    key={step}
+                    className={`flex-1 h-2 rounded-full transition-colors ${
+                      step <= currentStep ? '' : 'bg-zinc-200 dark:bg-zinc-800'
+                    }`}
+                    style={step <= currentStep ? { backgroundColor: accent } : {}}
+                  />
+                ))}
+              </div>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -2904,26 +3667,69 @@ The **Skeleton** component displays a subtle pulse animation previewing layout s
     ),
         variants: [
       {
-        name: 'Pulsing Card Skeleton',
-        description: 'Lightweight placeholder shapes with subtle pulse animation preventing layout jumps.',
-        render: () => (
-          <div className="w-full max-w-sm p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3">
-            <div className="w-10 h-10 rounded-full bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
-            <div className="w-3/4 h-3 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
-            <div className="w-1/2 h-2.5 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
-          </div>
-        ),
+        name: 'Pulsing Media Card Skeleton with Toggle',
+        description: 'Interactive placeholder simulating loading state transitions into resolved image cards.',
+        render: (accent: string, accentText: string) => {
+          const [loaded, setLoaded] = useState(false);
+          return (
+            <div className="w-full max-w-sm space-y-3">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-semibold text-zinc-900 dark:text-white">Live State Simulation</span>
+                <button
+                  type="button"
+                  onClick={() => setLoaded(!loaded)}
+                  className="px-2 py-0.5 rounded text-[10px] font-mono border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+                >
+                  {loaded ? 'Simulate Loading' : 'Resolve Image'}
+                </button>
+              </div>
+              <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3">
+                {!loaded ? (
+                  <>
+                    <div className="w-full h-24 rounded-lg bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
+                    <div className="w-3/4 h-3 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
+                    <div className="w-1/2 h-2.5 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse" />
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&auto=format&fit=crop&q=80"
+                      alt="Resolved Content"
+                      className="w-full h-24 object-cover rounded-lg"
+                      loading="lazy"
+                    />
+                    <div className="text-xs font-bold text-zinc-900 dark:text-white">WASM Polyglot Engine</div>
+                    <div className="text-[11px] text-zinc-500">Fully hydrated across all browser viewports.</div>
+                  </>
+                )}
+              </div>
+            </div>
+          );
+        },
       },
       {
         name: 'Text Content Skeleton Line Stack',
-        description: 'Multiple text line placeholders simulating incoming paragraphs.',
-        render: () => (
-          <div className="w-full max-w-md space-y-2">
-            <div className="w-full h-2 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
-            <div className="w-5/6 h-2 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
-            <div className="w-4/6 h-2 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse-subtle" />
-          </div>
-        ),
+        description: 'Multiple text line placeholders simulating incoming paragraphs with adjustable line count.',
+        render: () => {
+          const [lines, setLines] = useState(3);
+          return (
+            <div className="w-full max-w-md space-y-3">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-zinc-500">Simulate Paragraph Lines</span>
+                <div className="flex gap-1">
+                  <button type="button" onClick={() => setLines(2)} className="px-2 py-0.5 rounded text-[10px] font-mono border">2</button>
+                  <button type="button" onClick={() => setLines(3)} className="px-2 py-0.5 rounded text-[10px] font-mono border">3</button>
+                  <button type="button" onClick={() => setLines(4)} className="px-2 py-0.5 rounded text-[10px] font-mono border">4</button>
+                </div>
+              </div>
+              <div className="space-y-2 p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900">
+                {Array.from({ length: lines }).map((_, i) => (
+                  <div key={i} className="h-2.5 rounded bg-zinc-200 dark:bg-zinc-800 animate-pulse" style={{ width: `${100 - i * 15}%` }} />
+                ))}
+              </div>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -3004,25 +3810,70 @@ The **Tabs** component organizes multiple related views into a compact tab bar c
     },
         variants: [
       {
-        name: 'Underline Motion Tabs',
-        description: 'Sliding indicator active underline tab bar with keyboard navigation.',
-        render: (accent: string) => (
-          <div className="flex gap-6 border-b border-zinc-200 dark:border-zinc-800 text-xs font-semibold">
-            <button type="button" className="pb-2 border-b-2 transition-colors" style={{ borderColor: accent, color: accent }}>Architecture</button>
-            <button type="button" className="pb-2 border-b-2 border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-white">Tokens</button>
-            <button type="button" className="pb-2 border-b-2 border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-white">Telemetry</button>
-          </div>
-        ),
+        name: 'Underline Motion Tabs with Tab Switching',
+        description: 'Sliding indicator active underline tab bar with real-time active tab switching.',
+        render: (accent: string) => {
+          const [activeTab, setActiveTab] = useState('arch');
+          const tabs = [
+            { id: 'arch', label: 'Architecture', content: 'Zero memory leaks and determinism via Rust compiler' },
+            { id: 'tokens', label: 'Tokens', content: 'WCAG AA/AAA soft stone backgrounds and eye-safe palettes' },
+            { id: 'telemetry', label: 'Telemetry', content: 'Instant binary instrumentation without tracking cookies' },
+          ];
+          const current = tabs.find(t => t.id === activeTab) || tabs[0];
+          return (
+            <div className="w-full max-w-md space-y-3">
+              <div className="flex gap-6 border-b border-zinc-200 dark:border-zinc-800 text-xs font-semibold">
+                {tabs.map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`pb-2 border-b-2 transition-colors cursor-pointer ${
+                      activeTab === tab.id ? '' : 'border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+                    style={activeTab === tab.id ? { borderColor: accent, color: accent } : {}}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+              <div className="p-3 rounded-lg bg-zinc-50 dark:bg-zinc-900 text-xs text-zinc-700 dark:text-zinc-300">
+                {current.content}
+              </div>
+            </div>
+          );
+        },
       },
       {
-        name: 'Pill Segmented Switcher',
+        name: 'Pill Segmented Switcher with State',
         description: 'Contained button switch tabs with smooth active background switch.',
-        render: (accent: string, accentText: string) => (
-          <div className="inline-flex p-1 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-xs font-medium">
-            <button type="button" className="px-3 py-1 rounded-md font-semibold shadow-xs" style={{ backgroundColor: accent, color: accentText }}>Active Tab</button>
-            <button type="button" className="px-3 py-1 rounded-md text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white">History</button>
-          </div>
-        ),
+        render: (accent: string, accentText: string) => {
+          const [mode, setMode] = useState<'active' | 'history'>('active');
+          return (
+            <div className="inline-flex p-1 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 text-xs font-medium">
+              <button
+                type="button"
+                onClick={() => setMode('active')}
+                className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${
+                  mode === 'active' ? 'shadow-xs' : 'text-zinc-600 dark:text-zinc-400'
+                }`}
+                style={mode === 'active' ? { backgroundColor: accent, color: accentText } : {}}
+              >
+                Active Components (28)
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode('history')}
+                className={`px-3 py-1 rounded-md font-semibold transition cursor-pointer ${
+                  mode === 'history' ? 'shadow-xs' : 'text-zinc-600 dark:text-zinc-400'
+                }`}
+                style={mode === 'history' ? { backgroundColor: accent, color: accentText } : {}}
+              >
+                Audit History
+              </button>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -3117,25 +3968,69 @@ The **Select** component displays a collapsed trigger opening a menu of selectab
     },
         variants: [
       {
-        name: 'Polymorphic Select Trigger',
-        description: 'Accessible dropdown trigger button with dynamic chevron indicator.',
-        render: (accent: string) => (
-          <div className="w-full max-w-xs flex items-center justify-between p-2.5 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-900 dark:text-white">
-            <span>Framework: React 19</span>
-            <span className="text-zinc-400">v</span>
-          </div>
-        ),
+        name: 'Polymorphic Select Trigger with Dropdown Menu',
+        description: 'Accessible select trigger with interactive options dropdown and selection state.',
+        render: (accent: string) => {
+          const [open, setOpen] = useState(false);
+          const [selected, setSelected] = useState('React 19');
+          const options = ['React 19', 'Vue 3', 'Svelte 5', 'Angular 18'];
+          return (
+            <div className="w-full max-w-xs relative text-xs">
+              <button
+                type="button"
+                onClick={() => setOpen(!open)}
+                className="w-full flex items-center justify-between p-2.5 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white cursor-pointer"
+              >
+                <span>Framework: {selected}</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+              </button>
+              {open && (
+                <div className="absolute left-0 right-0 mt-1 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl z-20 overflow-hidden divide-y divide-zinc-100 dark:divide-zinc-800">
+                  {options.map((opt) => (
+                    <div
+                      key={opt}
+                      onClick={() => {
+                        setSelected(opt);
+                        setOpen(false);
+                      }}
+                      className={`p-2 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer flex justify-between items-center ${
+                        selected === opt ? 'font-bold' : ''
+                      }`}
+                      style={selected === opt ? { color: accent } : {}}
+                    >
+                      <span>{opt}</span>
+                      {selected === opt && <Check className="h-3 w-3" />}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        },
       },
       {
         name: 'Option List with Active Highlight',
-        description: 'Open option items container with clear active state.',
-        render: (accent: string, accentText: string) => (
-          <div className="w-full max-w-xs rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1 text-xs space-y-0.5 shadow-md">
-            <div className="px-2.5 py-1.5 rounded font-medium" style={{ backgroundColor: accent, color: accentText }}>React 19 (TSX)</div>
-            <div className="px-2.5 py-1.5 rounded text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">Vue 3 (SFC)</div>
-            <div className="px-2.5 py-1.5 rounded text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">Svelte 5 (Runes)</div>
-          </div>
-        ),
+        description: 'Static option selector with live highlight feedback.',
+        render: (accent: string) => {
+          const [active, setActive] = useState('WASM');
+          return (
+            <div className="flex gap-1.5 text-xs">
+              {['WASM', 'Pure TS', 'Polyglot'].map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => setActive(item)}
+                  className={`px-3 py-1 rounded-md border font-mono transition cursor-pointer ${
+                    active === item ? 'font-bold' : 'border-zinc-300 dark:border-zinc-700 text-zinc-500'
+                  }`}
+                  style={active === item ? { borderColor: accent, color: accent } : {}}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -3217,29 +4112,54 @@ The **Slider** component provides an accessible numerical range scrubber, powere
     },
         variants: [
       {
-        name: 'Motion Track Range Slider',
-        description: 'Smooth sliding thumb with hover-lift micro-interaction.',
-        render: (accent: string) => (
-          <div className="w-full max-w-xs space-y-2">
-            <div className="flex justify-between text-xs text-zinc-500"><span>Scale</span><span>65%</span></div>
-            <div className="w-full h-2 rounded-full bg-zinc-200 dark:bg-zinc-800 relative flex items-center">
-              <div className="h-full rounded-full" style={{ width: '65%', backgroundColor: accent }} />
-              <div className="w-4 h-4 rounded-full bg-white shadow-md border border-zinc-300 absolute left-[65%] -translate-x-1/2 hover:scale-110 transition-transform cursor-pointer" />
+        name: 'Motion Track Range Slider with Live Output',
+        description: 'Smooth sliding thumb with real-time value display and hover lift.',
+        render: (accent: string) => {
+          const [val, setVal] = useState(65);
+          return (
+            <div className="w-full max-w-sm space-y-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-semibold text-zinc-900 dark:text-white">Fluid Boundary</span>
+                <span className="font-mono text-zinc-500">{val}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={val}
+                onChange={(e) => setVal(Number(e.target.value))}
+                className="w-full accent-orange-500 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg cursor-pointer"
+              />
             </div>
-          </div>
-        ),
+          );
+        },
       },
       {
         name: 'Discrete Stepped Slider',
-        description: 'Fixed notch slider for discrete values.',
-        render: (accent: string) => (
-          <div className="w-full max-w-xs space-y-1.5">
-            <div className="flex justify-between text-[10px] font-mono text-zinc-400"><span>0</span><span>25</span><span>50</span><span>75</span><span>100</span></div>
-            <div className="w-full h-1.5 rounded-full bg-zinc-200 dark:bg-zinc-800 relative">
-              <div className="h-full rounded-full" style={{ width: '50%', backgroundColor: accent }} />
+        description: 'Stepped range selection with snapping checkpoints.',
+        render: (accent: string) => {
+          const [step, setStep] = useState(2);
+          return (
+            <div className="w-full max-w-sm space-y-2">
+              <div className="flex justify-between text-xs">
+                <span className="text-zinc-500">Preset Level</span>
+                <span className="font-mono font-bold text-zinc-900 dark:text-white">Tier {step}</span>
+              </div>
+              <input
+                type="range"
+                min="1"
+                max="4"
+                step="1"
+                value={step}
+                onChange={(e) => setStep(Number(e.target.value))}
+                className="w-full accent-orange-500 h-1.5 bg-zinc-200 dark:bg-zinc-700 rounded-lg cursor-pointer"
+              />
+              <div className="flex justify-between text-[10px] text-zinc-400 font-mono">
+                <span>T1</span><span>T2</span><span>T3</span><span>T4</span>
+              </div>
             </div>
-          </div>
-        ),
+          );
+        },
       },
     ],
     install: {
@@ -3303,25 +4223,47 @@ The **Toggle** component exposes a simple push button with persistent pressed st
     },
         variants: [
       {
-        name: 'Pressed State Toggle Button',
-        description: 'Two-state button with visual active depression feedback.',
-        render: (accent: string, accentText: string) => (
-          <div className="flex gap-2">
-            <button type="button" className="px-3 py-1.5 rounded-md text-xs font-semibold shadow-xs" style={{ backgroundColor: accent, color: accentText }}>Pressed</button>
-            <button type="button" className="px-3 py-1.5 rounded-md text-xs font-medium border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">Unpressed</button>
-          </div>
-        ),
+        name: 'Pressed State Toggle Button with Click',
+        description: 'Two-state button with visual active depression and state toggling.',
+        render: (accent: string, accentText: string) => {
+          const [pressed, setPressed] = useState(true);
+          return (
+            <button
+              type="button"
+              onClick={() => setPressed(!pressed)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition cursor-pointer select-none ${
+                pressed ? 'shadow-inner' : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-300 dark:border-zinc-700'
+              }`}
+              style={pressed ? { backgroundColor: accent, color: accentText, borderColor: accent } : {}}
+            >
+              Toggle: {pressed ? 'ON (Active)' : 'OFF (Muted)'}
+            </button>
+          );
+        },
       },
       {
-        name: 'Icon Formatting Toggle Group',
-        description: 'Rich text alignment toggles with single-choice selection.',
-        render: (accent: string, accentText: string) => (
-          <div className="inline-flex rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden text-xs">
-            <button type="button" className="px-2.5 py-1 font-semibold" style={{ backgroundColor: accent, color: accentText }}>Left</button>
-            <button type="button" className="px-2.5 py-1 text-zinc-600 dark:text-zinc-400 border-l border-zinc-200 dark:border-zinc-800">Center</button>
-            <button type="button" className="px-2.5 py-1 text-zinc-600 dark:text-zinc-400 border-l border-zinc-200 dark:border-zinc-800">Right</button>
-          </div>
-        ),
+        name: 'Icon Formatting Toggle Group with Active State',
+        description: 'Rich text alignment toggles with single-choice active selection.',
+        render: (accent: string, accentText: string) => {
+          const [align, setAlign] = useState<'left' | 'center' | 'right'>('left');
+          return (
+            <div className="inline-flex rounded-md border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 overflow-hidden text-xs">
+              {(['left', 'center', 'right'] as const).map((a) => (
+                <button
+                  key={a}
+                  type="button"
+                  onClick={() => setAlign(a)}
+                  className={`px-3 py-1 font-semibold transition cursor-pointer ${
+                    align === a ? '' : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                  }`}
+                  style={align === a ? { backgroundColor: accent, color: accentText } : {}}
+                >
+                  {a.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -3398,25 +4340,66 @@ The **Popover** component displays floating panels alongside an anchor trigger w
     },
         variants: [
       {
-        name: 'Animated Floating Popover',
-        description: 'Micro-card container positioned above trigger with subtle slide-in animation.',
-        render: (accent: string, accentText: string) => (
-          <div className="p-3.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl max-w-xs space-y-2 animate-slide-in-up">
-            <div className="text-xs font-bold text-zinc-900 dark:text-white">Dimensions & Sizing</div>
-            <p className="text-xs text-zinc-500">Set default padding and gutter values for component containers.</p>
-            <button type="button" className="w-full py-1 rounded text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>Apply Config</button>
-          </div>
-        ),
+        name: 'Animated Floating Popover with Trigger',
+        description: 'Micro-card container positioned above trigger with interactive open/close toggle.',
+        render: (accent: string, accentText: string) => {
+          const [open, setOpen] = useState(false);
+          return (
+            <div className="space-y-3">
+              <button
+                type="button"
+                onClick={() => setOpen(!open)}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold shadow-xs transition cursor-pointer"
+                style={{ backgroundColor: accent, color: accentText }}
+              >
+                {open ? 'Dismiss Popover' : 'Trigger Popover'}
+              </button>
+              {open && (
+                <div className="p-3.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl max-w-xs space-y-2 animate-slide-in-up">
+                  <div className="text-xs font-bold text-zinc-900 dark:text-white">Dimensions & Sizing</div>
+                  <p className="text-xs text-zinc-500">Set default padding and gutter values for component containers.</p>
+                  <button type="button" onClick={() => setOpen(false)} className="w-full py-1 rounded text-xs font-semibold cursor-pointer" style={{ backgroundColor: accent, color: accentText }}>
+                    Apply Config
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        },
       },
       {
-        name: 'Contextual Action Popover',
-        description: 'Quick menu containing categorized actions.',
-        render: () => (
-          <div className="p-1.5 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md text-xs divide-y divide-zinc-100 dark:divide-zinc-800">
-            <div className="p-1.5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded">Copy Link</div>
-            <div className="p-1.5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded">Download SVG</div>
-          </div>
-        ),
+        name: 'Contextual Action Popover with Live Click',
+        description: 'Quick menu containing categorized actions with feedback.',
+        render: () => {
+          const [msg, setMsg] = useState<string | null>(null);
+          return (
+            <div className="space-y-2">
+              <div className="p-1.5 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-md text-xs divide-y divide-zinc-100 dark:divide-zinc-800 w-44">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMsg('Link copied to clipboard!');
+                    setTimeout(() => setMsg(null), 2000);
+                  }}
+                  className="w-full text-left p-1.5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded cursor-pointer transition"
+                >
+                  Copy Link
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMsg('SVG download initiated!');
+                    setTimeout(() => setMsg(null), 2000);
+                  }}
+                  className="w-full text-left p-1.5 text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded cursor-pointer transition"
+                >
+                  Download SVG
+                </button>
+              </div>
+              {msg && <div className="text-[10px] text-emerald-600 font-mono">{msg}</div>}
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -3510,25 +4493,62 @@ The **Sidebar** component provides a structured collapsible vertical navigation 
     },
         variants: [
       {
-        name: 'Collapsible Nav Sidebar',
-        description: 'Multi-section vertical navigation with toggleable categories.',
-        render: (accent: string) => (
-          <div className="w-full max-w-xs p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2 text-xs">
-            <div className="font-bold text-[10px] uppercase text-zinc-400">Components</div>
-            <div className="p-1.5 rounded font-semibold text-orange-600 dark:text-orange-400 bg-orange-500/10">Button (Primary)</div>
-            <div className="p-1.5 rounded text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800">Dialog (Modal)</div>
-          </div>
-        ),
+        name: 'Collapsible Nav Sidebar with Active Selection',
+        description: 'Multi-section vertical navigation with interactive item selection feedback.',
+        render: (accent: string) => {
+          const [activeItem, setActiveItem] = useState('button');
+          return (
+            <div className="w-full max-w-xs p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-1 text-xs">
+              <div className="font-bold text-[10px] uppercase text-zinc-400 pb-1">Components (28)</div>
+              {[
+                { id: 'button', label: 'Button (Primary)' },
+                { id: 'dialog', label: 'Dialog (Modal)' },
+                { id: 'carousel', label: 'Carousel (Infinite)' },
+              ].map((it) => (
+                <div
+                  key={it.id}
+                  onClick={() => setActiveItem(it.id)}
+                  className={`p-2 rounded-lg cursor-pointer transition flex justify-between items-center ${
+                    activeItem === it.id
+                      ? 'bg-orange-500/10 font-semibold'
+                      : 'text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800'
+                  }`}
+                  style={activeItem === it.id ? { color: accent } : {}}
+                >
+                  <span>{it.label}</span>
+                  {activeItem === it.id && <ChevronRight className="h-3 w-3" />}
+                </div>
+              ))}
+            </div>
+          );
+        },
       },
       {
-        name: 'Icon-Only Mini Sidebar',
-        description: 'Condensed dock layout with tooltips for minimal screen footprints.',
-        render: () => (
-          <div className="flex flex-col gap-2 p-2 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs w-10 items-center">
-            <span className="p-1 font-bold text-orange-500">M</span>
-            <span className="p-1 text-zinc-500 hover:text-zinc-900 dark:hover:text-white">S</span>
-          </div>
-        ),
+        name: 'Icon-Only Mini Sidebar with Tooltip Hover',
+        description: 'Condensed dock layout with tooltips and active item state.',
+        render: (accent: string) => {
+          const [activeDock, setActiveDock] = useState('P');
+          return (
+            <div className="flex gap-2 items-center">
+              <div className="flex flex-col gap-1.5 p-1.5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs w-10 items-center">
+                {['P', 'F', 'O', 'S'].map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setActiveDock(cat)}
+                    className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-xs transition cursor-pointer ${
+                      activeDock === cat ? 'bg-zinc-200 dark:bg-zinc-800 font-bold' : 'text-zinc-400 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+                    style={activeDock === cat ? { color: accent } : {}}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+              <span className="text-xs text-zinc-500 font-mono">Category: {activeDock}</span>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -3668,30 +4688,69 @@ The **Navbar** provides a clean, uncluttered header architecture featuring direc
     },
     variants: [
       {
-        name: 'Collapsible Nav Items with Flyout Menu',
-        description: 'Navigation item group with animated floating dropdown card for multi-page categories.',
-        render: (accent: string, accentText: string) => (
-          <div className="w-full max-w-md p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between text-xs">
-            <span className="font-bold text-zinc-900 dark:text-white">Workspace</span>
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 font-semibold text-orange-600 dark:text-orange-400">
-                <span>Projects</span>
-                <span className="text-[10px]">▼</span>
+        name: 'Collapsible Nav Items with Live Dropdown',
+        description: 'Navigation item group with animated floating dropdown card and active link clicking.',
+        render: (accent: string, accentText: string) => {
+          const [dropdown, setDropdown] = useState(false);
+          const [currentProject, setCurrentProject] = useState('Zen UI');
+          return (
+            <div className="w-full max-w-md p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between text-xs">
+              <span className="font-bold text-zinc-900 dark:text-white">Silex Workspace</span>
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setDropdown(!dropdown)}
+                  className="flex items-center gap-1 font-semibold text-orange-600 dark:text-orange-400 cursor-pointer"
+                >
+                  <span>{currentProject}</span>
+                  <span className="text-[10px]">▼</span>
+                </button>
+                {dropdown && (
+                  <div className="absolute right-0 mt-2 w-32 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xl z-20 p-1 divide-y divide-zinc-100 dark:divide-zinc-800">
+                    {['Zen UI', 'Silex Core', 'CLI Tool'].map((proj) => (
+                      <div
+                        key={proj}
+                        onClick={() => {
+                          setCurrentProject(proj);
+                          setDropdown(false);
+                        }}
+                        className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer rounded text-[11px]"
+                      >
+                        {proj}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              <span className="text-zinc-500">Settings</span>
+              <button type="button" className="px-2.5 py-1 rounded text-xs font-semibold cursor-pointer" style={{ backgroundColor: accent, color: accentText }}>
+                Deploy
+              </button>
             </div>
-            <button type="button" className="px-2.5 py-1 rounded text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>Deploy</button>
-          </div>
-        ),
+          );
+        },
       },
       {
-        name: 'Breadcrumb Navigation Bar',
-        description: 'Hierarchical navigation path for deep documentation views.',
-        render: () => (
-          <div className="flex items-center gap-2 text-xs text-zinc-500">
-            <span>Home</span><span>/</span><span>Docs</span><span>/</span><span className="text-zinc-900 dark:text-white font-medium">Components</span>
-          </div>
-        ),
+        name: 'Breadcrumb Navigation Bar with Crumb Click',
+        description: 'Hierarchical navigation path with interactive crumb selection.',
+        render: () => {
+          const [activeStep, setActiveStep] = useState('Components');
+          return (
+            <div className="flex items-center gap-2 text-xs text-zinc-500">
+              {['Home', 'Docs', 'Components'].map((crumb, idx) => (
+                <React.Fragment key={crumb}>
+                  {idx > 0 && <span>/</span>}
+                  <button
+                    type="button"
+                    onClick={() => setActiveStep(crumb)}
+                    className={`cursor-pointer transition ${activeStep === crumb ? 'text-zinc-900 dark:text-white font-bold' : 'hover:underline'}`}
+                  >
+                    {crumb}
+                  </button>
+                </React.Fragment>
+              ))}
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -3762,24 +4821,76 @@ The **Grid** component computes responsive column allocations and gap classes cl
     },
         variants: [
       {
-        name: 'Responsive Multi-Column Card Grid',
-        description: 'Flexible grid container scaling from 1 column on mobile to 2 on tablet and 3 on desktop.',
-        render: () => (
-          <div className="w-full max-w-md grid grid-cols-2 gap-2 text-xs">
-            <div className="p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-medium">Card Item A</div>
-            <div className="p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-medium">Card Item B</div>
-          </div>
-        ),
+        name: 'Responsive Multi-Column Image Grid',
+        description: 'Interactive gallery grid with image preview tiles and dynamic column filter controls.',
+        render: (accent: string, accentText: string) => {
+          const [cols, setCols] = useState<2 | 3>(2);
+          const images = [
+            { id: 1, title: 'WASM Compiler', img: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&auto=format&fit=crop&q=80' },
+            { id: 2, title: 'Polyglot Sync', img: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=300&auto=format&fit=crop&q=80' },
+            { id: 3, title: 'Tailwind Engine', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&auto=format&fit=crop&q=80' },
+          ];
+          return (
+            <div className="w-full max-w-md space-y-3">
+              <div className="flex items-center justify-between text-xs">
+                <span className="font-semibold text-zinc-900 dark:text-white">Grid Gallery Preview</span>
+                <div className="flex gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setCols(2)}
+                    className={`px-2 py-0.5 rounded text-[11px] font-mono border transition cursor-pointer ${cols === 2 ? 'bg-zinc-200 dark:bg-zinc-800 font-bold' : 'border-zinc-300 dark:border-zinc-700'}`}
+                  >
+                    2 Cols
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCols(3)}
+                    className={`px-2 py-0.5 rounded text-[11px] font-mono border transition cursor-pointer ${cols === 3 ? 'bg-zinc-200 dark:bg-zinc-800 font-bold' : 'border-zinc-300 dark:border-zinc-700'}`}
+                  >
+                    3 Cols
+                  </button>
+                </div>
+              </div>
+              <div className={`grid ${cols === 2 ? 'grid-cols-2' : 'grid-cols-3'} gap-2`}>
+                {images.slice(0, cols === 2 ? 2 : 3).map((item) => (
+                  <div key={item.id} className="rounded-lg border border-zinc-200 dark:border-zinc-800 overflow-hidden bg-white dark:bg-zinc-900 shadow-xs">
+                    <img src={item.img} alt={item.title} className="w-full h-16 object-cover" loading="lazy" />
+                    <div className="p-1.5 text-[10px] font-medium text-zinc-800 dark:text-zinc-200 truncate">{item.title}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        },
       },
       {
-        name: 'Asymmetric Split Container',
-        description: 'Two-column layout with 1/3 sidebar and 2/3 main viewport distribution.',
-        render: () => (
-          <div className="w-full max-w-md flex gap-2 text-xs">
-            <div className="w-1/3 p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 font-mono">Nav 33%</div>
-            <div className="w-2/3 p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-mono">Content 67%</div>
-          </div>
-        ),
+        name: 'Asymmetric Split Container with Interactive Ratio',
+        description: 'Interactive two-column layout with toggleable width distribution (1:2 or 1:1).',
+        render: (accent: string, accentText: string) => {
+          const [ratio, setRatio] = useState<'1:2' | '1:1'>('1:2');
+          return (
+            <div className="w-full max-w-md space-y-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-semibold text-zinc-900 dark:text-white">Asymmetric Split View</span>
+                <button
+                  type="button"
+                  onClick={() => setRatio(ratio === '1:2' ? '1:1' : '1:2')}
+                  className="px-2 py-0.5 rounded text-[10px] font-mono border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+                >
+                  Toggle: {ratio}
+                </button>
+              </div>
+              <div className="flex gap-2 text-xs">
+                <div className={`${ratio === '1:2' ? 'w-1/3' : 'w-1/2'} p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 font-mono transition-all duration-200`}>
+                  Sidebar {ratio === '1:2' ? '33%' : '50%'}
+                </div>
+                <div className={`${ratio === '1:2' ? 'w-2/3' : 'w-1/2'} p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 font-mono transition-all duration-200`}>
+                  Main Content {ratio === '1:2' ? '67%' : '50%'}
+                </div>
+              </div>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -3853,30 +4964,67 @@ The **List** component standardizes row-oriented records, menu options, or divid
     },
         variants: [
       {
-        name: 'Interactive Action List',
-        description: 'Selectable item rows with chevron feedback and active state styling.',
-        render: (accent: string) => (
-          <div className="w-full max-w-md divide-y divide-zinc-200 dark:divide-zinc-800 border border-zinc-300 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 overflow-hidden text-xs">
-            <div className="p-2.5 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/60 cursor-pointer">
-              <span className="font-medium text-zinc-900 dark:text-white">Tailwind v4 Configuration</span>
-              <span className="text-zinc-400">--</span>
+        name: 'Interactive Action List with Media Previews',
+        description: 'Selectable item rows with thumbnail images, live selection state, and chevron indicators.',
+        render: (accent: string, accentText: string) => {
+          const [selectedId, setSelectedId] = useState('1');
+          const items = [
+            { id: '1', title: 'Tailwind v4 Configuration', status: 'Active', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&auto=format&fit=crop&q=80' },
+            { id: '2', title: 'WebAssembly ABI Bindings', status: 'Ready', img: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=100&auto=format&fit=crop&q=80' },
+            { id: '3', title: 'Cross-Framework Code Generation', status: 'Synced', img: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=100&auto=format&fit=crop&q=80' },
+          ];
+          return (
+            <div className="w-full max-w-md divide-y divide-zinc-200 dark:divide-zinc-800 border border-zinc-300 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 overflow-hidden text-xs">
+              {items.map((it) => (
+                <div
+                  key={it.id}
+                  onClick={() => setSelectedId(it.id)}
+                  className={`p-2.5 flex items-center justify-between cursor-pointer transition ${
+                    selectedId === it.id
+                      ? 'bg-zinc-100 dark:bg-zinc-800/80'
+                      : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/40'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <img src={it.img} alt="" className="w-7 h-7 rounded-md object-cover border border-zinc-200 dark:border-zinc-700" loading="lazy" />
+                    <span className="font-medium text-zinc-900 dark:text-white">{it.title}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-300">
+                      {it.status}
+                    </span>
+                    <ChevronRight className={`h-3.5 w-3.5 transition-transform ${selectedId === it.id ? 'translate-x-0.5' : 'text-zinc-400'}`} style={selectedId === it.id ? { color: accent } : {}} />
+                  </div>
+                </div>
+              ))}
             </div>
-            <div className="p-2.5 flex items-center justify-between hover:bg-zinc-50 dark:hover:bg-zinc-800/60 cursor-pointer">
-              <span className="font-medium text-zinc-900 dark:text-white">WebAssembly ABI Bindings</span>
-              <span className="text-zinc-400">--</span>
-            </div>
-          </div>
-        ),
+          );
+        },
       },
       {
-        name: 'Badge Key-Value Item List',
-        description: 'Dense status summary rows.',
-        render: () => (
-          <div className="w-full max-w-md p-2 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex justify-between items-center text-xs">
-            <span className="text-zinc-600 dark:text-zinc-400">Memory Leak Test</span>
-            <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold">0 LEAKS</span>
-          </div>
-        ),
+        name: 'Badge Key-Value Item List with Filter',
+        description: 'Dense status summary rows with toggleable metric view.',
+        render: () => {
+          const [filter, setFilter] = useState<'all' | 'verified'>('all');
+          return (
+            <div className="w-full max-w-md space-y-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="font-semibold text-zinc-900 dark:text-white">Validation Statuses</span>
+                <button
+                  type="button"
+                  onClick={() => setFilter(filter === 'all' ? 'verified' : 'all')}
+                  className="text-[10px] font-mono text-zinc-500 hover:text-zinc-900 dark:hover:text-white underline cursor-pointer"
+                >
+                  Show: {filter}
+                </button>
+              </div>
+              <div className="p-2 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex justify-between items-center text-xs">
+                <span className="text-zinc-600 dark:text-zinc-400">Memory Leak Test</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold">0 LEAKS</span>
+              </div>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -3921,94 +5069,254 @@ assert!(cls.contains("divide-y"));`,
     name: 'Carousel',
     category: 'Surfaces',
     icon: <GalleryHorizontal className="h-4 w-4" />,
-    description: 'Sliding carousel swiper with keyboard navigation, indicator dots, and slide transitions.',
+    description: 'Infinite multi-card sliding carousel with continuous looping, drag/touch gestures, and horizontal & vertical orientations.',
     markdownDoc: `
 ### Overview
-The **Carousel** component manages sequential slide presentations with \`CarouselState\` in \`silex-ui-core\`.
+The **Carousel** component orchestrates multi-item continuous viewport presentations. Silex features both **horizontal multi-card sliding carousels** and **vertical infinite sliding carousels**, driven by deterministic loop indices and hardware-accelerated transforms.
+
+### Features
+- **Infinite Looping**: Slides wrap around seamlessly with modulo offset indexes.
+- **Multi-Card Visibility**: Displays multiple cards simultaneously across viewports.
+- **Drag & Touch Gestures**: Pointer event binding enables intuitive flick, drag, and swiping.
+- **Horizontal & Vertical Layouts**: Full support for both classic row carousels and vertical stacked drawers.
+- **Full Keyboard Accessibility**: ARIA roles, live region slide indicators, and accessible arrow controls.
     `,
-    preview: (accent: string) => {
-      const slides = [
-        { title: 'Deterministic Rust Engine', desc: '0 memory leaks across 50,000 rapid lifecycle state transitions.' },
-        { title: 'True Cross-Framework Polyglot', desc: 'Generates idiomatic code for React 19, Vue 3, Svelte 5 & Angular.' },
-        { title: 'Eye-Safe Light & Dark Tokens', desc: 'Guaranteed WCAG AA/AAA contrast ratios with soft stone backgrounds.' },
+    preview: (accent: string, accentText: string) => {
+      const cards = [
+        { id: 1, title: 'WASM Compiler Core', desc: '0 memory leaks across 50k transitions', tag: 'Rust Engine', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=400&auto=format&fit=crop&q=80' },
+        { id: 2, title: 'Polyglot Code Generator', desc: 'React 19, Vue 3, Svelte 5 & Angular', tag: 'Universal', img: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=400&auto=format&fit=crop&q=80' },
+        { id: 3, title: 'Tailwind v4 Optimized', desc: 'Zero runtime JS styling footprint', tag: 'CSS Engine', img: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=400&auto=format&fit=crop&q=80' },
+        { id: 4, title: 'WCAG 2.2 AA Contrast', desc: 'Strict eye-safe soft stone surfaces', tag: 'Accessibility', img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&auto=format&fit=crop&q=80' },
+        { id: 5, title: 'Edge Registry Sync', desc: 'Instant binary component distribution', tag: 'Distribution', img: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=400&auto=format&fit=crop&q=80' },
       ];
-      const [idx, setIdx] = useState(0);
+
+      const [offset, setOffset] = useState(0);
+      const [isDragging, setIsDragging] = useState(false);
+      const [startX, setStartX] = useState(0);
+      const [dragDistance, setDragDistance] = useState(0);
+
+      const next = () => setOffset(prev => prev + 1);
+      const prev = () => setOffset(prev => prev - 1);
+
+      const handlePointerDown = (e: React.PointerEvent) => {
+        setIsDragging(true);
+        setStartX(e.clientX);
+        setDragDistance(0);
+      };
+
+      const handlePointerMove = (e: React.PointerEvent) => {
+        if (!isDragging) return;
+        setDragDistance(e.clientX - startX);
+      };
+
+      const handlePointerUp = () => {
+        if (!isDragging) return;
+        setIsDragging(false);
+        if (dragDistance < -40) {
+          next();
+        } else if (dragDistance > 40) {
+          prev();
+        }
+        setDragDistance(0);
+      };
+
+      const visibleCount = 3;
+      const visibleIndices = Array.from({ length: visibleCount }, (_, i) => {
+        const raw = (offset + i) % cards.length;
+        return raw >= 0 ? raw : raw + cards.length;
+      });
 
       return (
-        <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 space-y-4 shadow-sm">
-          <div className="h-24 flex flex-col justify-center space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: accent }}>
-              Slide {idx + 1} of {slides.length}
-            </span>
-            <h4 className="text-sm font-bold text-zinc-950 dark:text-white">{slides[idx].title}</h4>
-            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">{slides[idx].desc}</p>
+        <div className="w-full max-w-xl space-y-4 select-none">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-bold text-zinc-950 dark:text-white uppercase tracking-wider">
+                Infinite Multi-Card Carousel
+              </span>
+              <span className="text-[10px] px-2 py-0.5 rounded font-mono font-semibold" style={{ backgroundColor: accent, color: accentText }}>
+                Multi-Card Loop
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                onClick={prev}
+                aria-label="Previous slide"
+                className="p-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition cursor-pointer"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={next}
+                aria-label="Next slide"
+                className="p-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 transition cursor-pointer"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
           </div>
-          <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800">
-            <div className="flex gap-1.5">
-              {slides.map((_, i) => (
+
+          <div
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerUp}
+            className="grid grid-cols-1 sm:grid-cols-3 gap-3 cursor-grab active:cursor-grabbing p-1"
+          >
+            {visibleIndices.map((cardIdx, posIdx) => {
+              const item = cards[cardIdx];
+              return (
+                <div
+                  key={`${item.id}-${posIdx}`}
+                  className="rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-xs hover:border-zinc-400 dark:hover:border-zinc-600 transition flex flex-col justify-between"
+                >
+                  <div className="relative h-28 w-full bg-zinc-100 dark:bg-zinc-800 overflow-hidden">
+                    <img
+                      src={item.img}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                      loading="lazy"
+                    />
+                    <span className="absolute top-2 left-2 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-zinc-950/80 text-white backdrop-blur-xs">
+                      {item.tag}
+                    </span>
+                  </div>
+                  <div className="p-3 space-y-1">
+                    <h4 className="text-xs font-bold text-zinc-950 dark:text-white line-clamp-1">{item.title}</h4>
+                    <p className="text-[11px] text-zinc-500 dark:text-zinc-400 line-clamp-2 leading-relaxed">{item.desc}</p>
+                  </div>
+                  <div className="p-3 pt-0 flex items-center justify-between text-[10px] text-zinc-400 font-mono">
+                    <span>Card #{item.id}</span>
+                    <span className="text-zinc-500 hover:underline cursor-pointer">Explore &rarr;</span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="flex items-center justify-center gap-1.5 pt-1">
+            {cards.map((_, i) => {
+              const activeMod = ((offset % cards.length) + cards.length) % cards.length;
+              const isActive = activeMod === i;
+              return (
                 <button
                   key={i}
                   type="button"
-                  aria-label={`Go to slide ${i + 1}`}
-                  onClick={() => setIdx(i)}
-                  className={`h-1.5 rounded-full transition-all ${
-                    idx === i ? 'w-5' : 'w-1.5 bg-zinc-300 dark:bg-zinc-700'
+                  aria-label={`Jump to slide ${i + 1}`}
+                  onClick={() => setOffset(i)}
+                  className={`h-1.5 rounded-full transition-all cursor-pointer ${
+                    isActive ? 'w-6' : 'w-1.5 bg-zinc-300 dark:bg-zinc-700'
                   }`}
-                  style={idx === i ? { backgroundColor: accent } : {}}
+                  style={isActive ? { backgroundColor: accent } : {}}
                 />
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                aria-label="Previous slide"
-                onClick={() => setIdx(idx === 0 ? slides.length - 1 : idx - 1)}
-                className="px-2 py-1 rounded text-xs font-mono border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
-              >
-                Prev
-              </button>
-              <button
-                type="button"
-                aria-label="Next slide"
-                onClick={() => setIdx((idx + 1) % slides.length)}
-                className="px-2 py-1 rounded text-xs font-mono border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
-              >
-                Next
-              </button>
-            </div>
+              );
+            })}
           </div>
         </div>
       );
     },
-        variants: [
+    variants: [
       {
-        name: 'Multi-Slide Animated Deck',
-        description: 'Interactive slide container with previous and next transition buttons.',
-        render: (accent: string, accentText: string) => (
-          <div className="w-full max-w-md p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3 shadow-md">
-            <div className="flex justify-between items-center text-xs font-semibold">
-              <span>Slide 2 of 4</span>
-              <div className="flex gap-1">
-                <button type="button" className="px-2 py-0.5 rounded border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300">&lt;</button>
-                <button type="button" className="px-2 py-0.5 rounded font-semibold" style={{ backgroundColor: accent, color: accentText }}>&gt;</button>
+        name: 'Infinite Horizontal Multi-Card Slider',
+        description: 'Multi-card horizontal carousel with continuous wrapping, mouse/touch dragging, and arrow controls.',
+        render: (accent: string, accentText: string) => {
+          const items = [
+            { id: 'h1', title: 'Rust WASM Core', desc: 'Deterministic 0-leak state machines', img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&auto=format&fit=crop&q=80' },
+            { id: 'h2', title: 'React 19 Hooks', desc: 'Server Actions and Suspense native', img: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300&auto=format&fit=crop&q=80' },
+            { id: 'h3', title: 'Vue 3 Composables', desc: 'Fine-grained reactivity primitives', img: 'https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=300&auto=format&fit=crop&q=80' },
+            { id: 'h4', title: 'Svelte 5 Runes', desc: 'Compile-time zero-runtime signals', img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300&auto=format&fit=crop&q=80' },
+          ];
+          const [index, setIndex] = useState(0);
+
+          const next = () => setIndex(prev => prev + 1);
+          const prev = () => setIndex(prev => prev - 1);
+
+          const visible = [0, 1].map(offset => {
+            const raw = (index + offset) % items.length;
+            return items[raw >= 0 ? raw : raw + items.length];
+          });
+
+          return (
+            <div className="w-full max-w-md space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-zinc-900 dark:text-white">Continuous Horizontal Deck</span>
+                <div className="flex gap-1">
+                  <button type="button" onClick={prev} aria-label="Previous card" className="p-1 rounded border border-zinc-300 dark:border-zinc-700 text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
+                    <ChevronLeft className="h-3.5 w-3.5" />
+                  </button>
+                  <button type="button" onClick={next} aria-label="Next card" className="p-1 rounded text-xs font-semibold hover:opacity-90 transition" style={{ backgroundColor: accent, color: accentText }}>
+                    <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2.5">
+                {visible.map((it, idx) => (
+                  <div key={`${it.id}-${idx}`} className="rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-xs">
+                    <img src={it.img} alt={it.title} className="w-full h-20 object-cover" loading="lazy" />
+                    <div className="p-2 space-y-0.5">
+                      <div className="text-xs font-bold text-zinc-900 dark:text-white">{it.title}</div>
+                      <div className="text-[10px] text-zinc-500 line-clamp-1">{it.desc}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="h-16 rounded-lg bg-zinc-100 dark:bg-zinc-950 flex items-center justify-center text-xs text-zinc-500">
-              Accessible Slide Viewport Container
-            </div>
-          </div>
-        ),
+          );
+        },
       },
       {
-        name: 'Dot Indicators Carousel Bar',
-        description: 'Carousel state with pagination dot indicators.',
-        render: (accent: string) => (
-          <div className="flex items-center gap-1.5 py-2">
-            <div className="w-6 h-1.5 rounded-full" style={{ backgroundColor: accent }} />
-            <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-            <div className="w-1.5 h-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-          </div>
-        ),
+        name: 'Infinite Vertical Sliding Card Carousel',
+        description: 'Vertically stacked card carousel with continuous upward/downward looping navigation.',
+        render: (accent: string, accentText: string) => {
+          const vCards = [
+            { id: 'v1', time: '10:42 AM', title: 'CI Build Deployed', desc: 'Edge CDN cache revalidated', icon: 'v' },
+            { id: 'v2', time: '11:15 AM', title: 'Memory Leak Check', desc: '0 leaks detected over 50k runs', icon: 'v' },
+            { id: 'v3', time: '01:30 PM', title: 'WASM Runtime Ready', desc: 'All 28 components synchronized', icon: 'v' },
+            { id: 'v4', time: '03:00 PM', title: 'Lighthouse Audit 100', desc: 'Full WCAG AA contrast compliance', icon: 'v' },
+          ];
+          const [topIdx, setTopIdx] = useState(0);
+
+          const next = () => setTopIdx(prev => prev + 1);
+          const prev = () => setTopIdx(prev => prev - 1);
+
+          const visible = [0, 1].map(offset => {
+            const raw = (topIdx + offset) % vCards.length;
+            return vCards[raw >= 0 ? raw : raw + vCards.length];
+          });
+
+          return (
+            <div className="w-full max-w-sm rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 space-y-3 shadow-xs">
+              <div className="flex items-center justify-between pb-2 border-b border-zinc-100 dark:border-zinc-800">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-zinc-900 dark:text-white">
+                  <GalleryHorizontal className="h-3.5 w-3.5 rotate-90" style={{ color: accent }} />
+                  <span>Vertical Infinite Carousel</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <button type="button" onClick={prev} aria-label="Slide up" className="p-1 rounded border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
+                    <ChevronUp className="h-3 w-3" />
+                  </button>
+                  <button type="button" onClick={next} aria-label="Slide down" className="p-1 rounded border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition">
+                    <ChevronDown className="h-3 w-3" />
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-2">
+                {visible.map((card, i) => (
+                  <div key={`${card.id}-${i}`} className="p-2.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-between">
+                    <div>
+                      <div className="text-xs font-bold text-zinc-900 dark:text-white">{card.title}</div>
+                      <div className="text-[10px] text-zinc-500">{card.desc}</div>
+                    </div>
+                    <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">
+                      {card.time}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -4018,34 +5326,57 @@ The **Carousel** component manages sequential slide presentations with \`Carouse
       cargo: 'cargo add silex-ui-core',
     },
     props: [
-      { name: 'initialSlide', type: 'number', default: '0', description: 'Starting slide index' },
-      { name: 'loop', type: 'boolean', default: 'true', description: 'Whether to loop back to start after reaching end' },
+      { name: 'orientation', type: "'horizontal' | 'vertical'", default: "'horizontal'", description: 'Sliding axis of the multi-card carousel' },
+      { name: 'visibleCount', type: 'number', default: '3', description: 'Number of visible items rendered simultaneously' },
+      { name: 'loop', type: 'boolean', default: 'true', description: 'Whether carousel wraps seamlessly from end to start' },
+      { name: 'dragFree', type: 'boolean', default: 'true', description: 'Enables mouse drag and touch flick gesture navigation' },
     ],
     code: {
-      react: `import React from "react";
-import { Carousel, CarouselItem, CarouselNext, CarouselPrev } from "@/components/ui/carousel";
+      react: `import React, { useState } from "react";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrev } from "@/components/ui/carousel";
 
-export const Example: React.FC = () => {
+export const MultiCardCarousel: React.FC = () => {
   return (
-    <Carousel>
-      <CarouselItem>Slide 1</CarouselItem>
-      <CarouselItem>Slide 2</CarouselItem>
+    <Carousel orientation="horizontal" opts={{ loop: true, align: "start" }}>
+      <CarouselContent className="-ml-2 md:-ml-4">
+        <CarouselItem className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+          <div className="p-4 border rounded-xl bg-card">Slide 1</div>
+        </CarouselItem>
+        <CarouselItem className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+          <div className="p-4 border rounded-xl bg-card">Slide 2</div>
+        </CarouselItem>
+        <CarouselItem className="pl-2 md:pl-4 md:basis-1/2 lg:basis-1/3">
+          <div className="p-4 border rounded-xl bg-card">Slide 3</div>
+        </CarouselItem>
+      </CarouselContent>
       <CarouselPrev />
       <CarouselNext />
     </Carousel>
   );
 };`,
       vue: `<template>
-  <Carousel>
-    <CarouselItem>Slide 1</CarouselItem>
+  <Carousel orientation="horizontal" :loop="true">
+    <CarouselItem v-for="item in items" :key="item.id">
+      <div class="card">{{ item.title }}</div>
+    </CarouselItem>
+    <CarouselPrev />
+    <CarouselNext />
   </Carousel>
 </template>`,
-      svelte: `<Carousel><CarouselItem>Slide 1</CarouselItem></Carousel>`,
-      angular: `<silex-carousel></silex-carousel>`,
-      web: `<silex-carousel></silex-carousel>`,
-      rust: `use silex_ui_core::components::carousel::CarouselState;
+      svelte: `<Carousel orientation="horizontal" loop={true}>
+  {#each items as item}
+    <CarouselItem>{item.title}</CarouselItem>
+  {/each}
+  <CarouselPrev />
+  <CarouselNext />
+</Carousel>`,
+      angular: `<silex-carousel orientation="horizontal" [loop]="true">
+  <silex-carousel-item *ngFor="let item of items">{{ item.title }}</silex-carousel-item>
+</silex-carousel>`,
+      web: `<silex-carousel orientation="horizontal" loop="true"></silex-carousel>`,
+      rust: `use silex_ui_core::components::carousel::{CarouselState, CarouselOrientation};
 
-let mut car = CarouselState::new(3, 0);
+let mut car = CarouselState::new(5, 0).with_orientation(CarouselOrientation::Horizontal);
 car.next();
 assert_eq!(car.current_index(), 1);`,
     },
@@ -4098,22 +5429,61 @@ The **Background** component renders calm, human-friendly decorative textures (g
     },
         variants: [
       {
-        name: 'Subtle Dotted Radial Canvas',
-        description: 'Consistent design system background pattern with calculated eye-comfort dots.',
-        render: () => (
-          <div className="w-full max-w-md h-20 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 flex items-center justify-center">
-            <span className="text-xs font-mono text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-900 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800">16px Dotted Mesh</span>
-          </div>
-        ),
+        name: 'Subtle Dotted Radial Canvas with Spacing Control',
+        description: 'Consistent design system background pattern with adjustable dot density.',
+        render: () => {
+          const [spacing, setSpacing] = useState<16 | 24>(16);
+          return (
+            <div className="w-full max-w-md space-y-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-zinc-500">Dotted Grid Density</span>
+                <div className="flex gap-1">
+                  <button type="button" onClick={() => setSpacing(16)} className={`px-2 py-0.5 rounded text-[10px] font-mono border ${spacing === 16 ? 'bg-zinc-200 dark:bg-zinc-800 font-bold' : ''}`}>16px</button>
+                  <button type="button" onClick={() => setSpacing(24)} className={`px-2 py-0.5 rounded text-[10px] font-mono border ${spacing === 24 ? 'bg-zinc-200 dark:bg-zinc-800 font-bold' : ''}`}>24px</button>
+                </div>
+              </div>
+              <div
+                className="w-full h-20 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 flex items-center justify-center text-zinc-300 dark:text-zinc-800"
+                style={{
+                  backgroundImage: 'radial-gradient(currentColor 1px, transparent 1px)',
+                  backgroundSize: `${spacing}px ${spacing}px`,
+                }}
+              >
+                <span className="text-xs font-mono text-zinc-600 dark:text-zinc-400 bg-white dark:bg-zinc-900 px-2 py-1 rounded border border-zinc-200 dark:border-zinc-800">
+                  {spacing}px Mesh Grid
+                </span>
+              </div>
+            </div>
+          );
+        },
       },
       {
-        name: 'Solid Stone Surface Card',
-        description: 'High-contrast anti-glare flat solid background.',
-        render: () => (
-          <div className="w-full max-w-md p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-xs text-zinc-800 dark:text-zinc-200">
-            Flat Solid Neutral Background (Zero Gradients)
-          </div>
-        ),
+        name: 'Solid Stone Surface Card with Mode Toggle',
+        description: 'High-contrast anti-glare flat solid background with contrast switch.',
+        render: () => {
+          const [contrast, setContrast] = useState<'soft' | 'high'>('soft');
+          return (
+            <div className="w-full max-w-md space-y-2">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-zinc-500">Flat Solid Surface</span>
+                <button
+                  type="button"
+                  onClick={() => setContrast(contrast === 'soft' ? 'high' : 'soft')}
+                  className="text-[10px] font-mono text-zinc-500 hover:underline cursor-pointer"
+                >
+                  Mode: {contrast.toUpperCase()}
+                </button>
+              </div>
+              <div className={`w-full p-4 rounded-xl border text-xs transition ${
+                contrast === 'soft'
+                  ? 'border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-900 text-zinc-800 dark:text-zinc-200'
+                  : 'border-zinc-900 dark:border-zinc-100 bg-zinc-200 dark:bg-zinc-800 text-zinc-950 dark:text-white font-semibold'
+              }`}>
+                Flat Solid Neutral Background (Zero Gradients, Pure Colors)
+              </div>
+            </div>
+          );
+        },
       },
     ],
     install: {
@@ -5132,31 +6502,24 @@ function DocsLayout({
             <p className="text-zinc-600 dark:text-zinc-400 text-base">{currentComponent.description}</p>
           </div>
 
-          {/* Interactive Preview Canvas */}
+          {/* Interactive Preview & Playground */}
           <div id="interactive-preview" className="space-y-3">
             <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2.5">
               <div className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-white">
                 <Sparkles className="h-4 w-4" style={{ color: activeTheme.accentHex }} />
-                <span>Interactive Preview</span>
+                <span>Interactive Playground & Live Preview</span>
               </div>
               <span className="text-[11px] font-mono text-zinc-400 dark:text-zinc-500">
-                Live Component Sandbox
+                Full Reactive Properties Toolbar
               </span>
             </div>
 
-            {/* Fluid Responsive Canvas Container with Standard Dotted Background */}
-            <div className="w-full rounded-2xl border border-zinc-300 dark:border-zinc-800 p-6 sm:p-10 flex items-center justify-center min-h-[260px] shadow-sm bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800">
-              <div className="w-full flex justify-center text-zinc-900 dark:text-white">
-                <ErrorBoundary>
-                  <ComponentPreviewRenderer
-                    key={currentComponent.id}
-                    previewFn={currentComponent.preview}
-                    accent={activeTheme.accentHex}
-                    accentText={activeTheme.accentTextHex}
-                  />
-                </ErrorBoundary>
-              </div>
-            </div>
+            <ComponentPlayground
+              key={currentComponent.id}
+              component={currentComponent}
+              activeTheme={activeTheme}
+              defaultSnippet={currentComponent.code[activeFramework] || currentComponent.code.react}
+            />
           </div>
 
           {/* Component Varieties & Layout Patterns */}
@@ -5285,6 +6648,44 @@ function DocsLayout({
           <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 markdown-body text-zinc-800 dark:text-zinc-200 shadow-sm">
             <ReactMarkdown>{currentComponent.markdownDoc}</ReactMarkdown>
           </div>
+
+          {/* Component Pager: Previous & Next Navigation */}
+          {(() => {
+            const keys = Object.keys(COMPONENTS_DATA);
+            const currentIdx = keys.indexOf(currentComponent.id);
+            const prevComp = currentIdx > 0 ? COMPONENTS_DATA[keys[currentIdx - 1]] : null;
+            const nextComp = currentIdx < keys.length - 1 ? COMPONENTS_DATA[keys[currentIdx + 1]] : null;
+
+            return (
+              <div className="pt-6 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-4">
+                {prevComp ? (
+                  <NavLink
+                    to={`/docs/components/${prevComp.id}`}
+                    className="flex-1 p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 bg-white dark:bg-zinc-900 transition flex items-center gap-3 group"
+                  >
+                    <ChevronLeft className="h-5 w-5 text-zinc-400 group-hover:-translate-x-1 transition-transform" />
+                    <div>
+                      <div className="text-[10px] uppercase font-mono text-zinc-400">Previous Component</div>
+                      <div className="text-xs font-bold text-zinc-900 dark:text-white group-hover:underline">{prevComp.name}</div>
+                    </div>
+                  </NavLink>
+                ) : <div className="flex-1" />}
+
+                {nextComp ? (
+                  <NavLink
+                    to={`/docs/components/${nextComp.id}`}
+                    className="flex-1 p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-600 bg-white dark:bg-zinc-900 transition flex items-center justify-end text-right gap-3 group"
+                  >
+                    <div>
+                      <div className="text-[10px] uppercase font-mono text-zinc-400">Next Component</div>
+                      <div className="text-xs font-bold text-zinc-900 dark:text-white group-hover:underline">{nextComp.name}</div>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-zinc-400 group-hover:translate-x-1 transition-transform" />
+                  </NavLink>
+                ) : <div className="flex-1" />}
+              </div>
+            );
+          })()}
         </div>
       )}
     </MainLayout>
