@@ -833,22 +833,23 @@ function NavigationBar({
                     Component Library (28)
                   </div>
                   {[
-                    { name: 'Button', path: '/docs/components/button' },
-                    { name: 'Dialog', path: '/docs/components/dialog' },
-                    { name: 'Card', path: '/docs/components/card' },
-                    { name: 'Tabs', path: '/docs/components/tabs' },
-                    { name: 'Sidebar', path: '/docs/components/sidebar' },
-                    { name: 'Navbar', path: '/docs/components/navbar' },
-                    { name: 'Motion Card', path: '/docs/components/motion-card' },
-                    { name: 'Motion Marquee', path: '/docs/components/motion-marquee' },
+                    { name: 'Button', path: '/docs/components/button', icon: <MousePointerClick className="h-3.5 w-3.5 text-orange-500" /> },
+                    { name: 'Dialog', path: '/docs/components/dialog', icon: <Maximize2 className="h-3.5 w-3.5 text-blue-500" /> },
+                    { name: 'Card', path: '/docs/components/card', icon: <SquareCode className="h-3.5 w-3.5 text-emerald-500" /> },
+                    { name: 'Tabs', path: '/docs/components/tabs', icon: <TabsIcon className="h-3.5 w-3.5 text-purple-500" /> },
+                    { name: 'Sidebar', path: '/docs/components/sidebar', icon: <PanelLeft className="h-3.5 w-3.5 text-amber-500" /> },
+                    { name: 'Navbar', path: '/docs/components/navbar', icon: <Navigation className="h-3.5 w-3.5 text-teal-500" /> },
+                    { name: 'Motion Card', path: '/docs/components/card', icon: <Zap className="h-3.5 w-3.5 text-rose-500" /> },
+                    { name: 'Carousel', path: '/docs/components/carousel', icon: <GalleryHorizontal className="h-3.5 w-3.5 text-indigo-500" /> },
                   ].map((comp) => (
                     <NavLink
                       key={comp.path}
                       to={comp.path}
                       onClick={() => setComponentsMenuOpen(false)}
-                      className="px-2 py-1.5 rounded text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
                     >
-                      {comp.name}
+                      <span className="shrink-0">{comp.icon}</span>
+                      <span className="truncate font-medium">{comp.name}</span>
                     </NavLink>
                   ))}
                   <div className="col-span-2 pt-1 border-t border-zinc-100 dark:border-zinc-800 mt-1">
@@ -6178,14 +6179,16 @@ export function DocSidebar({
                       key={comp.id}
                       to={`/docs/components/${comp.id}`}
                       onClick={onCloseMobileDrawer}
-                      className={({ isActive }) => `flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs transition ${
+                      className={({ isActive }) => `flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs transition group ${
                         isActive
                           ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold'
                           : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
                       }`}
                     >
-                      <span className="h-1.5 w-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
-                      <span>{comp.name}</span>
+                      <span className="shrink-0 [&>svg]:h-3.5 [&>svg]:w-3.5 text-zinc-400 dark:text-zinc-500 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors">
+                        {comp.icon}
+                      </span>
+                      <span className="truncate font-medium">{comp.name}</span>
                     </NavLink>
                   ))}
                 </div>
