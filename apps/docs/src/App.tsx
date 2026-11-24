@@ -2413,7 +2413,23 @@ function DocsLayout({
   const [activeSection, setActiveSection] = useState('overview');
 
   const [gettingStartedOpen, setGettingStartedOpen] = useState(true);
-  const [primitivesOpen, setPrimitivesOpen] = useState(true);
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
+    'Primitives': true,
+    'Overlays': true,
+    'Form Controls': true,
+    'Feedback': true,
+    'Layout': true,
+    'Surfaces': true,
+  });
+
+  const toggleCategory = (cat: string) => {
+    setOpenCategories(prev => ({
+      ...prev,
+      [cat]: !prev[cat],
+    }));
+  };
+
+  const categories = ['Primitives', 'Form Controls', 'Overlays', 'Feedback', 'Layout', 'Surfaces'];
 
   const copyText = (txt: string) => {
     navigator.clipboard.writeText(txt);
@@ -2485,42 +2501,57 @@ function DocsLayout({
         )}
       </div>
 
-      {/* Component Primitives Category */}
-      <div>
-        <button
-          type="button"
-          onClick={() => setPrimitivesOpen(!primitivesOpen)}
-          className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1"
-        >
-          <div className="flex items-center gap-2">
-            <Boxes className="h-3.5 w-3.5" />
-            <span>Components ({Object.keys(COMPONENTS_DATA).length})</span>
-          </div>
-          {primitivesOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-        </button>
+      {/* Collapsible Component Categories */}
+      <div className="space-y-3 pt-1">
+        <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
+          Component Categories
+        </div>
+        {categories.map((category) => {
+          const catComponents = Object.values(COMPONENTS_DATA).filter(
+            (c) => c.category === category && c.name.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          if (catComponents.length === 0) return null;
+          const isOpen = openCategories[category] ?? true;
 
-        {primitivesOpen && (
-          <div className="space-y-1 mt-1 pl-2">
-            {Object.values(COMPONENTS_DATA)
-              .filter((c) => c.name.toLowerCase().includes(searchQuery.toLowerCase()))
-              .map((c) => (
-                <NavLink
-                  key={c.id}
-                  to={`/docs/components/${c.id}`}
-                  onClick={() => setMobileDocsDrawerOpen(false)}
-                  className={({ isActive }) => `flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs transition ${
-                    isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
-                  }`}
-                >
-                  <span className="flex items-center gap-2">
-                    {c.icon}
-                    <span>{c.name}</span>
+          return (
+            <div key={category} className="space-y-1">
+              <button
+                type="button"
+                onClick={() => toggleCategory(category)}
+                className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1 hover:text-zinc-900 dark:hover:text-white transition"
+              >
+                <div className="flex items-center gap-2">
+                  <Boxes className="h-3.5 w-3.5" />
+                  <span>{category}</span>
+                  <span className="text-[10px] font-normal lowercase tracking-normal text-zinc-400 dark:text-zinc-500">
+                    ({catComponents.length})
                   </span>
-                  <span className="text-[10px] text-zinc-400 font-mono">{c.category}</span>
-                </NavLink>
-              ))}
-          </div>
-        )}
+                </div>
+                {isOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+              </button>
+
+              {isOpen && (
+                <div className="space-y-1 pl-2">
+                  {catComponents.map((c) => (
+                    <NavLink
+                      key={c.id}
+                      to={`/docs/components/${c.id}`}
+                      onClick={() => setMobileDocsDrawerOpen(false)}
+                      className={({ isActive }) => `flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs transition ${
+                        isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        {c.icon}
+                        <span>{c.name}</span>
+                      </span>
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
