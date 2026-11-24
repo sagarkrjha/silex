@@ -454,18 +454,20 @@ function NavigationBar({
   onToggleMobileNav: () => void;
 }) {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [componentsMenuOpen, setComponentsMenuOpen] = useState(false);
+  const [resourcesMenuOpen, setResourcesMenuOpen] = useState(false);
   const active = THEMES.find(t => t.id === selectedTheme) || THEMES[0];
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200 dark:border-zinc-800 bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-4 sm:gap-8">
+        <div className="flex items-center gap-6 sm:gap-8">
           {/* Mobile navigation hamburger toggle */}
           <button
             type="button"
             onClick={onToggleMobileNav}
             aria-label={mobileNavOpen ? "Close mobile menu" : "Open mobile menu"}
-            className="md:hidden p-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition"
+            className="md:hidden p-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition cursor-pointer"
           >
             {mobileNavOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -477,24 +479,125 @@ function NavigationBar({
             >
               <Flame className="h-4 w-4 sm:h-5 sm:w-5" />
             </div>
-            <span className="font-bold text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white">Silex</span>
-            <span 
-              className="hidden xs:inline-block text-[10px] px-2 py-0.5 rounded-full font-mono font-medium border"
-              style={{ color: active.accentHex, borderColor: active.accentHex }}
-            >
-              Polyglot
-            </span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="font-bold text-base sm:text-lg tracking-tight text-zinc-950 dark:text-white">Silex</span>
+              <span className="text-[10px] font-mono font-medium text-zinc-400">v0.1</span>
+            </div>
           </Link>
-          <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-400">
-            <NavLink to="/" end className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Story</NavLink>
-            <NavLink to="/docs/components/button" className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Components</NavLink>
-            <NavLink to="/docs/comparison" className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>vs shadcn</NavLink>
-            <NavLink to="/docs/installation" className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Installation</NavLink>
-            <NavLink to="/docs/theming" className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Theming</NavLink>
-            <a href="https://github.com/sagarkrjha/silex" target="_blank" rel="noreferrer" className="hover:text-zinc-950 dark:hover:text-white transition flex items-center gap-1.5">
-              <span>GitHub</span>
-              <ExternalLink className="h-3 w-3 text-zinc-400 dark:text-zinc-500" />
-            </a>
+
+          <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-1 text-xs font-medium text-zinc-600 dark:text-zinc-400">
+            <NavLink 
+              to="/docs/introduction" 
+              className={({ isActive }) => `px-3 py-1.5 rounded-md transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold bg-zinc-100 dark:bg-zinc-800' : 'hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-800/60'}`}
+            >
+              Docs
+            </NavLink>
+
+            {/* Collapsible Components Menu */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setComponentsMenuOpen(true)}
+              onMouseLeave={() => setComponentsMenuOpen(false)}
+            >
+              <button
+                type="button"
+                onClick={() => setComponentsMenuOpen(!componentsMenuOpen)}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition cursor-pointer ${
+                  componentsMenuOpen ? 'text-zinc-950 dark:text-white bg-zinc-100 dark:bg-zinc-800' : 'hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-800/60'
+                }`}
+              >
+                <span>Components</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${componentsMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {componentsMenuOpen && (
+                <div className="absolute left-0 mt-1 w-64 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 shadow-2xl z-50 grid grid-cols-2 gap-1 animate-slide-in-up">
+                  <div className="col-span-2 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-zinc-400">
+                    Component Library (28)
+                  </div>
+                  {[
+                    { name: 'Button', path: '/docs/components/button' },
+                    { name: 'Dialog', path: '/docs/components/dialog' },
+                    { name: 'Card', path: '/docs/components/card' },
+                    { name: 'Tabs', path: '/docs/components/tabs' },
+                    { name: 'Sidebar', path: '/docs/components/sidebar' },
+                    { name: 'Navbar', path: '/docs/components/navbar' },
+                    { name: 'Motion Card', path: '/docs/components/motion-card' },
+                    { name: 'Motion Marquee', path: '/docs/components/motion-marquee' },
+                  ].map((comp) => (
+                    <NavLink
+                      key={comp.path}
+                      to={comp.path}
+                      onClick={() => setComponentsMenuOpen(false)}
+                      className="px-2 py-1.5 rounded text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                    >
+                      {comp.name}
+                    </NavLink>
+                  ))}
+                  <div className="col-span-2 pt-1 border-t border-zinc-100 dark:border-zinc-800 mt-1">
+                    <NavLink
+                      to="/docs/components/button"
+                      onClick={() => setComponentsMenuOpen(false)}
+                      className="text-[11px] font-semibold text-orange-600 dark:text-orange-400 px-2 py-1 block hover:underline"
+                    >
+                      Browse all 28 components &rarr;
+                    </NavLink>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Collapsible Resources / Guides Menu */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setResourcesMenuOpen(true)}
+              onMouseLeave={() => setResourcesMenuOpen(false)}
+            >
+              <button
+                type="button"
+                onClick={() => setResourcesMenuOpen(!resourcesMenuOpen)}
+                className={`flex items-center gap-1 px-3 py-1.5 rounded-md transition cursor-pointer ${
+                  resourcesMenuOpen ? 'text-zinc-950 dark:text-white bg-zinc-100 dark:bg-zinc-800' : 'hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-800/60'
+                }`}
+              >
+                <span>Guides</span>
+                <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${resourcesMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+
+              {resourcesMenuOpen && (
+                <div className="absolute left-0 mt-1 w-48 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-2 shadow-2xl z-50 space-y-1 animate-slide-in-up">
+                  <NavLink
+                    to="/docs/installation"
+                    onClick={() => setResourcesMenuOpen(false)}
+                    className="block px-2.5 py-1.5 rounded text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  >
+                    Installation & CLI
+                  </NavLink>
+                  <NavLink
+                    to="/docs/theming"
+                    onClick={() => setResourcesMenuOpen(false)}
+                    className="block px-2.5 py-1.5 rounded text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  >
+                    Eye-Safe Theming
+                  </NavLink>
+                  <NavLink
+                    to="/docs/configuration"
+                    onClick={() => setResourcesMenuOpen(false)}
+                    className="block px-2.5 py-1.5 rounded text-xs text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  >
+                    Configuration (silex.json)
+                  </NavLink>
+                </div>
+              )}
+            </div>
+
+            <NavLink 
+              to="/" 
+              end 
+              className={({ isActive }) => `px-3 py-1.5 rounded-md transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold bg-zinc-100 dark:bg-zinc-800' : 'hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-50 dark:hover:bg-zinc-800/60'}`}
+            >
+              Story
+            </NavLink>
           </nav>
         </div>
 
@@ -551,13 +654,15 @@ function NavigationBar({
             {isDark ? <Sun className="h-4 w-4 text-amber-400" /> : <Moon className="h-4 w-4 text-zinc-600" />}
           </button>
 
-          <Link
-            to="/docs/components/button"
-            className="hidden sm:inline-flex px-3.5 py-1.5 rounded-md text-xs font-semibold shadow-sm transition"
-            style={{ backgroundColor: active.accentHex, color: active.accentTextHex }}
+          <a 
+            href="https://github.com/sagarkrjha/silex" 
+            target="_blank" 
+            rel="noreferrer" 
+            className="p-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 hover:text-zinc-950 dark:hover:text-white transition"
+            aria-label="GitHub Repository"
           >
-            Explore Library
-          </Link>
+            <ExternalLink className="h-4 w-4 text-zinc-500" />
+          </a>
         </div>
       </div>
 
@@ -566,26 +671,18 @@ function NavigationBar({
         <div className="md:hidden border-t border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-4 py-4 space-y-3">
           <nav className="flex flex-col space-y-2 text-sm font-medium">
             <NavLink 
-              to="/" 
-              end 
+              to="/docs/introduction" 
               onClick={onToggleMobileNav}
               className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
             >
-              Story
+              Documentation
             </NavLink>
             <NavLink 
               to="/docs/components/button" 
               onClick={onToggleMobileNav}
               className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
             >
-              Components
-            </NavLink>
-            <NavLink 
-              to="/docs/comparison" 
-              onClick={onToggleMobileNav}
-              className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
-            >
-              Silex vs. shadcn
+              Components (28)
             </NavLink>
             <NavLink 
               to="/docs/installation" 
@@ -600,6 +697,14 @@ function NavigationBar({
               className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
             >
               Theming
+            </NavLink>
+            <NavLink 
+              to="/" 
+              end 
+              onClick={onToggleMobileNav}
+              className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
+            >
+              Story
             </NavLink>
             <a 
               href="https://github.com/sagarkrjha/silex" 
@@ -616,10 +721,6 @@ function NavigationBar({
     </header>
   );
 }
-
-// ----------------------------------------------------------------------------
-// Landing Page (Zero Gradients, Bold Editorial Design)
-// ----------------------------------------------------------------------------
 
 function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
   const [installPm, setInstallPm] = useState<'pnpm' | 'npm' | 'bun' | 'cargo'>('pnpm');
@@ -846,7 +947,7 @@ impl DialogState {
           Full Code Ownership. Zero Blackbox Dependencies.
         </h2>
         <p className="text-zinc-600 dark:text-zinc-400 text-base max-w-xl mx-auto leading-relaxed">
-          Inspired by the philosophy of shadcn, Silex doesn't lock your project into an opaque node_modules package. 
+          Silex never locks your project into an opaque node_modules package. 
           The CLI generates transparent, fully-typed source components directly into your codebase, backed by a deterministic Rust core.
         </p>
         <div>
@@ -3474,55 +3575,110 @@ assert!(side.is_collapsed());`,
     name: 'Navbar',
     category: 'Layout',
     icon: <Navigation className="h-4 w-4" />,
-    description: 'Sticky, responsive application top bar with brand mark, action links, and mobile drawer.',
+    description: 'Sticky top navigation bar with brand identity, multi-level collapsible menu groups, and responsive drawer.',
     markdownDoc: `
 ### Overview
-The **Navbar** provides a semantic, accessible top header with backdrop blur and responsive collapsible hamburger menus.
+The **Navbar** provides a clean, uncluttered header architecture featuring direct links and nested collapsible dropdown menus with keyboard and click navigation.
     `,
-    preview: (accent: string) => {
+    preview: (accent: string, accentText: string) => {
       const [open, setOpen] = useState(false);
+      const [collapsibleGroupOpen, setCollapsibleGroupOpen] = useState(false);
+
       return (
-        <div className="w-full max-w-md rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 space-y-3">
+        <div className="w-full max-w-lg rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 space-y-3">
           <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
             <div className="flex items-center gap-2 font-bold text-xs text-zinc-900 dark:text-white">
               <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: accent }} />
               <span>Silex App</span>
             </div>
-            <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-500">
-              <span className="font-semibold text-zinc-900 dark:text-white">Docs</span>
-              <span>Components</span>
-              <span>Showcase</span>
+
+            {/* Desktop Navbar Links with Collapsible Dropdown */}
+            <div className="hidden sm:flex items-center gap-2 text-xs">
+              <span className="px-2.5 py-1 rounded-md text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">Overview</span>
+              
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setCollapsibleGroupOpen(!collapsibleGroupOpen)}
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-md font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                >
+                  <span>Resources</span>
+                  <ChevronDown className={`h-3 w-3 transition-transform ${collapsibleGroupOpen ? 'rotate-180' : ''}`} />
+                </button>
+
+                {collapsibleGroupOpen && (
+                  <div className="absolute left-0 mt-1 w-44 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-1.5 shadow-xl z-30 space-y-0.5 animate-slide-in-up">
+                    <div className="p-1.5 rounded text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">Design Tokens</div>
+                    <div className="p-1.5 rounded text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">Rust ABI Spec</div>
+                    <div className="p-1.5 rounded text-xs text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer">Tailwind v4 Setup</div>
+                  </div>
+                )}
+              </div>
+
+              <span className="px-2.5 py-1 rounded-md text-zinc-500 hover:text-zinc-900 dark:hover:text-white cursor-pointer">Changelog</span>
             </div>
-            <button
-              type="button"
-              onClick={() => setOpen(!open)}
-              className="sm:hidden px-2 py-1 rounded text-[11px] font-mono border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300"
-            >
-              {open ? 'Close' : 'Menu'}
-            </button>
+
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                className="hidden sm:inline-flex px-3 py-1 text-xs rounded-md font-semibold"
+                style={{ backgroundColor: accent, color: accentText }}
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => setOpen(!open)}
+                className="sm:hidden px-2 py-1 rounded text-[11px] font-mono border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300"
+              >
+                {open ? 'Close' : 'Menu'}
+              </button>
+            </div>
           </div>
+
+          {/* Mobile Accordion Drawer */}
           {open && (
-            <div className="sm:hidden space-y-1 pt-1 pb-2 text-xs">
-              <div className="p-1.5 rounded bg-zinc-100 dark:bg-zinc-800 font-semibold text-zinc-900 dark:text-white">Docs</div>
-              <div className="p-1.5 rounded text-zinc-600 dark:text-zinc-400">Components</div>
-              <div className="p-1.5 rounded text-zinc-600 dark:text-zinc-400">Showcase</div>
+            <div className="sm:hidden space-y-2 pt-1 pb-2 text-xs">
+              <div className="p-2 rounded bg-zinc-100 dark:bg-zinc-800 font-semibold text-zinc-900 dark:text-white">Overview</div>
+              <div>
+                <button
+                  type="button"
+                  onClick={() => setCollapsibleGroupOpen(!collapsibleGroupOpen)}
+                  className="w-full flex items-center justify-between p-2 rounded text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  <span>Resources</span>
+                  <ChevronDown className={`h-3 w-3 ${collapsibleGroupOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {collapsibleGroupOpen && (
+                  <div className="pl-4 space-y-1 pt-1">
+                    <div className="p-1.5 rounded text-zinc-600 dark:text-zinc-400">Design Tokens</div>
+                    <div className="p-1.5 rounded text-zinc-600 dark:text-zinc-400">Rust ABI Spec</div>
+                    <div className="p-1.5 rounded text-zinc-600 dark:text-zinc-400">Tailwind v4 Setup</div>
+                  </div>
+                )}
+              </div>
+              <div className="p-2 rounded text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800">Changelog</div>
             </div>
           )}
-          <div className="text-[11px] text-zinc-400">Fixed top header with responsive mobile drawer</div>
+          <div className="text-[11px] text-zinc-400">Semantic, decluttered navbar with nested collapsible link groups</div>
         </div>
       );
     },
-        variants: [
+    variants: [
       {
-        name: 'Sticky Header with Theme Switcher',
-        description: 'Compact top navigation bar with brand mark and action triggers.',
+        name: 'Collapsible Nav Items with Flyout Menu',
+        description: 'Navigation item group with animated floating dropdown card for multi-page categories.',
         render: (accent: string, accentText: string) => (
           <div className="w-full max-w-md p-3 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 flex items-center justify-between text-xs">
-            <span className="font-bold text-zinc-900 dark:text-white">Silex UI</span>
-            <div className="flex items-center gap-2">
-              <span className="text-zinc-500">Docs</span>
-              <button type="button" className="px-2.5 py-1 rounded font-semibold" style={{ backgroundColor: accent, color: accentText }}>Install</button>
+            <span className="font-bold text-zinc-900 dark:text-white">Workspace</span>
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1 font-semibold text-orange-600 dark:text-orange-400">
+                <span>Projects</span>
+                <span className="text-[10px]">▼</span>
+              </div>
+              <span className="text-zinc-500">Settings</span>
             </div>
+            <button type="button" className="px-2.5 py-1 rounded text-xs font-semibold" style={{ backgroundColor: accent, color: accentText }}>Deploy</button>
           </div>
         ),
       },
@@ -4207,7 +4363,7 @@ function IntroductionDoc({ activeTheme }: { activeTheme: ThemeConfig }) {
         <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-3xl">
           <strong>Silex</strong> is a high-performance, polyglot UI component engine designed for modern web applications. 
           Built on a pure Rust deterministic core with zero runtime garbage collection overhead, Silex pairs the code-ownership 
-          philosophy of shadcn with cross-framework polyglot code generation, mathematical WCAG AA contrast compliance, and humanized eye-safe theming.
+          full source code ownership with cross-framework polyglot code generation, mathematical WCAG AA contrast compliance, and humanized eye-safe theming.
         </p>
       </div>
 
@@ -4308,7 +4464,7 @@ function IntroductionDoc({ activeTheme }: { activeTheme: ThemeConfig }) {
           <span>Multi-Framework Code Ownership</span>
         </h2>
         <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
-          Like shadcn, components are not installed as blackbox node_modules dependencies. Instead, clean, fully-typed source files are placed directly into your <code className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-xs font-mono">@/components/ui</code> folder.
+          Components are never installed as blackbox dependencies. Instead, clean, fully-typed source files are placed directly into your <code className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-xs font-mono">@/components/ui</code> folder.
         </p>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
@@ -4331,13 +4487,13 @@ function IntroductionDoc({ activeTheme }: { activeTheme: ThemeConfig }) {
       {/* Next Steps CTA */}
       <div id="next-steps" className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row gap-4">
         <Link
-          to="/docs/comparison"
+          to="/docs/installation"
           className="flex-1 p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900 transition flex items-center justify-between group"
         >
           <div>
-            <span className="text-xs text-zinc-500 font-medium">Next in Architecture</span>
+            <span className="text-xs text-zinc-500 font-medium">Next in Setup</span>
             <div className="font-semibold text-sm text-zinc-950 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
-              Silex vs. shadcn Architectural Comparison
+              Detailed Installation & Framework Guides
             </div>
           </div>
           <ArrowRight className="h-4 w-4 text-zinc-400 group-hover:text-orange-500 transition group-hover:translate-x-1" />
@@ -4474,124 +4630,272 @@ function ConfigurationDoc() {
   );
 }
 
-function ComparisonDoc({ activeTheme }: { activeTheme: ThemeConfig }) {
-  const comparisonItems = [
-    {
-      feature: 'Core Architecture',
-      silex: 'Pure Rust core (compiled to WebAssembly / C-ABI) with deterministic state machines.',
-      shadcn: 'Radix UI primitive hooks with JavaScript runtime state logic.',
-      highlight: true,
-    },
-    {
-      feature: 'Polyglot Framework Support',
-      silex: 'First-class code generation & support for React 19, Vue 3, Svelte 5, Angular 19, Web Components, and Rust.',
-      shadcn: 'React / Next.js only (community ports exist as separate forks).',
-      highlight: true,
-    },
-    {
-      feature: 'Memory & Lifecycle Safety',
-      silex: '0 memory leaks across 50,000 rapid lifecycle state transitions; zero redundant heap allocations.',
-      shadcn: 'Dependent on V8 garbage collection and complex useEffect closure dependencies.',
-      highlight: false,
-    },
-    {
-      feature: 'Component Ownership Model',
-      silex: 'Full source code ownership via CLI directly into your project (`silex add <component>`).',
-      shadcn: 'Full source code ownership via CLI (`shadcn-ui add <component>`).',
-      highlight: false,
-    },
-    {
-      feature: 'Theming & Eye Comfort',
-      silex: '8 human-crafted palettes with mathematically guaranteed WCAG AA/AAA contrast and anti-glare light mode.',
-      shadcn: 'Standard HSL/OKLCH neutral palette variables; no built-in eye-strain mitigation.',
-      highlight: true,
-    },
-    {
-      feature: 'Tailwind Engine',
-      silex: 'Engineered natively for Tailwind CSS v4 with custom dark mode class variants and zero gradients.',
-      shadcn: 'Historically Tailwind v3 configured; upgrading to v4 requires manual CSS migration.',
-      highlight: false,
-    },
-    {
-      feature: 'Component Density & Primitives',
-      silex: '22 verified primitive components with native ARIA roles and unit/integration test suites.',
-      shadcn: 'Comprehensive React collection (~45 components).',
-      highlight: false,
-    },
-    {
-      feature: 'Security & Sanitization',
-      silex: 'Native injection deterrents, strict DOS resilience, and verified contrast safety tests.',
-      shadcn: 'Dependent on browser DOM and Radix internal sanitization.',
-      highlight: true,
-    },
-  ];
+// ----------------------------------------------------------------------------
+
+// ----------------------------------------------------------------------------
+// Independent Documentation Sidebar Component
+// ----------------------------------------------------------------------------
+
+export interface DocSidebarProps {
+  sidebarCollapsed: boolean;
+  onToggleCollapse: () => void;
+  mobileDrawerOpen: boolean;
+  onCloseMobileDrawer: () => void;
+  searchQuery: string;
+  onSearchChange: (q: string) => void;
+  categories: string[];
+  openCategories: Record<string, boolean>;
+  onToggleCategory: (cat: string) => void;
+  gettingStartedOpen: boolean;
+  onToggleGettingStarted: () => void;
+  componentsData: Record<string, ComponentDoc>;
+  className?: string;
+}
+
+export function DocSidebar({
+  sidebarCollapsed,
+  onToggleCollapse,
+  mobileDrawerOpen,
+  onCloseMobileDrawer,
+  searchQuery,
+  onSearchChange,
+  categories,
+  openCategories,
+  onToggleCategory,
+  gettingStartedOpen,
+  onToggleGettingStarted,
+  componentsData,
+  className = "",
+}: DocSidebarProps) {
+  const sidebarNavContent = (
+    <div className="space-y-4 text-sm">
+      {/* Search Bar */}
+      <div className="relative">
+        <Search className="h-4 w-4 absolute left-3 top-2.5 text-zinc-400" />
+        <input
+          type="text"
+          aria-label="Search documentation and components"
+          placeholder="Search docs & components..."
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
+          className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md text-xs text-zinc-900 dark:text-white focus:outline-none transition"
+        />
+      </div>
+
+      {/* Getting Started Category */}
+      <div>
+        <button
+          type="button"
+          onClick={onToggleGettingStarted}
+          className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+        >
+          <div className="flex items-center gap-2">
+            <FileText className="h-3.5 w-3.5" />
+            <span>Getting Started</span>
+          </div>
+          {gettingStartedOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+        </button>
+
+        {gettingStartedOpen && (
+          <div className="space-y-1 mt-1 pl-2">
+            {[
+              { name: 'Introduction', path: '/docs/introduction' },
+              { name: 'Installation', path: '/docs/installation' },
+              { name: 'Theming & Tokens', path: '/docs/theming' },
+              { name: 'Configuration', path: '/docs/configuration' },
+            ].map((item) => (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                onClick={onCloseMobileDrawer}
+                className={({ isActive }) => `block px-2.5 py-1.5 rounded-md text-xs transition ${
+                  isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
+                }`}
+              >
+                {item.name}
+              </NavLink>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Collapsible Component Categories */}
+      <div className="space-y-3 pt-1">
+        <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
+          Component Categories
+        </div>
+        {categories.map((category) => {
+          const catComponents = Object.values(componentsData).filter(
+            (c) => c.category === category && c.name.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          if (catComponents.length === 0) return null;
+          const isOpen = openCategories[category] ?? true;
+
+          return (
+            <div key={category} className="space-y-1">
+              <button
+                type="button"
+                onClick={() => onToggleCategory(category)}
+                className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1 hover:text-zinc-900 dark:hover:text-white transition cursor-pointer"
+              >
+                <div className="flex items-center gap-2">
+                  <Boxes className="h-3.5 w-3.5" />
+                  <span>{category}</span>
+                  <span className="text-[10px] font-normal lowercase tracking-normal text-zinc-400 dark:text-zinc-500">
+                    ({catComponents.length})
+                  </span>
+                </div>
+                {isOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+              </button>
+
+              {isOpen && (
+                <div className="space-y-0.5 pl-2">
+                  {catComponents.map((comp) => (
+                    <NavLink
+                      key={comp.id}
+                      to={`/docs/components/${comp.id}`}
+                      onClick={onCloseMobileDrawer}
+                      className={({ isActive }) => `flex items-center gap-2 px-2.5 py-1.5 rounded-md text-xs transition ${
+                        isActive
+                          ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold'
+                          : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
+                      }`}
+                    >
+                      <span className="h-1.5 w-1.5 rounded-full bg-zinc-300 dark:bg-zinc-700" />
+                      <span>{comp.name}</span>
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 
   return (
-    <div className="space-y-8">
-      <div className="space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border" style={{ color: activeTheme.accentHex, borderColor: activeTheme.accentHex }}>
-          <Scale className="h-3.5 w-3.5" />
-          <span>Architectural Comparison</span>
+    <>
+      {/* Mobile Drawer Overlay */}
+      {mobileDrawerOpen && (
+        <div 
+          role="dialog" 
+          aria-modal="true" 
+          aria-label="Mobile Documentation Navigation" 
+          className="fixed inset-0 z-50 bg-black/60 md:hidden flex animate-slide-in-up"
+        >
+          <div className="w-4/5 max-w-xs h-full bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 p-5 overflow-y-auto space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+              <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
+                Documentation
+              </span>
+              <button
+                type="button"
+                aria-label="Close navigation"
+                onClick={onCloseMobileDrawer}
+                className="p-1 rounded-md text-zinc-500 hover:text-zinc-950 dark:hover:text-white cursor-pointer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+            {sidebarNavContent}
+          </div>
+          <div 
+            className="flex-1" 
+            onClick={onCloseMobileDrawer} 
+            aria-hidden="true" 
+          />
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
-          Silex vs. shadcn/ui
-        </h1>
-        <p className="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-3xl">
-          We deeply respect the copy-paste philosophy pioneered by shadcn. Silex elevates this foundation by replacing opaque runtime JavaScript state with a native, mathematically verified Rust core that powers modern frontends across every major framework.
-        </p>
-      </div>
+      )}
 
-      <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 overflow-x-auto shadow-sm">
-        <table className="w-full min-w-[650px] text-left text-xs">
-          <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100">
-            <tr>
-              <th className="p-3.5 font-bold uppercase tracking-wider w-1/4">Capability / Dimension</th>
-              <th className="p-3.5 font-bold uppercase tracking-wider w-3/8 text-orange-600 dark:text-orange-400">
-                Silex UI (Rust Core)
-              </th>
-              <th className="p-3.5 font-bold uppercase tracking-wider w-3/8 text-zinc-600 dark:text-zinc-400">
-                shadcn/ui (Radix JS)
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-900">
-            {comparisonItems.map((item) => (
-              <tr key={item.feature} className={item.highlight ? 'bg-orange-500/5' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/40'}>
-                <td className="p-3.5 font-semibold text-zinc-900 dark:text-white align-top">
-                  {item.feature}
-                </td>
-                <td className="p-3.5 text-zinc-800 dark:text-zinc-200 leading-relaxed align-top">
-                  {item.silex}
-                </td>
-                <td className="p-3.5 text-zinc-500 dark:text-zinc-400 leading-relaxed align-top">
-                  {item.shadcn}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      {/* Desktop Aside */}
+      <aside 
+        aria-label="Documentation Navigation"
+        className={`shrink-0 transition-all duration-300 ${
+          sidebarCollapsed ? 'w-12' : 'w-64'
+        } space-y-6 hidden md:block ${className}`}
+      >
+        <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
+          {!sidebarCollapsed && (
+            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              Documentation
+            </span>
+          )}
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+          </button>
+        </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-        <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 space-y-2">
-          <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">Why Rust in the Component Layer?</h3>
-          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            UI state machines (dialog transitions, focus trapping, drawer dragging, numerical slider clamping) benefit immensely from algebraic enum data types and borrow-checker invariants. Impossible component states become mathematically unrepresentable.
-          </p>
+        {!sidebarCollapsed && sidebarNavContent}
+      </aside>
+    </>
+  );
+}
+
+// ----------------------------------------------------------------------------
+// Independent Main Layout Container
+// ----------------------------------------------------------------------------
+
+export interface MainLayoutProps {
+  sidebar?: React.ReactNode;
+  children: React.ReactNode;
+  tableOfContents?: React.ReactNode;
+  onOpenMobileDrawer?: () => void;
+  currentLabel?: string;
+  className?: string;
+}
+
+export function MainLayout({
+  sidebar,
+  children,
+  tableOfContents,
+  onOpenMobileDrawer,
+  currentLabel,
+  className = "",
+}: MainLayoutProps) {
+  return (
+    <div className={`max-w-[1440px] mx-auto px-4 sm:px-6 flex-1 w-full flex flex-col md:flex-row gap-6 md:gap-8 py-6 md:py-8 ${className}`}>
+      {/* Mobile Breadcrumb & Drawer Trigger Bar */}
+      {onOpenMobileDrawer && (
+        <div className="md:hidden flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
+          <button
+            type="button"
+            onClick={onOpenMobileDrawer}
+            className="inline-flex items-center gap-2 text-xs font-medium text-zinc-700 dark:text-zinc-300 bg-zinc-100 dark:bg-zinc-800 px-3 py-1.5 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-700 transition cursor-pointer"
+          >
+            <PanelLeft className="h-4 w-4" />
+            <span>Documentation Index</span>
+          </button>
+          {currentLabel && (
+            <span className="text-xs font-mono text-zinc-500">
+              {currentLabel}
+            </span>
+          )}
         </div>
-        <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 space-y-2">
-          <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">Polyglot Code Ownership</h3>
-          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
-            Teams maintaining multi-stack organizations (e.g. Next.js customer portals and Vue internal backoffices) no longer need fragmented component libraries. Silex components share the identical deterministic core across all frameworks.
-          </p>
-        </div>
-      </div>
+      )}
+
+      {/* Decoupled Sidebar Slot */}
+      {sidebar}
+
+      {/* Main Content Area */}
+      <main className="flex-1 min-w-0 space-y-8">
+        {children}
+      </main>
+
+      {/* Table of Contents Slot */}
+      {tableOfContents}
     </div>
   );
 }
 
 // ----------------------------------------------------------------------------
-// 3-Column Documentation Page
+// 3-Column Documentation Page (Orchestrates Sidebar & MainLayout)
 // ----------------------------------------------------------------------------
 
 function DocsLayout({ 
@@ -4621,6 +4925,7 @@ function DocsLayout({
     'Feedback': true,
     'Layout': true,
     'Surfaces': true,
+    'Motion': true,
   });
 
   const toggleCategory = (cat: string) => {
@@ -4636,8 +4941,7 @@ function DocsLayout({
     navigator.clipboard.writeText(txt);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
-  
-};
+  };
 
   const currentComponent = componentId ? COMPONENTS_DATA[componentId] : null;
 
@@ -4660,475 +4964,307 @@ function DocsLayout({
     { id: 'overview', title: 'Overview' },
   ];
 
-  const sidebarContent = (
-    <div className="space-y-4 text-sm">
-      {/* Search */}
-      <div className="relative">
-        <Search className="h-4 w-4 absolute left-3 top-2.5 text-zinc-400" />
-        <input
-          type="text"
-          aria-label="Search documentation and components"
-          placeholder="Search docs & components..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full pl-9 pr-3 py-1.5 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-md text-xs text-zinc-900 dark:text-white focus:outline-none transition"
-        />
-      </div>
-
-      {/* Getting Started Category */}
-      <div>
-        <button
-          type="button"
-          onClick={() => setGettingStartedOpen(!gettingStartedOpen)}
-          className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1"
-        >
-          <div className="flex items-center gap-2">
-            <FileText className="h-3.5 w-3.5" />
-            <span>Getting Started</span>
-          </div>
-          {gettingStartedOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-        </button>
-
-        {gettingStartedOpen && (
-          <div className="space-y-1 mt-1 pl-2">
-            {[
-              { name: 'Introduction', path: '/docs/introduction' },
-              { name: 'Silex vs. shadcn', path: '/docs/comparison' },
-              { name: 'Installation', path: '/docs/installation' },
-              { name: 'Theming & Tokens', path: '/docs/theming' },
-              { name: 'Configuration', path: '/docs/configuration' },
-            ].map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                onClick={() => setMobileDocsDrawerOpen(false)}
-                className={({ isActive }) => `block px-2.5 py-1.5 rounded-md text-xs transition ${
-                  isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
-                }`}
-              >
-                {item.name}
-              </NavLink>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Collapsible Component Categories */}
-      <div className="space-y-3 pt-1">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-zinc-400 dark:text-zinc-500 px-1">
-          Component Categories
-        </div>
-        {categories.map((category) => {
-          const catComponents = Object.values(COMPONENTS_DATA).filter(
-            (c) => c.category === category && c.name.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-          if (catComponents.length === 0) return null;
-          const isOpen = openCategories[category] ?? true;
-
-          return (
-            <div key={category} className="space-y-1">
-              <button
-                type="button"
-                onClick={() => toggleCategory(category)}
-                className="w-full flex items-center justify-between text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 py-1 hover:text-zinc-900 dark:hover:text-white transition"
-              >
-                <div className="flex items-center gap-2">
-                  <Boxes className="h-3.5 w-3.5" />
-                  <span>{category}</span>
-                  <span className="text-[10px] font-normal lowercase tracking-normal text-zinc-400 dark:text-zinc-500">
-                    ({catComponents.length})
-                  </span>
-                </div>
-                {isOpen ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
-              </button>
-
-              {isOpen && (
-                <div className="space-y-1 pl-2">
-                  {catComponents.map((c) => (
-                    <NavLink
-                      key={c.id}
-                      to={`/docs/components/${c.id}`}
-                      onClick={() => setMobileDocsDrawerOpen(false)}
-                      className={({ isActive }) => `flex items-center justify-between px-2.5 py-1.5 rounded-md text-xs transition ${
-                        isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-900/60'
-                      }`}
-                    >
-                      <span className="flex items-center gap-2">
-                        {c.icon}
-                        <span>{c.name}</span>
-                      </span>
-                    </NavLink>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-
   return (
-    <div className="max-w-[1440px] mx-auto px-4 sm:px-6 flex-1 w-full flex flex-col md:flex-row gap-6 md:gap-8 py-6 md:py-8">
-      {/* Mobile docs navigation toggle button */}
-      <div className="md:hidden flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
-        <button
-          type="button"
-          onClick={() => setMobileDocsDrawerOpen(true)}
-          className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 text-xs font-semibold text-zinc-800 dark:text-zinc-200"
-        >
-          <PanelLeft className="h-4 w-4" />
-          <span>Documentation Index</span>
-        </button>
-        <span className="text-xs font-mono text-zinc-500">
-          {currentComponent ? currentComponent.name : docSlug ? docSlug.toUpperCase() : 'Docs'}
-        </span>
-      </div>
-
-      {/* Mobile Drawer Modal for Navigation */}
-      {mobileDocsDrawerOpen && (
-        <div 
-          role="dialog" 
-          aria-modal="true" 
-          aria-label="Mobile Documentation Index" 
-          className="fixed inset-0 z-50 bg-black/60 md:hidden flex"
-        >
-          <div className="w-4/5 max-w-xs h-full bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 p-5 overflow-y-auto space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-zinc-200 dark:border-zinc-800">
-              <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-                Documentation
-              </span>
-              <button
-                type="button"
-                aria-label="Close navigation"
-                onClick={() => setMobileDocsDrawerOpen(false)}
-                className="p-1 rounded-md text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
-              >
-                <X className="h-5 w-5" />
-              </button>
+    <MainLayout
+      onOpenMobileDrawer={() => setMobileDocsDrawerOpen(true)}
+      currentLabel={currentComponent ? currentComponent.name : docSlug ? docSlug.toUpperCase() : 'Docs'}
+      sidebar={
+        <DocSidebar
+          sidebarCollapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+          mobileDrawerOpen={mobileDocsDrawerOpen}
+          onCloseMobileDrawer={() => setMobileDocsDrawerOpen(false)}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          categories={categories}
+          openCategories={openCategories}
+          onToggleCategory={toggleCategory}
+          gettingStartedOpen={gettingStartedOpen}
+          onToggleGettingStarted={() => setGettingStartedOpen(!gettingStartedOpen)}
+          componentsData={COMPONENTS_DATA}
+        />
+      }
+      tableOfContents={
+        <aside aria-label="On this page navigation" className="w-56 shrink-0 hidden lg:block space-y-4">
+          <div className="sticky top-24 space-y-3">
+            <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
+              On this page
             </div>
-            {sidebarContent}
+            <ul className="space-y-1.5 text-xs">
+              {sections.map((s) => (
+                <li key={s.id}>
+                  <a
+                    href={`#${s.id}`}
+                    className={`block py-1 px-2 rounded-md transition ${
+                      activeSection === s.id
+                        ? 'font-semibold'
+                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+                    style={activeSection === s.id ? { color: activeTheme.accentHex } : {}}
+                  >
+                    {s.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
           </div>
-          <div 
-            className="flex-1" 
-            onClick={() => setMobileDocsDrawerOpen(false)} 
-            aria-hidden="true" 
-          />
-        </div>
-      )}
+        </aside>
+      }
+    >
+      {docSlug === 'introduction' && <IntroductionDoc activeTheme={activeTheme} />}
+      {docSlug === 'installation' && <InstallationDoc />}
+      {docSlug === 'theming' && <ThemingDoc />}
+      {docSlug === 'configuration' && <ConfigurationDoc />}
 
-      {/* 1. Left Desktop Collapsible Sidebar */}
-      <aside 
-        aria-label="Documentation Navigation"
-        className={`shrink-0 transition-all duration-300 ${
-          sidebarCollapsed ? 'w-12' : 'w-64'
-        } space-y-6 hidden md:block`}
-      >
-        <div className="flex items-center justify-between pb-2 border-b border-zinc-200 dark:border-zinc-800">
-          {!sidebarCollapsed && (
-            <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-              Documentation
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            aria-label={sidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
-            className="p-1.5 rounded-lg text-zinc-500 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800 transition cursor-pointer"
-            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          >
-            {sidebarCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-          </button>
-        </div>
-
-        {!sidebarCollapsed && sidebarContent}
-      </aside>
-
-      {/* 2. Middle Main Documentation Area */}
-      <main className="flex-1 min-w-0 space-y-8">
-        {docSlug === 'introduction' && <IntroductionDoc activeTheme={activeTheme} />}
-        {docSlug === 'comparison' && <ComparisonDoc activeTheme={activeTheme} />}
-        {docSlug === 'installation' && <InstallationDoc />}
-        {docSlug === 'theming' && <ThemingDoc />}
-        {docSlug === 'configuration' && <ConfigurationDoc />}
-
-        {currentComponent && (
-          <div className="space-y-8">
-            <div id="overview" className="space-y-2">
-              <div className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5" style={{ color: activeTheme.accentHex }}>
-                {currentComponent.icon}
-                <span>{currentComponent.category}</span>
-              </div>
-              <h1 className="text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">{currentComponent.name}</h1>
-              <p className="text-zinc-600 dark:text-zinc-400 text-base">{currentComponent.description}</p>
+      {currentComponent && (
+        <div className="space-y-8">
+          <div id="overview" className="space-y-2">
+            <div className="text-xs font-semibold uppercase tracking-wider flex items-center gap-1.5" style={{ color: activeTheme.accentHex }}>
+              {currentComponent.icon}
+              <span>{currentComponent.category}</span>
             </div>
+            <h1 className="text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">{currentComponent.name}</h1>
+            <p className="text-zinc-600 dark:text-zinc-400 text-base">{currentComponent.description}</p>
+          </div>
 
-            {/* Interactive Preview Canvas */}
-            <div id="interactive-preview" className="space-y-3">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2.5 gap-2">
-                <div className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-white">
-                  <Sparkles className="h-4 w-4" style={{ color: activeTheme.accentHex }} />
-                  <span>Interactive Preview Canvas</span>
-                </div>
-
-                {/* Responsive Viewport Switcher */}
-                <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700/60">
-                  <button
-                    type="button"
-                    aria-label="Responsive Viewport"
-                    onClick={() => setPreviewViewport('responsive')}
-                    className={`p-1 rounded transition ${
-                      previewViewport === 'responsive'
-                        ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
-                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
-                    }`}
-                    title="Fluid Responsive (100%)"
-                  >
-                    <Split className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Desktop Viewport"
-                    onClick={() => setPreviewViewport('desktop')}
-                    className={`p-1 rounded transition ${
-                      previewViewport === 'desktop'
-                        ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
-                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
-                    }`}
-                    title="Desktop (1024px)"
-                  >
-                    <Monitor className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Tablet Viewport"
-                    onClick={() => setPreviewViewport('tablet')}
-                    className={`p-1 rounded transition ${
-                      previewViewport === 'tablet'
-                        ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
-                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
-                    }`}
-                    title="Tablet (640px)"
-                  >
-                    <Tablet className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    type="button"
-                    aria-label="Mobile Viewport"
-                    onClick={() => setPreviewViewport('mobile')}
-                    className={`p-1 rounded transition ${
-                      previewViewport === 'mobile'
-                        ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
-                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
-                    }`}
-                    title="Mobile (360px)"
-                  >
-                    <Smartphone className="h-3.5 w-3.5" />
-                  </button>
-                </div>
+          {/* Interactive Preview Canvas */}
+          <div id="interactive-preview" className="space-y-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2.5 gap-2">
+              <div className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-white">
+                <Sparkles className="h-4 w-4" style={{ color: activeTheme.accentHex }} />
+                <span>Interactive Preview Canvas</span>
               </div>
 
-              {/* Viewport Canvas Wrapper with Consistent Dotted Background */}
-              <div className="flex justify-center w-full transition-all duration-300">
-                <div
-                  className={`transition-all duration-300 rounded-xl border border-zinc-300 dark:border-zinc-800 p-8 flex items-center justify-center min-h-[240px] shadow-sm bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 ${
-                    previewViewport === 'mobile'
-                      ? 'w-[360px]'
-                      : previewViewport === 'tablet'
-                      ? 'w-[640px]'
-                      : previewViewport === 'desktop'
-                      ? 'w-[960px] max-w-full'
-                      : 'w-full'
-                  }`}
-                >
-                  <div className="w-full flex justify-center text-zinc-900 dark:text-white">
-                    <ErrorBoundary>
-                      <ComponentPreviewRenderer
-                        key={`${currentComponent.id}-${previewViewport}`}
-                        previewFn={currentComponent.preview}
-                        accent={activeTheme.accentHex}
-                        accentText={activeTheme.accentTextHex}
-                      />
-                    </ErrorBoundary>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Component Varieties Gallery */}
-            {currentComponent.variants && currentComponent.variants.length > 0 && (
-              <div id="component-varieties" className="space-y-4">
-                <div className="flex items-center gap-2 border-b border-zinc-200 dark:border-zinc-800 pb-2">
-                  <Boxes className="h-4 w-4" style={{ color: activeTheme.accentHex }} />
-                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-white">
-                    Component Varieties & Layout Patterns
-                  </h3>
-                </div>
-
-                <div className="flex flex-col gap-4">
-                  {currentComponent.variants.map((v) => (
-                    <div
-                      key={v.name}
-                      className="p-5 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3 shadow-xs"
-                    >
-                      <div className="flex items-center justify-between">
-                        <span className="font-semibold text-xs text-zinc-900 dark:text-white">{v.name}</span>
-                        <span className="text-[10px] font-mono text-zinc-400">Variant</span>
-                      </div>
-                      <p className="text-xs text-zinc-500 dark:text-zinc-400">{v.description}</p>
-                      <div className="pt-2 flex items-center justify-center p-6 rounded-lg bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 border border-zinc-200 dark:border-zinc-800 min-h-[100px]">
-                        <div className="text-zinc-900 dark:text-white w-full flex justify-center">
-                          <ErrorBoundary>
-                            <ComponentPreviewRenderer
-                              previewFn={v.render}
-                              accent={activeTheme.accentHex}
-                              accentText={activeTheme.accentTextHex}
-                            />
-                          </ErrorBoundary>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Installation Box */}
-            <div id="installation" className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-400 flex items-center gap-1.5">
-                  <Terminal className="h-3.5 w-3.5" />
-                  <span>Installation</span>
-                </span>
-                <div className="flex gap-1">
-                  {(['pnpm', 'npm', 'bun', 'cargo'] as const).map((pm) => (
-                    <button
-                      key={pm}
-                      type="button"
-                      onClick={() => setInstallPm(pm)}
-                      className={`px-2 py-0.5 rounded text-[11px] font-mono transition cursor-pointer ${
-                        installPm === pm ? 'font-bold border' : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
-                      }`}
-                      style={installPm === pm ? { 
-                        color: activeTheme.accentHex, 
-                        borderColor: activeTheme.accentHex
-                      } : {}}
-                    >
-                      {pm}
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-900 px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-800 font-mono text-xs">
-                <span className="text-zinc-900 dark:text-zinc-200">{currentComponent.install[installPm]}</span>
+              {/* Responsive Viewport Switcher */}
+              <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700/60">
                 <button
                   type="button"
-                  aria-label="Copy Installation Command"
-                  onClick={() => copyText(currentComponent.install[installPm])}
-                  className="text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition ml-3 cursor-pointer"
-                >
-                  {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
-
-            {/* Polyglot Framework Code Snippets */}
-            <div id="polyglot-usage" className="space-y-3">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                <div className="flex flex-wrap gap-1.5 w-full sm:w-auto">
-                  {(['react', 'vue', 'svelte', 'angular', 'web', 'rust'] as const).map((fw) => (
-                    <button
-                      key={fw}
-                      type="button"
-                      onClick={() => setActiveFramework(fw)}
-                      className={`px-2.5 sm:px-3 py-1 rounded-md text-xs font-medium uppercase tracking-wider transition cursor-pointer ${
-                        activeFramework === fw
-                          ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-950 dark:text-white font-bold'
-                          : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
-                      }`}
-                    >
-                      {fw}
-                    </button>
-                  ))}
-                </div>
-                <button
-                  type="button"
-                  aria-label="Copy Framework Snippet"
-                  onClick={() => copyText(currentComponent.code[activeFramework])}
-                  className="self-end sm:self-auto flex items-center gap-1.5 px-3 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md transition cursor-pointer"
-                >
-                  {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
-                  <span>{copied ? 'Copied' : 'Copy'}</span>
-                </button>
-              </div>
-
-              <CodeHighlight code={currentComponent.code[activeFramework]} language={activeFramework} />
-            </div>
-
-            {/* Props Table */}
-            <div id="props-reference" className="space-y-3">
-              <h3 className="text-lg font-semibold text-zinc-950 dark:text-white">Props Reference</h3>
-              <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 overflow-x-auto shadow-sm">
-                <table className="w-full min-w-[500px] text-left text-xs">
-                  <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
-                    <tr>
-                      <th className="p-3 font-semibold">Prop</th>
-                      <th className="p-3 font-semibold">Type</th>
-                      <th className="p-3 font-semibold">Default</th>
-                      <th className="p-3 font-semibold">Description</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-900">
-                    {currentComponent.props.map((p) => (
-                      <tr key={p.name} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
-                        <td className="p-3 font-mono font-semibold" style={{ color: activeTheme.accentHex }}>{p.name}</td>
-                        <td className="p-3 font-mono text-zinc-500">{p.type}</td>
-                        <td className="p-3 font-mono text-zinc-400">{p.default}</td>
-                        <td className="p-3 text-zinc-600 dark:text-zinc-300">{p.description}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Markdown Documentation */}
-            <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 markdown-body text-zinc-800 dark:text-zinc-200 shadow-sm">
-              <ReactMarkdown>{currentComponent.markdownDoc}</ReactMarkdown>
-            </div>
-          </div>
-        )}
-      </main>
-
-      {/* 3. Right "On This Page" Table of Contents */}
-      <aside aria-label="On this page navigation" className="w-56 shrink-0 hidden lg:block space-y-4">
-        <div className="sticky top-24 space-y-3">
-          <div className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-            On this page
-          </div>
-          <ul className="space-y-1.5 text-xs">
-            {sections.map((s) => (
-              <li key={s.id}>
-                <a
-                  href={`#${s.id}`}
-                  className={`block py-1 px-2 rounded-md transition ${
-                    activeSection === s.id
-                      ? 'font-semibold'
+                  aria-label="Responsive Viewport"
+                  onClick={() => setPreviewViewport('responsive')}
+                  className={`p-1 rounded transition ${
+                    previewViewport === 'responsive'
+                      ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
                       : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
                   }`}
-                  style={activeSection === s.id ? { color: activeTheme.accentHex } : {}}
+                  title="Fluid Responsive (100%)"
                 >
-                  {s.title}
-                </a>
-              </li>
-            ))}
-          </ul>
+                  <Maximize2 className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Desktop Viewport"
+                  onClick={() => setPreviewViewport('desktop')}
+                  className={`p-1 rounded transition ${
+                    previewViewport === 'desktop'
+                      ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                      : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                  }`}
+                  title="Desktop (960px)"
+                >
+                  <Monitor className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Tablet Viewport"
+                  onClick={() => setPreviewViewport('tablet')}
+                  className={`p-1 rounded transition ${
+                    previewViewport === 'tablet'
+                      ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                      : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                  }`}
+                  title="Tablet (640px)"
+                >
+                  <Tablet className="h-3.5 w-3.5" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Mobile Viewport"
+                  onClick={() => setPreviewViewport('mobile')}
+                  className={`p-1 rounded transition ${
+                    previewViewport === 'mobile'
+                      ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                      : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                  }`}
+                  title="Mobile (360px)"
+                >
+                  <Smartphone className="h-3.5 w-3.5" />
+                </button>
+              </div>
+            </div>
+
+            {/* Viewport Canvas Wrapper with Consistent Dotted Background */}
+            <div className="flex justify-center w-full transition-all duration-300">
+              <div
+                className={`transition-all duration-300 rounded-xl border border-zinc-300 dark:border-zinc-800 p-8 flex items-center justify-center min-h-[240px] shadow-sm bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 ${
+                  previewViewport === 'mobile'
+                    ? 'w-[360px]'
+                    : previewViewport === 'tablet'
+                    ? 'w-[640px]'
+                    : previewViewport === 'desktop'
+                    ? 'w-[960px] max-w-full'
+                    : 'w-full'
+                }`}
+              >
+                <div className="w-full flex justify-center text-zinc-900 dark:text-white">
+                  <ErrorBoundary>
+                    <ComponentPreviewRenderer
+                      key={`${currentComponent.id}-${previewViewport}`}
+                      previewFn={currentComponent.preview}
+                      accent={activeTheme.accentHex}
+                      accentText={activeTheme.accentTextHex}
+                    />
+                  </ErrorBoundary>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Component Varieties & Layout Patterns */}
+          {currentComponent.variants && currentComponent.variants.length > 0 && (
+            <div id="component-varieties" className="space-y-4">
+              <div className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-white">
+                <Layers className="h-4 w-4" style={{ color: activeTheme.accentHex }} />
+                <span>Component Varieties & Layout Patterns</span>
+              </div>
+              <p className="text-xs text-zinc-500 dark:text-zinc-400">
+                Independent layout compositions, sizing adaptations, and component variants available in the Silex system.
+              </p>
+
+              <div className="flex flex-col gap-4">
+                {currentComponent.variants.map((v, idx) => (
+                  <div
+                    key={v.name || idx}
+                    className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3 shadow-xs"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-zinc-900 dark:text-white">{v.name}</span>
+                      <span className="text-[10px] font-mono text-zinc-400">Variant</span>
+                    </div>
+                    <p className="text-xs text-zinc-500 dark:text-zinc-400">{v.description}</p>
+                    <div className="pt-2 flex items-center justify-center p-6 rounded-lg bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 border border-zinc-200 dark:border-zinc-800 min-h-[100px]">
+                      <div className="text-zinc-900 dark:text-white w-full flex justify-center">
+                        <ErrorBoundary>
+                          <ComponentPreviewRenderer
+                            previewFn={v.render}
+                            accent={activeTheme.accentHex}
+                            accentText={activeTheme.accentTextHex}
+                          />
+                        </ErrorBoundary>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Installation */}
+          <div id="installation" className="space-y-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-zinc-950 dark:text-white">Installation</h3>
+              <div className="flex gap-1">
+                {(['pnpm', 'npm', 'bun', 'cargo'] as const).map((pm) => (
+                  <button
+                    key={pm}
+                    type="button"
+                    onClick={() => setInstallPm(pm)}
+                    className={`px-2 py-0.5 rounded text-[11px] font-mono transition cursor-pointer ${
+                      installPm === pm
+                        ? 'bg-zinc-200 dark:bg-zinc-800 font-bold border'
+                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+                    style={installPm === pm ? { 
+                      color: activeTheme.accentHex, 
+                      borderColor: activeTheme.accentHex
+                    } : {}}
+                  >
+                    {pm}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-900 px-4 py-2.5 rounded-lg border border-zinc-300 dark:border-zinc-800 font-mono text-xs">
+              <span className="text-zinc-900 dark:text-zinc-200">{currentComponent.install[installPm]}</span>
+              <button
+                type="button"
+                aria-label="Copy Installation Command"
+                onClick={() => copyText(currentComponent.install[installPm])}
+                className="text-zinc-400 hover:text-zinc-800 dark:hover:text-white transition ml-3 cursor-pointer"
+              >
+                {copied ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          {/* Polyglot Framework Code Snippets */}
+          <div id="polyglot-usage" className="space-y-3">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+              <div className="flex flex-wrap gap-1.5 w-full sm:w-auto">
+                {(['react', 'vue', 'svelte', 'angular', 'web', 'rust'] as const).map((fw) => (
+                  <button
+                    key={fw}
+                    type="button"
+                    onClick={() => setActiveFramework(fw)}
+                    className={`px-2.5 sm:px-3 py-1 rounded-md text-xs font-medium uppercase tracking-wider transition cursor-pointer ${
+                      activeFramework === fw
+                        ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-950 dark:text-white font-bold'
+                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+                  >
+                    {fw}
+                  </button>
+                ))}
+              </div>
+              <button
+                type="button"
+                aria-label="Copy Framework Snippet"
+                onClick={() => copyText(currentComponent.code[activeFramework])}
+                className="self-end sm:self-auto flex items-center gap-1.5 px-3 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white bg-zinc-100 dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-md transition cursor-pointer"
+              >
+                {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+                <span>{copied ? 'Copied' : 'Copy'}</span>
+              </button>
+            </div>
+
+            <CodeHighlight code={currentComponent.code[activeFramework]} language={activeFramework} />
+          </div>
+
+          {/* Props Table */}
+          <div id="props-reference" className="space-y-3">
+            <h3 className="text-lg font-semibold text-zinc-950 dark:text-white">Props Reference</h3>
+            <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 overflow-x-auto shadow-sm">
+              <table className="w-full min-w-[500px] text-left text-xs">
+                <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300">
+                  <tr>
+                    <th className="p-3 font-semibold">Prop</th>
+                    <th className="p-3 font-semibold">Type</th>
+                    <th className="p-3 font-semibold">Default</th>
+                    <th className="p-3 font-semibold">Description</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-900">
+                  {currentComponent.props.map((p) => (
+                    <tr key={p.name} className="hover:bg-zinc-50 dark:hover:bg-zinc-800/60">
+                      <td className="p-3 font-mono font-semibold" style={{ color: activeTheme.accentHex }}>{p.name}</td>
+                      <td className="p-3 font-mono text-zinc-500">{p.type}</td>
+                      <td className="p-3 font-mono text-zinc-400">{p.default}</td>
+                      <td className="p-3 text-zinc-600 dark:text-zinc-300">{p.description}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Markdown Documentation */}
+          <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-8 markdown-body text-zinc-800 dark:text-zinc-200 shadow-sm">
+            <ReactMarkdown>{currentComponent.markdownDoc}</ReactMarkdown>
+          </div>
         </div>
-      </aside>
-    </div>
+      )}
+    </MainLayout>
   );
 }
-
 // ----------------------------------------------------------------------------
 // Root App
 // ----------------------------------------------------------------------------
