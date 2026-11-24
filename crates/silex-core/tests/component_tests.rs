@@ -13,6 +13,11 @@ use silex_ui_core::components::textarea::TextareaProps;
 use silex_ui_core::components::table::{TableProps, TableVariant};
 use silex_ui_core::components::progress::ProgressState;
 use silex_ui_core::components::skeleton::SkeletonProps;
+use silex_ui_core::components::tabs::TabsState;
+use silex_ui_core::components::select::SelectState;
+use silex_ui_core::components::slider::SliderState;
+use silex_ui_core::components::toggle::ToggleState;
+use silex_ui_core::components::popover::PopoverState;
 use silex_ui_core::theme::{ThemeTokens, ThemeMode};
 use silex_ui_core::contrast_ratio;
 
@@ -119,6 +124,33 @@ fn test_new_primitive_components() {
 
     let skeleton = SkeletonProps::new(true);
     assert!(skeleton.compute_classes().contains("rounded-full"));
+
+    let mut tabs = TabsState::new("general");
+    assert!(tabs.is_active("general"));
+    tabs.set_active("security");
+    assert_eq!(tabs.active_tab(), "security");
+
+    let mut select = SelectState::new(false);
+    select.open();
+    assert!(select.is_open());
+    select.set_value("opt-1");
+    assert_eq!(select.value(), "opt-1");
+    assert!(!select.is_open());
+
+    let mut slider = SliderState::new(25, 0, 100);
+    assert_eq!(slider.value(), 25);
+    assert_eq!(slider.percentage(), 25.0);
+    slider.set_value(80);
+    assert_eq!(slider.value(), 80);
+
+    let mut toggle = ToggleState::new(false);
+    toggle.toggle();
+    assert!(toggle.is_pressed());
+
+    let mut popover = PopoverState::new();
+    assert!(!popover.is_open());
+    popover.open();
+    assert!(popover.is_open());
 }
 
 #[test]

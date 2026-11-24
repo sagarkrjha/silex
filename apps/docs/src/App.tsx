@@ -50,7 +50,13 @@ import {
   Table as TableIcon,
   BarChart2,
   Loader2,
-  ChevronRightSquare
+  ChevronRightSquare,
+  Sliders,
+  CheckCircle2,
+  ListFilter,
+  Layers as TabsIcon,
+  HelpCircle,
+  Scale
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import Prism from 'prismjs';
@@ -408,6 +414,7 @@ function NavigationBar({
           <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-6 text-sm font-medium text-zinc-600 dark:text-zinc-400">
             <NavLink to="/" end className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Story</NavLink>
             <NavLink to="/docs/components/button" className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Components</NavLink>
+            <NavLink to="/docs/comparison" className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>vs shadcn</NavLink>
             <NavLink to="/docs/installation" className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Installation</NavLink>
             <NavLink to="/docs/theming" className={({ isActive }) => `hover:text-zinc-950 dark:hover:text-white transition ${isActive ? 'text-zinc-950 dark:text-white font-semibold' : ''}`}>Theming</NavLink>
             <a href="https://github.com/sagarkrjha/silex" target="_blank" rel="noreferrer" className="hover:text-zinc-950 dark:hover:text-white transition flex items-center gap-1.5">
@@ -498,6 +505,13 @@ function NavigationBar({
               className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
             >
               Components
+            </NavLink>
+            <NavLink 
+              to="/docs/comparison" 
+              onClick={onToggleMobileNav}
+              className={({ isActive }) => `px-3 py-2 rounded-lg transition ${isActive ? 'bg-orange-500/10 text-orange-600 dark:text-orange-400 font-semibold' : 'text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800'}`}
+            >
+              Silex vs. shadcn
             </NavLink>
             <NavLink 
               to="/docs/installation" 
@@ -2235,6 +2249,386 @@ let skel = SkeletonProps::new(true);
 let classes = skel.compute_classes();`,
     },
   },
+
+  tabs: {
+    id: 'tabs',
+    name: 'Tabs',
+    category: 'Surfaces',
+    icon: <TabsIcon className="h-4 w-4" />,
+    description: 'Set of layered content sections displayed one at a time via keyboard-accessible tab triggers.',
+    markdownDoc: `
+### Overview
+The **Tabs** component organizes multiple related views into a compact tab bar conforming to WAI-ARIA \`role="tablist"\` and \`role="tab"\`.
+    `,
+    preview: (accent: string, accentText: string) => {
+      const [activeTab, setActiveTab] = useState('account');
+      return (
+        <div className="w-full max-w-sm space-y-3">
+          <div role="tablist" className="inline-flex h-9 items-center justify-center rounded-lg bg-zinc-100 dark:bg-zinc-800 p-1 text-zinc-500">
+            {['account', 'password', 'telemetry'].map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab}
+                onClick={() => setActiveTab(tab)}
+                className={`inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-xs transition cursor-pointer capitalize ${
+                  activeTab === tab ? 'font-semibold shadow-sm' : 'hover:text-zinc-900 dark:hover:text-zinc-100'
+                }`}
+                style={activeTab === tab ? { backgroundColor: accent, color: accentText } : {}}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+          <div className="p-4 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-xs text-zinc-700 dark:text-zinc-300">
+            {activeTab === 'account' && <p>Account profile details and encryption identity.</p>}
+            {activeTab === 'password' && <p>Rotate private ECDSA keys and auth credentials.</p>}
+            {activeTab === 'telemetry' && <p>Cluster metrics collected at 100Hz frequency.</p>}
+          </div>
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add tabs',
+      npm: 'npx silex-ui add tabs',
+      bun: 'bunx silex-ui add tabs',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'defaultValue', type: 'string', default: "''", description: 'Active tab value on initial render' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+
+export const Example: React.FC = () => {
+  return (
+    <Tabs defaultValue="account">
+      <TabsList>
+        <TabsTrigger value="account">Account</TabsTrigger>
+        <TabsTrigger value="password">Password</TabsTrigger>
+      </TabsList>
+      <TabsContent value="account">Account settings</TabsContent>
+      <TabsContent value="password">Password changes</TabsContent>
+    </Tabs>
+  );
+};`,
+      vue: `<template>
+  <Tabs default-value="account">
+    <TabsList><TabsTrigger value="account">Account</TabsTrigger></TabsList>
+    <TabsContent value="account">Account settings</TabsContent>
+  </Tabs>
+</template>`,
+      svelte: `<Tabs defaultValue="account">
+  <TabsList><TabsTrigger value="account">Account</TabsTrigger></TabsList>
+  <TabsContent value="account">Account settings</TabsContent>
+</Tabs>`,
+      angular: `<silex-tabs default="account">...</silex-tabs>`,
+      web: `<silex-tabs default="account">...</silex-tabs>`,
+      rust: `use silex_ui_core::components::tabs::TabsState;
+
+let mut tabs = TabsState::new("account");
+tabs.set_active("password");
+assert_eq!(tabs.active_tab(), "password");`,
+    },
+  },
+
+  select: {
+    id: 'select',
+    name: 'Select',
+    category: 'Form Controls',
+    icon: <ListFilter className="h-4 w-4" />,
+    description: 'Custom dropdown list allowing single option selection from multiple choices.',
+    markdownDoc: `
+### Overview
+The **Select** component displays a collapsed trigger opening a menu of selectable choices with full keyboard arrow and escape navigation.
+    `,
+    preview: (accent: string) => {
+      const [open, setOpen] = useState(false);
+      const [selected, setSelected] = useState('Rust (WASM)');
+      const options = ['Rust (WASM)', 'React 19', 'Vue 3', 'Svelte 5'];
+      return (
+        <div className="relative w-full max-w-xs">
+          <button
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+            className="flex h-9 w-full items-center justify-between rounded-md border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 px-3 py-2 text-xs shadow-sm text-zinc-900 dark:text-zinc-100"
+          >
+            <span>{selected}</span>
+            <ChevronDown className={`h-4 w-4 text-zinc-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+          </button>
+          {open && (
+            <div role="listbox" className="absolute top-full mt-1.5 w-full rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-lg z-50 py-1">
+              {options.map((opt) => (
+                <div
+                  key={opt}
+                  role="option"
+                  aria-selected={selected === opt}
+                  onClick={() => { setSelected(opt); setOpen(false); }}
+                  className="flex items-center justify-between px-3 py-1.5 text-xs text-zinc-800 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800 cursor-pointer"
+                >
+                  <span>{opt}</span>
+                  {selected === opt && <Check className="h-3.5 w-3.5" style={{ color: accent }} />}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add select',
+      npm: 'npx silex-ui add select',
+      bun: 'bunx silex-ui add select',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'value', type: 'string', default: "''", description: 'Selected option value' },
+      { name: 'onValueChange', type: '(val: string) => void', default: '-', description: 'Callback fired on item selection' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Select, SelectTrigger, SelectContent, SelectItem, SelectValue } from "@/components/ui/select";
+
+export const Example: React.FC = () => {
+  return (
+    <Select defaultValue="rust">
+      <SelectTrigger className="w-[180px]">
+        <SelectValue placeholder="Select target" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="rust">Rust (WASM)</SelectItem>
+        <SelectItem value="react">React 19</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+};`,
+      vue: `<template>
+  <Select default-value="rust">
+    <SelectTrigger><SelectValue placeholder="Select target" /></SelectTrigger>
+    <SelectContent>
+      <SelectItem value="rust">Rust (WASM)</SelectItem>
+    </SelectContent>
+  </Select>
+</template>`,
+      svelte: `<Select defaultValue="rust">...</Select>`,
+      angular: `<silex-select value="rust">...</silex-select>`,
+      web: `<silex-select value="rust">...</silex-select>`,
+      rust: `use silex_ui_core::components::select::SelectState;
+
+let mut sel = SelectState::new(false);
+sel.set_value("rust");
+assert_eq!(sel.value(), "rust");`,
+    },
+  },
+
+  slider: {
+    id: 'slider',
+    name: 'Slider',
+    category: 'Form Controls',
+    icon: <Sliders className="h-4 w-4" />,
+    description: 'Input control allowing the user to make selections from a range of values.',
+    markdownDoc: `
+### Overview
+The **Slider** component provides an accessible numerical range scrubber, powered by \`SliderState\` in \`silex-ui-core\`.
+    `,
+    preview: (accent: string) => {
+      const [val, setVal] = useState(60);
+      return (
+        <div className="w-full max-w-xs space-y-2">
+          <div className="flex justify-between text-xs font-semibold text-zinc-700 dark:text-zinc-300">
+            <span>Buffer Threshold</span>
+            <span className="font-mono">{val}ms</span>
+          </div>
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={val}
+            aria-label="Buffer threshold slider"
+            onChange={(e) => setVal(Number(e.target.value))}
+            className="w-full accent-orange-600 cursor-pointer"
+            style={{ accentColor: accent }}
+          />
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add slider',
+      npm: 'npx silex-ui add slider',
+      bun: 'bunx silex-ui add slider',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'defaultValue', type: 'number', default: '0', description: 'Starting range value' },
+      { name: 'min', type: 'number', default: '0', description: 'Lower boundary value' },
+      { name: 'max', type: 'number', default: '100', description: 'Upper boundary value' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Slider } from "@/components/ui/slider";
+
+export const Example: React.FC = () => {
+  return <Slider defaultValue={[50]} max={100} step={1} />;
+};`,
+      vue: `<template>
+  <Slider :default-value="[50]" :max="100" />
+</template>`,
+      svelte: `<Slider defaultValue={[50]} max={100} />`,
+      angular: `<silex-slider [value]="50" [max]="100"></silex-slider>`,
+      web: `<silex-slider value="50" max="100"></silex-slider>`,
+      rust: `use silex_ui_core::components::slider::SliderState;
+
+let mut slider = SliderState::new(50, 0, 100);
+slider.set_value(75);
+assert_eq!(slider.value(), 75);`,
+    },
+  },
+
+  toggle: {
+    id: 'toggle',
+    name: 'Toggle',
+    category: 'Primitives',
+    icon: <CheckCircle2 className="h-4 w-4" />,
+    description: 'Two-state button that can be either on (pressed) or off (unpressed).',
+    markdownDoc: `
+### Overview
+The **Toggle** component exposes a simple push button with persistent pressed state conforming to \`aria-pressed\`.
+    `,
+    preview: (accent: string, accentText: string) => {
+      const [pressed, setPressed] = useState(false);
+      return (
+        <button
+          type="button"
+          aria-pressed={pressed}
+          onClick={() => setPressed(!pressed)}
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-semibold border transition cursor-pointer ${
+            pressed ? '' : 'border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300'
+          }`}
+          style={pressed ? { backgroundColor: accent, borderColor: accent, color: accentText } : {}}
+        >
+          <Zap className="h-3.5 w-3.5" />
+          <span>{pressed ? 'Turbo Boost Active' : 'Turbo Boost Standby'}</span>
+        </button>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add toggle',
+      npm: 'npx silex-ui add toggle',
+      bun: 'bunx silex-ui add toggle',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'pressed', type: 'boolean', default: 'false', description: 'Controlled pressed state' },
+    ],
+    code: {
+      react: `import React, { useState } from "react";
+import { Toggle } from "@/components/ui/toggle";
+
+export const Example: React.FC = () => {
+  return <Toggle aria-label="Toggle italic">Italic</Toggle>;
+};`,
+      vue: `<template>
+  <Toggle aria-label="Toggle italic">Italic</Toggle>
+</template>`,
+      svelte: `<Toggle aria-label="Toggle italic">Italic</Toggle>`,
+      angular: `<silex-toggle label="Italic"></silex-toggle>`,
+      web: `<silex-toggle label="Italic"></silex-toggle>`,
+      rust: `use silex_ui_core::components::toggle::ToggleState;
+
+let mut toggle = ToggleState::new(false);
+toggle.toggle();
+assert!(toggle.is_pressed());`,
+    },
+  },
+
+  popover: {
+    id: 'popover',
+    name: 'Popover',
+    category: 'Overlays',
+    icon: <HelpCircle className="h-4 w-4" />,
+    description: 'Displays rich floating content in a portal triggered by a button interaction.',
+    markdownDoc: `
+### Overview
+The **Popover** component displays floating panels alongside an anchor trigger without restricting keyboard focus flow.
+    `,
+    preview: (accent: string, accentText: string) => {
+      const [open, setOpen] = useState(false);
+      return (
+        <div className="relative inline-block">
+          <button
+            type="button"
+            aria-haspopup="dialog"
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+            className="px-4 py-2 text-xs font-semibold rounded-md shadow-sm transition"
+            style={{ backgroundColor: accent, color: accentText }}
+          >
+            {open ? 'Close Settings' : 'Quick Settings'}
+          </button>
+          {open && (
+            <div className="absolute left-0 mt-2 w-72 rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-xl z-50 space-y-3">
+              <h4 className="text-xs font-bold text-zinc-900 dark:text-white uppercase tracking-wider">Node Options</h4>
+              <p className="text-xs text-zinc-600 dark:text-zinc-400">Configure connection pooling rate limit and timeout thresholds.</p>
+              <div className="pt-2 border-t border-zinc-200 dark:border-zinc-800 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => setOpen(false)}
+                  className="px-2.5 py-1 text-xs rounded font-medium border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add popover',
+      npm: 'npx silex-ui add popover',
+      bun: 'bunx silex-ui add popover',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'open', type: 'boolean', default: 'false', description: 'Controlled visibility state' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+
+export const Example: React.FC = () => {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button type="button">Open Popover</button>
+      </PopoverTrigger>
+      <PopoverContent>Popover body content</PopoverContent>
+    </Popover>
+  );
+};`,
+      vue: `<template>
+  <Popover>
+    <template #trigger><button type="button">Open Popover</button></template>
+    <p>Popover body content</p>
+  </Popover>
+</template>`,
+      svelte: `<Popover>
+  {#snippet trigger()}<button type="button">Open Popover</button>{/snippet}
+  <p>Popover body content</p>
+</Popover>`,
+      angular: `<silex-popover>...</silex-popover>`,
+      web: `<silex-popover>...</silex-popover>`,
+      rust: `use silex_ui_core::components::popover::PopoverState;
+
+let mut pop = PopoverState::new();
+pop.open();
+assert!(pop.is_open());`,
+    },
+  },
 };
 
 // ----------------------------------------------------------------------------
@@ -2390,6 +2784,122 @@ function ConfigurationDoc() {
   );
 }
 
+function ComparisonDoc({ activeTheme }: { activeTheme: ThemeConfig }) {
+  const comparisonItems = [
+    {
+      feature: 'Core Architecture',
+      silex: 'Pure Rust core (compiled to WebAssembly / C-ABI) with deterministic state machines.',
+      shadcn: 'Radix UI primitive hooks with JavaScript runtime state logic.',
+      highlight: true,
+    },
+    {
+      feature: 'Polyglot Framework Support',
+      silex: 'First-class code generation & support for React 19, Vue 3, Svelte 5, Angular 19, Web Components, and Rust.',
+      shadcn: 'React / Next.js only (community ports exist as separate forks).',
+      highlight: true,
+    },
+    {
+      feature: 'Memory & Lifecycle Safety',
+      silex: '0 memory leaks across 50,000 rapid lifecycle state transitions; zero redundant heap allocations.',
+      shadcn: 'Dependent on V8 garbage collection and complex useEffect closure dependencies.',
+      highlight: false,
+    },
+    {
+      feature: 'Component Ownership Model',
+      silex: 'Full source code ownership via CLI directly into your project (`silex add <component>`).',
+      shadcn: 'Full source code ownership via CLI (`shadcn-ui add <component>`).',
+      highlight: false,
+    },
+    {
+      feature: 'Theming & Eye Comfort',
+      silex: '8 human-crafted palettes with mathematically guaranteed WCAG AA/AAA contrast and anti-glare light mode.',
+      shadcn: 'Standard HSL/OKLCH neutral palette variables; no built-in eye-strain mitigation.',
+      highlight: true,
+    },
+    {
+      feature: 'Tailwind Engine',
+      silex: 'Engineered natively for Tailwind CSS v4 with custom dark mode class variants and zero gradients.',
+      shadcn: 'Historically Tailwind v3 configured; upgrading to v4 requires manual CSS migration.',
+      highlight: false,
+    },
+    {
+      feature: 'Component Density & Primitives',
+      silex: '22 verified primitive components with native ARIA roles and unit/integration test suites.',
+      shadcn: 'Comprehensive React collection (~45 components).',
+      highlight: false,
+    },
+    {
+      feature: 'Security & Sanitization',
+      silex: 'Native injection deterrents, strict DOS resilience, and verified contrast safety tests.',
+      shadcn: 'Dependent on browser DOM and Radix internal sanitization.',
+      highlight: true,
+    },
+  ];
+
+  return (
+    <div className="space-y-8">
+      <div className="space-y-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border" style={{ color: activeTheme.accentHex, borderColor: activeTheme.accentHex }}>
+          <Scale className="h-3.5 w-3.5" />
+          <span>Architectural Comparison</span>
+        </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Silex vs. shadcn/ui
+        </h1>
+        <p className="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-3xl">
+          We deeply respect the copy-paste philosophy pioneered by shadcn. Silex elevates this foundation by replacing opaque runtime JavaScript state with a native, mathematically verified Rust core that powers modern frontends across every major framework.
+        </p>
+      </div>
+
+      <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 overflow-x-auto shadow-sm">
+        <table className="w-full min-w-[650px] text-left text-xs">
+          <thead className="bg-zinc-100 dark:bg-zinc-900 border-b border-zinc-300 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100">
+            <tr>
+              <th className="p-3.5 font-bold uppercase tracking-wider w-1/4">Capability / Dimension</th>
+              <th className="p-3.5 font-bold uppercase tracking-wider w-3/8 text-orange-600 dark:text-orange-400">
+                Silex UI (Rust Core)
+              </th>
+              <th className="p-3.5 font-bold uppercase tracking-wider w-3/8 text-zinc-600 dark:text-zinc-400">
+                shadcn/ui (Radix JS)
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-zinc-200 dark:divide-zinc-800 bg-white dark:bg-zinc-900">
+            {comparisonItems.map((item) => (
+              <tr key={item.feature} className={item.highlight ? 'bg-orange-500/5' : 'hover:bg-zinc-50 dark:hover:bg-zinc-800/40'}>
+                <td className="p-3.5 font-semibold text-zinc-900 dark:text-white align-top">
+                  {item.feature}
+                </td>
+                <td className="p-3.5 text-zinc-800 dark:text-zinc-200 leading-relaxed align-top">
+                  {item.silex}
+                </td>
+                <td className="p-3.5 text-zinc-500 dark:text-zinc-400 leading-relaxed align-top">
+                  {item.shadcn}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+        <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 space-y-2">
+          <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">Why Rust in the Component Layer?</h3>
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            UI state machines (dialog transitions, focus trapping, drawer dragging, numerical slider clamping) benefit immensely from algebraic enum data types and borrow-checker invariants. Impossible component states become mathematically unrepresentable.
+          </p>
+        </div>
+        <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 space-y-2">
+          <h3 className="font-semibold text-sm text-zinc-900 dark:text-white">Polyglot Code Ownership</h3>
+          <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            Teams maintaining multi-stack organizations (e.g. Next.js customer portals and Vue internal backoffices) no longer need fragmented component libraries. Silex components share the identical deterministic core across all frameworks.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ----------------------------------------------------------------------------
 // 3-Column Documentation Page
 // ----------------------------------------------------------------------------
@@ -2482,6 +2992,7 @@ function DocsLayout({
           <div className="space-y-1 mt-1 pl-2">
             {[
               { name: 'Introduction', path: '/docs/introduction' },
+              { name: 'Silex vs. shadcn', path: '/docs/comparison' },
               { name: 'Installation', path: '/docs/installation' },
               { name: 'Theming & Tokens', path: '/docs/theming' },
               { name: 'Configuration', path: '/docs/configuration' },
@@ -2635,6 +3146,7 @@ function DocsLayout({
       {/* 2. Middle Main Documentation Area */}
       <main className="flex-1 min-w-0 space-y-8">
         {docSlug === 'introduction' && <IntroductionDoc />}
+        {docSlug === 'comparison' && <ComparisonDoc activeTheme={activeTheme} />}
         {docSlug === 'installation' && <InstallationDoc />}
         {docSlug === 'theming' && <ThemingDoc />}
         {docSlug === 'configuration' && <ConfigurationDoc />}

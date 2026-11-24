@@ -36,7 +36,8 @@ fn main() {
             let available = [
                 "button", "dialog", "sheet", "card", "alert", "badge",
                 "switch", "accordion", "input", "separator", "table", "tooltip",
-                "avatar", "checkbox", "textarea", "progress", "skeleton"
+                "avatar", "checkbox", "textarea", "progress", "skeleton",
+                "tabs", "select", "slider", "toggle", "popover"
             ];
             if available.contains(&name.as_str()) {
                 println!("Adding {} to your project...", name.bold());
@@ -61,13 +62,18 @@ fn main() {
                 ("checkbox", "Accessible binary and indeterminate control"),
                 ("dialog", "Modal dialog with backdrop and animations"),
                 ("input", "Text and numeric form inputs with validation styles"),
+                ("popover", "Non-modal floating content overlay container"),
                 ("progress", "Deterministic completion and percentage bars"),
+                ("select", "Custom dropdown single-item selection picker"),
                 ("separator", "Visual divider with orientation support"),
                 ("sheet", "Slide-out modal drawer with 4-directional support"),
                 ("skeleton", "Loading placeholder wireframe animations"),
+                ("slider", "Continuous numeric range scrubber control"),
                 ("switch", "Toggleable boolean switch state control"),
                 ("table", "Responsive, accessible data display table"),
+                ("tabs", "Tabbed panel switcher with keyboard navigation"),
                 ("textarea", "Multiline resizable form text inputs"),
+                ("toggle", "Two-state push action toggle button"),
                 ("tooltip", "Contextual hover tooltip with directional arrows"),
             ];
             for (comp, desc) in components {

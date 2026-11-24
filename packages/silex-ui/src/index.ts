@@ -310,6 +310,11 @@ export const components = [
   "table",
   "progress",
   "skeleton",
+  "tabs",
+  "select",
+  "slider",
+  "toggle",
+  "popover",
 ] as const;
 
 export type ComponentName = typeof components[number];
