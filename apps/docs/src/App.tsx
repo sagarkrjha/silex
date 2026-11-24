@@ -57,7 +57,12 @@ import {
   ListFilter,
   Layers as TabsIcon,
   HelpCircle,
-  Scale
+  Scale,
+  LayoutGrid,
+  List as ListIcon,
+  GalleryHorizontal,
+  Wallpaper,
+  Navigation
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import Prism from 'prismjs';
@@ -2628,6 +2633,492 @@ export const Example: React.FC = () => {
 let mut pop = PopoverState::new();
 pop.open();
 assert!(pop.is_open());`,
+    },
+  },
+
+  sidebar: {
+    id: 'sidebar',
+    name: 'Sidebar',
+    category: 'Layout',
+    icon: <PanelLeft className="h-4 w-4" />,
+    description: 'Collapsible navigation sidebar drawer with state preservation and compact modes.',
+    markdownDoc: `
+### Overview
+The **Sidebar** component provides a structured collapsible vertical navigation column. State is managed by \`SidebarState\` in \`silex-ui-core\`, guaranteeing zero layout shifts.
+    `,
+    preview: (accent: string) => {
+      const [collapsed, setCollapsed] = useState(false);
+      return (
+        <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950 p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-semibold text-zinc-800 dark:text-zinc-200">Sidebar Preview</span>
+            <button
+              type="button"
+              onClick={() => setCollapsed(!collapsed)}
+              className="px-2 py-1 rounded text-[11px] font-mono border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 transition cursor-pointer"
+            >
+              {collapsed ? 'Expand (w-64)' : 'Collapse (w-16)'}
+            </button>
+          </div>
+          <div className={`border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 rounded-lg p-3 transition-all duration-300 flex flex-col gap-2 ${collapsed ? 'w-20' : 'w-full'}`}>
+            <div className="flex items-center gap-2 text-xs font-semibold" style={{ color: accent }}>
+              <Flame className="h-4 w-4 shrink-0" />
+              {!collapsed && <span>Silex Console</span>}
+            </div>
+            <div className="space-y-1">
+              {['Overview', 'Deployments', 'Settings'].map((item, idx) => (
+                <div
+                  key={item}
+                  className={`flex items-center gap-2 p-1.5 rounded text-xs transition cursor-pointer ${
+                    idx === 0 ? 'bg-zinc-100 dark:bg-zinc-800 font-semibold text-zinc-900 dark:text-white' : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                  }`}
+                >
+                  <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: idx === 0 ? accent : '#a1a1aa' }} />
+                  {!collapsed && <span>{item}</span>}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add sidebar',
+      npm: 'npx silex-ui add sidebar',
+      bun: 'bunx silex-ui add sidebar',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'collapsed', type: 'boolean', default: 'false', description: 'Whether the sidebar is collapsed into mini mode' },
+      { name: 'onToggle', type: '() => void', default: '-', description: 'Callback fired when expand/collapse toggles' },
+    ],
+    code: {
+      react: `import React, { useState } from "react";
+import { Sidebar, SidebarItem } from "@/components/ui/sidebar";
+
+export const Example: React.FC = () => {
+  const [collapsed, setCollapsed] = useState(false);
+  return (
+    <Sidebar collapsed={collapsed} onToggle={() => setCollapsed(!collapsed)}>
+      <SidebarItem icon={<HomeIcon />} label="Dashboard" active />
+      <SidebarItem icon={<SettingsIcon />} label="Settings" />
+    </Sidebar>
+  );
+};`,
+      vue: `<template>
+  <Sidebar :collapsed="collapsed" @toggle="collapsed = !collapsed">
+    <SidebarItem label="Dashboard" :active="true" />
+  </Sidebar>
+</template>`,
+      svelte: `<Sidebar bind:collapsed={collapsed}>
+  <SidebarItem label="Dashboard" active={true} />
+</Sidebar>`,
+      angular: `<silex-sidebar [collapsed]="collapsed"></silex-sidebar>`,
+      web: `<silex-sidebar collapsed="false"></silex-sidebar>`,
+      rust: `use silex_ui_core::components::sidebar::SidebarState;
+
+let mut side = SidebarState::new(false);
+side.toggle();
+assert!(side.is_collapsed());`,
+    },
+  },
+
+  navbar: {
+    id: 'navbar',
+    name: 'Navbar',
+    category: 'Layout',
+    icon: <Navigation className="h-4 w-4" />,
+    description: 'Sticky, responsive application top bar with brand mark, action links, and mobile drawer.',
+    markdownDoc: `
+### Overview
+The **Navbar** provides a semantic, accessible top header with backdrop blur and responsive collapsible hamburger menus.
+    `,
+    preview: (accent: string) => {
+      const [open, setOpen] = useState(false);
+      return (
+        <div className="w-full max-w-md rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 space-y-3">
+          <div className="flex items-center justify-between border-b border-zinc-100 dark:border-zinc-800 pb-3">
+            <div className="flex items-center gap-2 font-bold text-xs text-zinc-900 dark:text-white">
+              <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: accent }} />
+              <span>Silex App</span>
+            </div>
+            <div className="hidden sm:flex items-center gap-3 text-xs text-zinc-500">
+              <span className="font-semibold text-zinc-900 dark:text-white">Docs</span>
+              <span>Components</span>
+              <span>Showcase</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setOpen(!open)}
+              className="sm:hidden px-2 py-1 rounded text-[11px] font-mono border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300"
+            >
+              {open ? 'Close' : 'Menu'}
+            </button>
+          </div>
+          {open && (
+            <div className="sm:hidden space-y-1 pt-1 pb-2 text-xs">
+              <div className="p-1.5 rounded bg-zinc-100 dark:bg-zinc-800 font-semibold text-zinc-900 dark:text-white">Docs</div>
+              <div className="p-1.5 rounded text-zinc-600 dark:text-zinc-400">Components</div>
+              <div className="p-1.5 rounded text-zinc-600 dark:text-zinc-400">Showcase</div>
+            </div>
+          )}
+          <div className="text-[11px] text-zinc-400">Fixed top header with responsive mobile drawer</div>
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add navbar',
+      npm: 'npx silex-ui add navbar',
+      bun: 'bunx silex-ui add navbar',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'sticky', type: 'boolean', default: 'true', description: 'Whether the bar sticks to viewport top' },
+      { name: 'mobileOpen', type: 'boolean', default: 'false', description: 'Controls mobile dropdown drawer visibility' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Navbar, NavbarBrand, NavbarNav, NavbarLink } from "@/components/ui/navbar";
+
+export const Example: React.FC = () => {
+  return (
+    <Navbar sticky>
+      <NavbarBrand>Acme Engine</NavbarBrand>
+      <NavbarNav>
+        <NavbarLink href="/docs" active>Docs</NavbarLink>
+        <NavbarLink href="/pricing">Pricing</NavbarLink>
+      </NavbarNav>
+    </Navbar>
+  );
+};`,
+      vue: `<template>
+  <Navbar :sticky="true">
+    <NavbarBrand>Acme Engine</NavbarBrand>
+  </Navbar>
+</template>`,
+      svelte: `<Navbar sticky={true} />`,
+      angular: `<silex-navbar [sticky]="true"></silex-navbar>`,
+      web: `<silex-navbar sticky="true"></silex-navbar>`,
+      rust: `use silex_ui_core::components::navbar::NavbarState;
+
+let mut nav = NavbarState::new(false);
+nav.toggle_mobile();
+assert!(nav.is_mobile_open());`,
+    },
+  },
+
+  grid: {
+    id: 'grid',
+    name: 'Grid',
+    category: 'Layout',
+    icon: <LayoutGrid className="h-4 w-4" />,
+    description: 'Responsive multi-column CSS grid layout container with automated breakpoints.',
+    markdownDoc: `
+### Overview
+The **Grid** component computes responsive column allocations and gap classes cleanly across viewport sizes.
+    `,
+    preview: (accent: string) => {
+      return (
+        <div className="w-full max-w-md grid grid-cols-3 gap-2.5">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              className="p-3.5 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-center font-mono text-xs font-semibold text-zinc-700 dark:text-zinc-300"
+              style={i === 1 ? { borderColor: accent, color: accent } : {}}
+            >
+              Col {i}
+            </div>
+          ))}
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add grid',
+      npm: 'npx silex-ui add grid',
+      bun: 'bunx silex-ui add grid',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'cols', type: '1 | 2 | 3 | 4 | 6 | 12', default: '3', description: 'Number of columns in grid' },
+      { name: 'gap', type: '2 | 4 | 6 | 8', default: '4', description: 'Spacing scale between grid cells' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Grid, GridItem } from "@/components/ui/grid";
+
+export const Example: React.FC = () => {
+  return (
+    <Grid cols={3} gap={4}>
+      <GridItem>Item 1</GridItem>
+      <GridItem>Item 2</GridItem>
+      <GridItem>Item 3</GridItem>
+    </Grid>
+  );
+};`,
+      vue: `<template>
+  <Grid :cols="3" :gap="4">
+    <GridItem>Item 1</GridItem>
+  </Grid>
+</template>`,
+      svelte: `<Grid cols={3} gap={4}>...</Grid>`,
+      angular: `<silex-grid [cols]="3" [gap]="4"></silex-grid>`,
+      web: `<silex-grid cols="3" gap="4"></silex-grid>`,
+      rust: `use silex_ui_core::components::grid::GridComputer;
+
+let cls = GridComputer::compute_classes(3, 4);
+assert!(cls.contains("grid-cols-3"));`,
+    },
+  },
+
+  list: {
+    id: 'list',
+    name: 'List',
+    category: 'Primitives',
+    icon: <ListIcon className="h-4 w-4" />,
+    description: 'Structured list group with dividers, interactive hover states, and trailing indicators.',
+    markdownDoc: `
+### Overview
+The **List** component standardizes row-oriented records, menu options, or divided settings items with full keyboard access.
+    `,
+    preview: (accent: string) => {
+      return (
+        <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 divide-y divide-zinc-200 dark:divide-zinc-800 overflow-hidden shadow-sm">
+          {[
+            { label: 'Security & Two-Factor Authentication', badge: 'Active' },
+            { label: 'API Keys & Personal Tokens', badge: '3 Keys' },
+            { label: 'Billing Invoices & Receipts', badge: 'Up to date' },
+          ].map((item, idx) => (
+            <div
+              key={item.label}
+              className="flex items-center justify-between p-3.5 text-xs hover:bg-zinc-50 dark:hover:bg-zinc-800/60 transition cursor-pointer"
+            >
+              <span className="font-medium text-zinc-900 dark:text-zinc-100">{item.label}</span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400" style={idx === 0 ? { borderColor: accent, color: accent } : {}}>
+                {item.badge}
+              </span>
+            </div>
+          ))}
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add list',
+      npm: 'npx silex-ui add list',
+      bun: 'bunx silex-ui add list',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'divided', type: 'boolean', default: 'true', description: 'Renders border dividers between list items' },
+      { name: 'interactive', type: 'boolean', default: 'true', description: 'Enables hover highlights and keyboard selection' },
+    ],
+    code: {
+      react: `import React from "react";
+import { List, ListItem } from "@/components/ui/list";
+
+export const Example: React.FC = () => {
+  return (
+    <List divided>
+      <ListItem>Account Profile</ListItem>
+      <ListItem>Billing Information</ListItem>
+    </List>
+  );
+};`,
+      vue: `<template>
+  <List :divided="true">
+    <ListItem>Account Profile</ListItem>
+  </List>
+</template>`,
+      svelte: `<List divided={true}><ListItem>Account</ListItem></List>`,
+      angular: `<silex-list [divided]="true"></silex-list>`,
+      web: `<silex-list divided="true"></silex-list>`,
+      rust: `use silex_ui_core::components::list::ListComputer;
+
+let cls = ListComputer::compute_container_classes(true);
+assert!(cls.contains("divide-y"));`,
+    },
+  },
+
+  carousel: {
+    id: 'carousel',
+    name: 'Carousel',
+    category: 'Surfaces',
+    icon: <GalleryHorizontal className="h-4 w-4" />,
+    description: 'Sliding carousel swiper with keyboard navigation, indicator dots, and slide transitions.',
+    markdownDoc: `
+### Overview
+The **Carousel** component manages sequential slide presentations with \`CarouselState\` in \`silex-ui-core\`.
+    `,
+    preview: (accent: string) => {
+      const slides = [
+        { title: 'Deterministic Rust Engine', desc: '0 memory leaks across 50,000 rapid lifecycle state transitions.' },
+        { title: 'True Cross-Framework Polyglot', desc: 'Generates idiomatic code for React 19, Vue 3, Svelte 5 & Angular.' },
+        { title: 'Eye-Safe Light & Dark Tokens', desc: 'Guaranteed WCAG AA/AAA contrast ratios with soft stone backgrounds.' },
+      ];
+      const [idx, setIdx] = useState(0);
+
+      return (
+        <div className="w-full max-w-sm rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 space-y-4 shadow-sm">
+          <div className="h-24 flex flex-col justify-center space-y-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: accent }}>
+              Slide {idx + 1} of {slides.length}
+            </span>
+            <h4 className="text-sm font-bold text-zinc-950 dark:text-white">{slides[idx].title}</h4>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">{slides[idx].desc}</p>
+          </div>
+          <div className="flex items-center justify-between pt-2 border-t border-zinc-100 dark:border-zinc-800">
+            <div className="flex gap-1.5">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  aria-label={`Go to slide ${i + 1}`}
+                  onClick={() => setIdx(i)}
+                  className={`h-1.5 rounded-full transition-all ${
+                    idx === i ? 'w-5' : 'w-1.5 bg-zinc-300 dark:bg-zinc-700'
+                  }`}
+                  style={idx === i ? { backgroundColor: accent } : {}}
+                />
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                aria-label="Previous slide"
+                onClick={() => setIdx(idx === 0 ? slides.length - 1 : idx - 1)}
+                className="px-2 py-1 rounded text-xs font-mono border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+              >
+                Prev
+              </button>
+              <button
+                type="button"
+                aria-label="Next slide"
+                onClick={() => setIdx((idx + 1) % slides.length)}
+                className="px-2 py-1 rounded text-xs font-mono border border-zinc-300 dark:border-zinc-700 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add carousel',
+      npm: 'npx silex-ui add carousel',
+      bun: 'bunx silex-ui add carousel',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'initialSlide', type: 'number', default: '0', description: 'Starting slide index' },
+      { name: 'loop', type: 'boolean', default: 'true', description: 'Whether to loop back to start after reaching end' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Carousel, CarouselItem, CarouselNext, CarouselPrev } from "@/components/ui/carousel";
+
+export const Example: React.FC = () => {
+  return (
+    <Carousel>
+      <CarouselItem>Slide 1</CarouselItem>
+      <CarouselItem>Slide 2</CarouselItem>
+      <CarouselPrev />
+      <CarouselNext />
+    </Carousel>
+  );
+};`,
+      vue: `<template>
+  <Carousel>
+    <CarouselItem>Slide 1</CarouselItem>
+  </Carousel>
+</template>`,
+      svelte: `<Carousel><CarouselItem>Slide 1</CarouselItem></Carousel>`,
+      angular: `<silex-carousel></silex-carousel>`,
+      web: `<silex-carousel></silex-carousel>`,
+      rust: `use silex_ui_core::components::carousel::CarouselState;
+
+let mut car = CarouselState::new(3, 0);
+car.next();
+assert_eq!(car.current_index(), 1);`,
+    },
+  },
+
+  background: {
+    id: 'background',
+    name: 'Background',
+    category: 'Surfaces',
+    icon: <Wallpaper className="h-4 w-4" />,
+    description: 'Decorative anti-glare patterned canvas surfaces (dots, lines, neutral) with zero gradients.',
+    markdownDoc: `
+### Overview
+The **Background** component renders calm, human-friendly decorative textures (grid lines, matrix dots, neutral stone) strictly honoring the anti-gradient design directive.
+    `,
+    preview: (accent: string) => {
+      const [pattern, setPattern] = useState<'dots' | 'lines' | 'neutral'>('dots');
+      return (
+        <div className="w-full max-w-sm space-y-3">
+          <div className="flex gap-2">
+            {(['dots', 'lines', 'neutral'] as const).map((p) => (
+              <button
+                key={p}
+                type="button"
+                onClick={() => setPattern(p)}
+                className={`px-2.5 py-1 rounded text-xs font-mono capitalize border transition ${
+                  pattern === p ? 'font-bold' : 'text-zinc-500 border-zinc-200 dark:border-zinc-800'
+                }`}
+                style={pattern === p ? { borderColor: accent, color: accent } : {}}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+          <div
+            className={`h-32 rounded-xl border border-zinc-300 dark:border-zinc-800 flex items-center justify-center p-4 transition-all ${
+              pattern === 'dots'
+                ? 'bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800'
+                : pattern === 'lines'
+                ? 'bg-zinc-50 dark:bg-zinc-950 [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px)] [background-size:20px_20px] text-zinc-300 dark:text-zinc-800'
+                : 'bg-stone-50 dark:bg-zinc-900'
+            }`}
+          >
+            <div className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-800 text-xs font-semibold text-zinc-900 dark:text-white shadow-sm">
+              Surface Texture: {pattern}
+            </div>
+          </div>
+        </div>
+      );
+    },
+    install: {
+      pnpm: 'pnpm dlx silex-ui add background',
+      npm: 'npx silex-ui add background',
+      bun: 'bunx silex-ui add background',
+      cargo: 'cargo add silex-ui-core',
+    },
+    props: [
+      { name: 'variant', type: '"dots" | "lines" | "neutral"', default: '"dots"', description: 'Geometric texture variant to display' },
+    ],
+    code: {
+      react: `import React from "react";
+import { Background } from "@/components/ui/background";
+
+export const Example: React.FC = () => {
+  return (
+    <Background variant="dots">
+      <div className="p-8">Content over subtle grid dots</div>
+    </Background>
+  );
+};`,
+      vue: `<template>
+  <Background variant="dots">
+    <div>Content</div>
+  </Background>
+</template>`,
+      svelte: `<Background variant="dots"><div>Content</div></Background>`,
+      angular: `<silex-background variant="dots"></silex-background>`,
+      web: `<silex-background variant="dots"></silex-background>`,
+      rust: `use silex_ui_core::components::background::BackgroundComputer;
+
+let cls = BackgroundComputer::compute_classes("dots");
+assert!(cls.contains("bg-zinc-50"));`,
     },
   },
 };

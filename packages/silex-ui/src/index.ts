@@ -315,6 +315,12 @@ export const components = [
   "slider",
   "toggle",
   "popover",
+  "sidebar",
+  "navbar",
+  "grid",
+  "list",
+  "carousel",
+  "background",
 ] as const;
 
 export type ComponentName = typeof components[number];

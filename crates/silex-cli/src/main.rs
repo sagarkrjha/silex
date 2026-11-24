@@ -37,7 +37,8 @@ fn main() {
                 "button", "dialog", "sheet", "card", "alert", "badge",
                 "switch", "accordion", "input", "separator", "table", "tooltip",
                 "avatar", "checkbox", "textarea", "progress", "skeleton",
-                "tabs", "select", "slider", "toggle", "popover"
+                "tabs", "select", "slider", "toggle", "popover",
+                "sidebar", "navbar", "grid", "list", "carousel", "background"
             ];
             if available.contains(&name.as_str()) {
                 println!("Adding {} to your project...", name.bold());
@@ -56,17 +57,23 @@ fn main() {
                 ("accordion", "Accessible collapsible disclosure sections"),
                 ("alert", "Contextual feedback messages and banners"),
                 ("avatar", "Profile representations with fallback states"),
+                ("background", "Eye-safe decorative pattern surfaces without gradients"),
                 ("badge", "Compact status and numerical indicators"),
                 ("button", "Interactive actions with variants and loading state"),
                 ("card", "Structured container with headers, footers and hover states"),
+                ("carousel", "Multi-slide swiper viewport with dots and transitions"),
                 ("checkbox", "Accessible binary and indeterminate control"),
                 ("dialog", "Modal dialog with backdrop and animations"),
+                ("grid", "Responsive layout grid system with flexible spans"),
                 ("input", "Text and numeric form inputs with validation styles"),
+                ("list", "Interactive or static divided list groups"),
+                ("navbar", "Responsive sticky header bar with mobile navigation"),
                 ("popover", "Non-modal floating content overlay container"),
                 ("progress", "Deterministic completion and percentage bars"),
                 ("select", "Custom dropdown single-item selection picker"),
                 ("separator", "Visual divider with orientation support"),
                 ("sheet", "Slide-out modal drawer with 4-directional support"),
+                ("sidebar", "Collapsible navigation drawer with compact mode"),
                 ("skeleton", "Loading placeholder wireframe animations"),
                 ("slider", "Continuous numeric range scrubber control"),
                 ("switch", "Toggleable boolean switch state control"),
