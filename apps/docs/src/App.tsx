@@ -67,7 +67,8 @@ import {
   Tablet,
   Monitor,
   Split,
-  Eye
+  Eye,
+  Code
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import Prism from 'prismjs';
@@ -282,6 +283,7 @@ export interface ComponentDoc {
     name: string;
     description: string;
     render: (accentColor: string, accentTextColor: string) => React.ReactNode;
+    code?: string;
   }[];
   install: {
     npm: string;
@@ -4898,6 +4900,110 @@ export function MainLayout({
 // 3-Column Documentation Page (Orchestrates Sidebar & MainLayout)
 // ----------------------------------------------------------------------------
 
+// ----------------------------------------------------------------------------
+// Interactive Variety Card Component with Code Snippet & Copy Action
+// ----------------------------------------------------------------------------
+
+interface VarietyCardProps {
+  variant: {
+    name: string;
+    description: string;
+    render: (accent: string, accentText: string) => React.ReactNode;
+    code?: string;
+  };
+  activeTheme: ThemeConfig;
+  defaultCodeSnippet: string;
+}
+
+function VarietyCard({ variant, activeTheme, defaultCodeSnippet }: VarietyCardProps) {
+  const [showCode, setShowCode] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Generate an accurate, clean snippet if custom one is not provided
+  const codeToDisplay = variant.code || `// ${variant.name} Variant
+// ${variant.description}
+${defaultCodeSnippet}`;
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(codeToDisplay);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 shadow-xs overflow-hidden transition-all duration-200">
+      {/* Variety Card Header */}
+      <div className="p-4 border-b border-zinc-200 dark:border-zinc-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-zinc-50/50 dark:bg-zinc-900/50">
+        <div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-zinc-900 dark:text-white">{variant.name}</span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded font-mono font-medium bg-zinc-200 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+              Interactive
+            </span>
+          </div>
+          <p className="text-xs text-zinc-500 dark:text-zinc-400 mt-0.5">{variant.description}</p>
+        </div>
+
+        <div className="flex items-center gap-1.5 self-end sm:self-auto shrink-0">
+          <button
+            type="button"
+            onClick={() => setShowCode(!showCode)}
+            className={`flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md border transition cursor-pointer ${
+              showCode
+                ? 'bg-zinc-200 dark:bg-zinc-800 text-zinc-900 dark:text-white border-zinc-300 dark:border-zinc-700'
+                : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white border-zinc-300 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800/60'
+            }`}
+            title="Toggle Code Snippet"
+          >
+            <Code className="h-3.5 w-3.5" />
+            <span>{showCode ? 'Hide Code' : 'View Code'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-md border border-zinc-300 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/60 transition cursor-pointer"
+            title="Copy Variant Code"
+          >
+            {copied ? <Check className="h-3.5 w-3.5 text-emerald-500" /> : <Copy className="h-3.5 w-3.5" />}
+            <span>{copied ? 'Copied' : 'Copy'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Interactive Variety Preview Canvas */}
+      <div className="p-6 sm:p-8 flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 min-h-[120px]">
+        <div className="text-zinc-900 dark:text-white w-full flex justify-center">
+          <ErrorBoundary>
+            <ComponentPreviewRenderer
+              previewFn={variant.render}
+              accent={activeTheme.accentHex}
+              accentText={activeTheme.accentTextHex}
+            />
+          </ErrorBoundary>
+        </div>
+      </div>
+
+      {/* Expandable Code Snippet Block */}
+      {showCode && (
+        <div className="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-900 p-3 animate-slide-in-up">
+          <div className="flex items-center justify-between pb-2 text-[10px] font-mono text-zinc-400 uppercase tracking-wider">
+            <span>JSX / Template Snippet</span>
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="text-xs text-orange-400 hover:underline flex items-center gap-1 cursor-pointer"
+            >
+              {copied ? 'Copied to clipboard' : 'Copy code snippet'}
+            </button>
+          </div>
+          <CodeHighlight code={codeToDisplay} language="react" />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function DocsLayout({ 
   activeTheme,
   mobileNavOpen,
@@ -5066,27 +5172,12 @@ function DocsLayout({
 
               <div className="flex flex-col gap-4">
                 {currentComponent.variants.map((v, idx) => (
-                  <div
+                  <VarietyCard
                     key={v.name || idx}
-                    className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-3 shadow-xs"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-zinc-900 dark:text-white">{v.name}</span>
-                      <span className="text-[10px] font-mono text-zinc-400">Variant</span>
-                    </div>
-                    <p className="text-xs text-zinc-500 dark:text-zinc-400">{v.description}</p>
-                    <div className="pt-2 flex items-center justify-center p-6 rounded-lg bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 border border-zinc-200 dark:border-zinc-800 min-h-[100px]">
-                      <div className="text-zinc-900 dark:text-white w-full flex justify-center">
-                        <ErrorBoundary>
-                          <ComponentPreviewRenderer
-                            previewFn={v.render}
-                            accent={activeTheme.accentHex}
-                            accentText={activeTheme.accentTextHex}
-                          />
-                        </ErrorBoundary>
-                      </div>
-                    </div>
-                  </div>
+                    variant={v}
+                    activeTheme={activeTheme}
+                    defaultCodeSnippet={currentComponent.code[activeFramework] || currentComponent.code.react}
+                  />
                 ))}
               </div>
             </div>
