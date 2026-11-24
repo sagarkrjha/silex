@@ -62,7 +62,12 @@ import {
   List as ListIcon,
   GalleryHorizontal,
   Wallpaper,
-  Navigation
+  Navigation,
+  Smartphone,
+  Tablet,
+  Monitor,
+  Split,
+  Eye
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import Prism from 'prismjs';
@@ -3554,6 +3559,8 @@ function DocsLayout({
   const [searchQuery, setSearchQuery] = useState('');
   const [copied, setCopied] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
+  const [previewViewport, setPreviewViewport] = useState<'responsive' | 'desktop' | 'tablet' | 'mobile'>('responsive');
+  const [previewPattern, setPreviewPattern] = useState<'neutral' | 'dots' | 'lines'>('neutral');
 
   const [gettingStartedOpen, setGettingStartedOpen] = useState(true);
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
@@ -3803,14 +3810,114 @@ function DocsLayout({
 
             {/* Interactive Preview Canvas */}
             <div id="interactive-preview" className="space-y-3">
-              <div className="flex items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-zinc-200 dark:border-zinc-800 pb-2.5 gap-2">
                 <div className="flex items-center gap-2 text-sm font-semibold text-zinc-900 dark:text-white">
                   <Sparkles className="h-4 w-4" style={{ color: activeTheme.accentHex }} />
                   <span>Interactive Preview Canvas</span>
                 </div>
+
+                {/* Silex Layout and Surface Controls */}
+                <div className="flex items-center gap-3">
+                  {/* Pattern Surface Switcher */}
+                  <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700/60">
+                    {(['neutral', 'dots', 'lines'] as const).map((pat) => (
+                      <button
+                        key={pat}
+                        type="button"
+                        aria-label={`Surface texture ${pat}`}
+                        onClick={() => setPreviewPattern(pat)}
+                        className={`px-2 py-0.5 rounded text-[11px] font-mono capitalize transition ${
+                          previewPattern === pat
+                            ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs font-semibold'
+                            : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
+                        }`}
+                      >
+                        {pat}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Responsive Viewport Switcher */}
+                  <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700/60">
+                    <button
+                      type="button"
+                      aria-label="Responsive Viewport"
+                      onClick={() => setPreviewViewport('responsive')}
+                      className={`p-1 rounded transition ${
+                        previewViewport === 'responsive'
+                          ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                          : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                      }`}
+                      title="Fluid Responsive (100%)"
+                    >
+                      <Split className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Desktop Viewport"
+                      onClick={() => setPreviewViewport('desktop')}
+                      className={`p-1 rounded transition ${
+                        previewViewport === 'desktop'
+                          ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                          : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                      }`}
+                      title="Desktop (1024px)"
+                    >
+                      <Monitor className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Tablet Viewport"
+                      onClick={() => setPreviewViewport('tablet')}
+                      className={`p-1 rounded transition ${
+                        previewViewport === 'tablet'
+                          ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                          : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                      }`}
+                      title="Tablet (640px)"
+                    >
+                      <Tablet className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      type="button"
+                      aria-label="Mobile Viewport"
+                      onClick={() => setPreviewViewport('mobile')}
+                      className={`p-1 rounded transition ${
+                        previewViewport === 'mobile'
+                          ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                          : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                      }`}
+                      title="Mobile (360px)"
+                    >
+                      <Smartphone className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div className="rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-10 flex items-center justify-center min-h-[220px] shadow-sm">
-                {currentComponent.preview(activeTheme.accentHex, activeTheme.accentTextHex)}
+
+              {/* Viewport Canvas Wrapper */}
+              <div className="flex justify-center w-full transition-all duration-300">
+                <div
+                  className={`transition-all duration-300 rounded-xl border border-zinc-300 dark:border-zinc-800 p-8 flex items-center justify-center min-h-[240px] shadow-sm ${
+                    previewViewport === 'mobile'
+                      ? 'w-[360px]'
+                      : previewViewport === 'tablet'
+                      ? 'w-[640px]'
+                      : previewViewport === 'desktop'
+                      ? 'w-[960px] max-w-full'
+                      : 'w-full'
+                  } ${
+                    previewPattern === 'dots'
+                      ? 'bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800'
+                      : previewPattern === 'lines'
+                      ? 'bg-zinc-50 dark:bg-zinc-950 [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px)] [background-size:20px_20px] text-zinc-300 dark:text-zinc-800'
+                      : 'bg-white dark:bg-zinc-900'
+                  }`}
+                >
+                  <div className="w-full flex justify-center text-zinc-900 dark:text-white">
+                    {currentComponent.preview(activeTheme.accentHex, activeTheme.accentTextHex)}
+                  </div>
+                </div>
               </div>
             </div>
 
