@@ -647,21 +647,22 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
         </div>
 
         <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-zinc-950 dark:text-white leading-[1.15] sm:leading-[1.1]">
-          We struck flint against steel <br className="hidden sm:inline" />
+          Engineered in Rust. <br className="hidden sm:inline" />
           <span style={{ color: activeTheme.accentHex }}>
-            because UI kits lost their soul.
+            Designed for Modern Frontends.
           </span>
         </h1>
 
         <p className="max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-zinc-700 dark:text-zinc-300 leading-relaxed font-normal px-2">
-          Tired of 40MB JavaScript node dependencies, mysterious runtime errors, and synthetic AI template slop? 
-          <strong> Silex</strong> is the pure Rust component core engineered for speed, mathematical WCAG contrast, and human editorial beauty across React, Vue, Svelte, Angular, and Web Components.
+          <strong>Silex</strong> is a high-performance UI component engine with a pure Rust core, compiled to WebAssembly 
+          and C-ABI. Built with copy-paste code ownership, mathematical WCAG AA contrast compliance, and first-class support 
+          for React 19, Vue 3, Svelte 5, Angular 19, and Web Components.
         </p>
 
         {/* Scaffold Box */}
         <div className="max-w-lg mx-auto bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-800 rounded-xl p-3 shadow-sm space-y-2">
           <div className="flex items-center justify-between px-2">
-            <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Start the Spark</span>
+            <span className="text-[11px] font-semibold text-zinc-500 uppercase tracking-wider">Quick Start CLI</span>
             <div className="flex gap-1">
               {(['pnpm', 'npm', 'bun', 'cargo'] as const).map((pm) => (
                 <button
@@ -722,19 +723,18 @@ function LandingPage({ activeTheme }: { activeTheme: ThemeConfig }) {
         </div>
       </section>
 
-      {/* Act II: The Anatomy of a Flame */}
+      {/* Act II: Deterministic State Architecture */}
       <section className="max-w-6xl mx-auto px-6 py-16 space-y-12">
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase" style={{ color: activeTheme.accentHex }}>
             <Compass className="h-4 w-4" />
-            <span>Act II: The Anatomy of Determinism</span>
+            <span>Deterministic Architecture</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-zinc-950 dark:text-white">
-            What if your UI state could never enter an invalid state?
+            Formal Rust State Machines with Zero Undefined Behavior
           </h2>
           <p className="text-zinc-600 dark:text-zinc-400 text-sm sm:text-base">
-            In typical frontends, modal dialogs, drawers, and switches get tangled in competing React useEffect hooks. 
-            In Silex, every component transition is a mathematically verified state machine in Rust.
+            Every interactive component transition is driven by algebraic data types in Rust, eliminating race conditions and impossible runtime UI states.
           </p>
         </div>
 
@@ -809,7 +809,7 @@ impl DialogState {
         <div className="text-center max-w-2xl mx-auto space-y-3">
           <div className="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase" style={{ color: activeTheme.accentHex }}>
             <Layers className="h-4 w-4" />
-            <span>Act III: First-Class Polyglot Architecture</span>
+            <span>Cross-Framework Architecture</span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-bold text-zinc-950 dark:text-white">
             Write Once in Rust. Deploy to Any Framework.
@@ -839,15 +839,15 @@ impl DialogState {
         </div>
       </section>
 
-      {/* Act IV: The Polyglot Manifesto */}
+      {/* Code Ownership Section */}
       <section className="max-w-4xl mx-auto px-6 py-20 text-center space-y-8 border-t border-zinc-300 dark:border-zinc-800">
         <Heart className="h-8 w-8 mx-auto" style={{ color: activeTheme.accentHex }} />
         <h2 className="text-3xl font-extrabold text-zinc-950 dark:text-white">
-          Copy what you own. Change what you wish.
+          Full Code Ownership. Zero Blackbox Dependencies.
         </h2>
         <p className="text-zinc-600 dark:text-zinc-400 text-base max-w-xl mx-auto leading-relaxed">
-          Like the philosophy of shadcn, Silex doesn't lock you into an opaque node_modules black box. 
-          The CLI copies raw, accessible TypeScript components directly into your codebase, powered by a native Rust core.
+          Inspired by the philosophy of shadcn, Silex doesn't lock your project into an opaque node_modules package. 
+          The CLI generates transparent, fully-typed source components directly into your codebase, backed by a deterministic Rust core.
         </p>
         <div>
           <Link
@@ -855,7 +855,7 @@ impl DialogState {
             className="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-semibold shadow-md transition"
             style={{ backgroundColor: activeTheme.accentHex, color: activeTheme.accentTextHex }}
           >
-            <span>Dive into the Components</span>
+            <span>Browse Components</span>
             <ChevronRight className="h-4 w-4" />
           </Link>
         </div>
@@ -3860,7 +3860,6 @@ function DocsLayout({
   const [copied, setCopied] = useState(false);
   const [activeSection, setActiveSection] = useState('overview');
   const [previewViewport, setPreviewViewport] = useState<'responsive' | 'desktop' | 'tablet' | 'mobile'>('responsive');
-  const [previewPattern, setPreviewPattern] = useState<'neutral' | 'dots' | 'lines'>('neutral');
 
   const [gettingStartedOpen, setGettingStartedOpen] = useState(true);
   const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({
@@ -4119,89 +4118,67 @@ function DocsLayout({
                   <span>Interactive Preview Canvas</span>
                 </div>
 
-                {/* Silex Layout and Surface Controls */}
-                <div className="flex items-center gap-3">
-                  {/* Pattern Surface Switcher */}
-                  <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700/60">
-                    {(['neutral', 'dots', 'lines'] as const).map((pat) => (
-                      <button
-                        key={pat}
-                        type="button"
-                        aria-label={`Surface texture ${pat}`}
-                        onClick={() => setPreviewPattern(pat)}
-                        className={`px-2 py-0.5 rounded text-[11px] font-mono capitalize transition ${
-                          previewPattern === pat
-                            ? 'bg-white dark:bg-zinc-900 text-zinc-950 dark:text-white shadow-xs font-semibold'
-                            : 'text-zinc-500 hover:text-zinc-800 dark:hover:text-zinc-300'
-                        }`}
-                      >
-                        {pat}
-                      </button>
-                    ))}
-                  </div>
-
-                  {/* Responsive Viewport Switcher */}
-                  <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700/60">
-                    <button
-                      type="button"
-                      aria-label="Responsive Viewport"
-                      onClick={() => setPreviewViewport('responsive')}
-                      className={`p-1 rounded transition ${
-                        previewViewport === 'responsive'
-                          ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
-                          : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
-                      }`}
-                      title="Fluid Responsive (100%)"
-                    >
-                      <Split className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Desktop Viewport"
-                      onClick={() => setPreviewViewport('desktop')}
-                      className={`p-1 rounded transition ${
-                        previewViewport === 'desktop'
-                          ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
-                          : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
-                      }`}
-                      title="Desktop (1024px)"
-                    >
-                      <Monitor className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Tablet Viewport"
-                      onClick={() => setPreviewViewport('tablet')}
-                      className={`p-1 rounded transition ${
-                        previewViewport === 'tablet'
-                          ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
-                          : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
-                      }`}
-                      title="Tablet (640px)"
-                    >
-                      <Tablet className="h-3.5 w-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label="Mobile Viewport"
-                      onClick={() => setPreviewViewport('mobile')}
-                      className={`p-1 rounded transition ${
-                        previewViewport === 'mobile'
-                          ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
-                          : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
-                      }`}
-                      title="Mobile (360px)"
-                    >
-                      <Smartphone className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
+                {/* Responsive Viewport Switcher */}
+                <div className="flex items-center gap-1 bg-zinc-100 dark:bg-zinc-800/80 p-0.5 rounded-lg border border-zinc-200 dark:border-zinc-700/60">
+                  <button
+                    type="button"
+                    aria-label="Responsive Viewport"
+                    onClick={() => setPreviewViewport('responsive')}
+                    className={`p-1 rounded transition ${
+                      previewViewport === 'responsive'
+                        ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+                    title="Fluid Responsive (100%)"
+                  >
+                    <Split className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Desktop Viewport"
+                    onClick={() => setPreviewViewport('desktop')}
+                    className={`p-1 rounded transition ${
+                      previewViewport === 'desktop'
+                        ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+                    title="Desktop (1024px)"
+                  >
+                    <Monitor className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Tablet Viewport"
+                    onClick={() => setPreviewViewport('tablet')}
+                    className={`p-1 rounded transition ${
+                      previewViewport === 'tablet'
+                        ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+                    title="Tablet (640px)"
+                  >
+                    <Tablet className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    type="button"
+                    aria-label="Mobile Viewport"
+                    onClick={() => setPreviewViewport('mobile')}
+                    className={`p-1 rounded transition ${
+                      previewViewport === 'mobile'
+                        ? 'bg-white dark:bg-zinc-900 text-orange-600 dark:text-orange-400 shadow-xs'
+                        : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-white'
+                    }`}
+                    title="Mobile (360px)"
+                  >
+                    <Smartphone className="h-3.5 w-3.5" />
+                  </button>
                 </div>
               </div>
 
-              {/* Viewport Canvas Wrapper */}
+              {/* Viewport Canvas Wrapper with Consistent Dotted Background */}
               <div className="flex justify-center w-full transition-all duration-300">
                 <div
-                  className={`transition-all duration-300 rounded-xl border border-zinc-300 dark:border-zinc-800 p-8 flex items-center justify-center min-h-[240px] shadow-sm ${
+                  className={`transition-all duration-300 rounded-xl border border-zinc-300 dark:border-zinc-800 p-8 flex items-center justify-center min-h-[240px] shadow-sm bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 ${
                     previewViewport === 'mobile'
                       ? 'w-[360px]'
                       : previewViewport === 'tablet'
@@ -4209,18 +4186,12 @@ function DocsLayout({
                       : previewViewport === 'desktop'
                       ? 'w-[960px] max-w-full'
                       : 'w-full'
-                  } ${
-                    previewPattern === 'dots'
-                      ? 'bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800'
-                      : previewPattern === 'lines'
-                      ? 'bg-zinc-50 dark:bg-zinc-950 [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px)] [background-size:20px_20px] text-zinc-300 dark:text-zinc-800'
-                      : 'bg-white dark:bg-zinc-900'
                   }`}
                 >
                   <div className="w-full flex justify-center text-zinc-900 dark:text-white">
                     <ErrorBoundary>
                       <ComponentPreviewRenderer
-                        key={`${currentComponent.id}-${previewViewport}-${previewPattern}`}
+                        key={`${currentComponent.id}-${previewViewport}`}
                         previewFn={currentComponent.preview}
                         accent={activeTheme.accentHex}
                         accentText={activeTheme.accentTextHex}
@@ -4252,14 +4223,16 @@ function DocsLayout({
                         <span className="text-[10px] font-mono text-zinc-400">Variant</span>
                       </div>
                       <p className="text-xs text-zinc-500 dark:text-zinc-400">{v.description}</p>
-                      <div className="pt-2 flex items-center justify-center p-4 rounded-lg bg-zinc-50 dark:bg-zinc-950 border border-zinc-100 dark:border-zinc-800/80 min-h-[90px]">
-                        <ErrorBoundary>
-                          <ComponentPreviewRenderer
-                            previewFn={v.render}
-                            accent={activeTheme.accentHex}
-                            accentText={activeTheme.accentTextHex}
-                          />
-                        </ErrorBoundary>
+                      <div className="pt-2 flex items-center justify-center p-6 rounded-lg bg-zinc-50 dark:bg-zinc-950 [background-image:radial-gradient(currentColor_1px,transparent_1px)] [background-size:16px_16px] text-zinc-300 dark:text-zinc-800 border border-zinc-200 dark:border-zinc-800 min-h-[100px]">
+                        <div className="text-zinc-900 dark:text-white w-full flex justify-center">
+                          <ErrorBoundary>
+                            <ComponentPreviewRenderer
+                              previewFn={v.render}
+                              accent={activeTheme.accentHex}
+                              accentText={activeTheme.accentTextHex}
+                            />
+                          </ErrorBoundary>
+                        </div>
                       </div>
                     </div>
                   ))}
