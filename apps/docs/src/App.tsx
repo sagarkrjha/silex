@@ -294,8 +294,66 @@ export interface ComponentDoc {
 }
 
 // ----------------------------------------------------------------------------
-// Global Theme Hook with HTML Class & CSS Custom Property Sync
+// Component Preview Renderer (Isolates component preview hooks from parent)
 // ----------------------------------------------------------------------------
+
+function ComponentPreviewRenderer({
+  previewFn,
+  accent,
+  accentText,
+}: {
+  previewFn: (accent: string, accentText: string) => React.ReactNode;
+  accent: string;
+  accentText: string;
+}) {
+  return <>{previewFn(accent, accentText)}</>;
+}
+
+// ----------------------------------------------------------------------------
+// Error Boundary
+// ----------------------------------------------------------------------------
+
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+    console.error('ErrorBoundary caught error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-6 rounded-xl border border-red-300 dark:border-red-900 bg-red-50 dark:bg-red-950/40 text-red-900 dark:text-red-200 space-y-3">
+          <div className="flex items-center gap-2 font-bold text-sm">
+            <AlertTriangle className="h-4 w-4 text-red-600 dark:text-red-400" />
+            <span>Component Preview Error</span>
+          </div>
+          <p className="text-xs font-mono">
+            {this.state.error?.message || 'An unexpected error occurred rendering this component preview.'}
+          </p>
+          <button
+            type="button"
+            onClick={() => this.setState({ hasError: false, error: null })}
+            className="px-3 py-1.5 rounded-md bg-red-600 text-white text-xs font-semibold hover:bg-red-700 transition cursor-pointer"
+          >
+            Retry Preview
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 function useActiveTheme() {
   const [selectedTheme, setSelectedTheme] = useState<ThemeKey>(() => {
@@ -3915,7 +3973,14 @@ function DocsLayout({
                   }`}
                 >
                   <div className="w-full flex justify-center text-zinc-900 dark:text-white">
-                    {currentComponent.preview(activeTheme.accentHex, activeTheme.accentTextHex)}
+                    <ErrorBoundary>
+                      <ComponentPreviewRenderer
+                        key={`${currentComponent.id}-${previewViewport}-${previewPattern}`}
+                        previewFn={currentComponent.preview}
+                        accent={activeTheme.accentHex}
+                        accentText={activeTheme.accentTextHex}
+                      />
+                    </ErrorBoundary>
                   </div>
                 </div>
               </div>
