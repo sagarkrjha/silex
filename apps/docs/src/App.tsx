@@ -5,7 +5,8 @@ import {
   Link, 
   NavLink, 
   useParams, 
-  useNavigate 
+  useNavigate,
+  Navigate 
 } from 'react-router';
 import { 
   Flame, 
@@ -2635,36 +2636,177 @@ assert!(pop.is_open());`,
 // Guide Documentation Pages
 // ----------------------------------------------------------------------------
 
-function IntroductionDoc() {
+function IntroductionDoc({ activeTheme }: { activeTheme: ThemeConfig }) {
+  const [copiedCmd, setCopiedCmd] = useState<string | null>(null);
+
+  const copyCode = (cmd: string) => {
+    navigator.clipboard.writeText(cmd);
+    setCopiedCmd(cmd);
+    setTimeout(() => setCopiedCmd(null), 2000);
+  };
+
   return (
-    <div className="space-y-6">
-      <h1 className="text-3xl font-bold tracking-tight text-zinc-950 dark:text-white">Introduction</h1>
-      <p className="text-base text-zinc-600 dark:text-zinc-400 leading-relaxed">
-        <strong>Silex</strong> is a next-generation UI component engine and design system built with a pure Rust core 
-        and first-class WebAssembly/C-ABI bindings. Inspired by the copy-paste philosophy of shadcn, Silex empowers 
-        engineers with full component ownership, mathematical WCAG contrast compliance, and humanized editorial themes.
-      </p>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4">
-        <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
-          <div className="flex items-center gap-2 font-semibold text-zinc-900 dark:text-white">
-            <Cpu className="h-4 w-4 text-orange-500" />
-            <span>Deterministic Rust State</span>
-          </div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Algebraic data types ensure impossible states are impossible. Tested over 50,000 rapid cycles with 0 memory growth.
-          </p>
+    <div className="space-y-10">
+      {/* Hero Header */}
+      <div id="overview" className="space-y-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold border" style={{ color: activeTheme.accentHex, borderColor: activeTheme.accentHex }}>
+          <Sparkles className="h-3.5 w-3.5" />
+          <span>Next-Generation Component Architecture</span>
         </div>
+        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-zinc-950 dark:text-white">
+          Introduction to Silex UI
+        </h1>
+        <p className="text-base sm:text-lg text-zinc-600 dark:text-zinc-400 leading-relaxed max-w-3xl">
+          <strong>Silex</strong> is a high-performance, polyglot UI component engine designed for modern web applications. 
+          Built on a pure Rust deterministic core with zero runtime garbage collection overhead, Silex pairs the code-ownership 
+          philosophy of shadcn with cross-framework polyglot code generation, mathematical WCAG AA contrast compliance, and humanized eye-safe theming.
+        </p>
+      </div>
 
-        <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
-          <div className="flex items-center gap-2 font-semibold text-zinc-900 dark:text-white">
-            <Layers className="h-4 w-4 text-sky-500" />
-            <span>Polyglot Generation</span>
+      {/* Core Architectural Pillars */}
+      <div id="core-pillars" className="space-y-4">
+        <h2 className="text-xl font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+          <Cpu className="h-5 w-5" style={{ color: activeTheme.accentHex }} />
+          <span>Core Architectural Pillars</span>
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-zinc-900 dark:text-white">
+              <Cpu className="h-4 w-4 text-orange-500" />
+              <span>Pure Rust Deterministic Core</span>
+            </div>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Every interactive state transition (modals, dropdowns, switches, tabs) is governed by formal Rust state machines with algebraic data types. Impossible component states are strictly unrepresentable.
+            </p>
           </div>
-          <p className="text-xs text-zinc-500 dark:text-zinc-400">
-            Use the same core primitives across React, Vue, Svelte, Angular, Web Components, and native Rust.
-          </p>
+
+          <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-zinc-900 dark:text-white">
+              <Layers className="h-4 w-4 text-sky-500" />
+              <span>Native Polyglot Generation</span>
+            </div>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Never get locked into a single frontend library. Silex natively generates idiomatic source code for React 19, Vue 3, Svelte 5, Angular 19, Web Components, and native Rust WebAssembly.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-zinc-900 dark:text-white">
+              <ShieldCheck className="h-4 w-4 text-emerald-500" />
+              <span>Mathematical Accessibility & Eye Safety</span>
+            </div>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              All 8 humanized palettes feature calculated WCAG AA/AAA contrast ratios with anti-glare light modes (soft stone backgrounds) and zero harsh pure-white eye fatigue.
+            </p>
+          </div>
+
+          <div className="p-5 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 space-y-2">
+            <div className="flex items-center gap-2 font-semibold text-zinc-900 dark:text-white">
+              <Flame className="h-4 w-4 text-rose-500" />
+              <span>Tailwind CSS v4 & Zero Gradients</span>
+            </div>
+            <p className="text-xs text-zinc-600 dark:text-zinc-400 leading-relaxed">
+              Crafted natively for modern CSS engines with strict solid color upholdings, zero arbitrary gradients, and full dark-mode selector ergonomics without layout shifts.
+            </p>
+          </div>
         </div>
+      </div>
+
+      {/* Quick Start Scaffolding */}
+      <div id="quick-start" className="space-y-4">
+        <h2 className="text-xl font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+          <Terminal className="h-5 w-5" style={{ color: activeTheme.accentHex }} />
+          <span>Quick Start Scaffolding</span>
+        </h2>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          Initialize Silex in any frontend project in under 30 seconds using your package manager of choice or Cargo:
+        </p>
+
+        <div className="space-y-3">
+          <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 flex items-center justify-between">
+            <div>
+              <span className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Step 1: Initialize Project Configuration</span>
+              <code className="text-xs font-mono text-orange-600 dark:text-orange-400">npx silex-ui init</code>
+            </div>
+            <button
+              type="button"
+              onClick={() => copyCode('npx silex-ui init')}
+              className="px-2.5 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white border border-zinc-300 dark:border-zinc-700 rounded-md transition"
+            >
+              {copiedCmd === 'npx silex-ui init' ? <Check className="h-3.5 w-3.5 text-emerald-500 inline" /> : <Copy className="h-3.5 w-3.5 inline" />}
+            </button>
+          </div>
+
+          <div className="p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 bg-zinc-100 dark:bg-zinc-950 flex items-center justify-between">
+            <div>
+              <span className="text-[10px] uppercase font-bold text-zinc-400 block mb-1">Step 2: Add Components Directly to your Codebase</span>
+              <code className="text-xs font-mono text-orange-600 dark:text-orange-400">npx silex-ui add button dialog card tabs</code>
+            </div>
+            <button
+              type="button"
+              onClick={() => copyCode('npx silex-ui add button dialog card tabs')}
+              className="px-2.5 py-1 text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-950 dark:hover:text-white border border-zinc-300 dark:border-zinc-700 rounded-md transition"
+            >
+              {copiedCmd === 'npx silex-ui add button dialog card tabs' ? <Check className="h-3.5 w-3.5 text-emerald-500 inline" /> : <Copy className="h-3.5 w-3.5 inline" />}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Polyglot Ecosystem Compatibility */}
+      <div id="polyglot-ecosystem" className="space-y-4">
+        <h2 className="text-xl font-bold text-zinc-950 dark:text-white flex items-center gap-2">
+          <Boxes className="h-5 w-5" style={{ color: activeTheme.accentHex }} />
+          <span>Multi-Framework Code Ownership</span>
+        </h2>
+        <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+          Like shadcn, components are not installed as blackbox node_modules dependencies. Instead, clean, fully-typed source files are placed directly into your <code className="px-1.5 py-0.5 rounded bg-zinc-200 dark:bg-zinc-800 text-xs font-mono">@/components/ui</code> folder.
+        </p>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2">
+          {[
+            { name: 'React 19', tag: 'TSX + Hooks' },
+            { name: 'Vue 3', tag: 'SFC + Composition' },
+            { name: 'Svelte 5', tag: 'Runes ($state)' },
+            { name: 'Angular 19', tag: 'Signals & Standalone' },
+            { name: 'Web Comps', tag: 'Custom Elements' },
+            { name: 'Rust Core', tag: 'WebAssembly & CLI' },
+          ].map((item) => (
+            <div key={item.name} className="p-3 rounded-lg border border-zinc-300 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-center space-y-1">
+              <span className="text-xs font-bold text-zinc-900 dark:text-white block">{item.name}</span>
+              <span className="text-[10px] text-zinc-500 font-mono block">{item.tag}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Next Steps CTA */}
+      <div id="next-steps" className="pt-4 border-t border-zinc-200 dark:border-zinc-800 flex flex-col sm:flex-row gap-4">
+        <Link
+          to="/docs/comparison"
+          className="flex-1 p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900 transition flex items-center justify-between group"
+        >
+          <div>
+            <span className="text-xs text-zinc-500 font-medium">Next in Architecture</span>
+            <div className="font-semibold text-sm text-zinc-950 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
+              Silex vs. shadcn Architectural Comparison
+            </div>
+          </div>
+          <ArrowRight className="h-4 w-4 text-zinc-400 group-hover:text-orange-500 transition group-hover:translate-x-1" />
+        </Link>
+
+        <Link
+          to="/docs/installation"
+          className="flex-1 p-4 rounded-xl border border-zinc-300 dark:border-zinc-800 hover:border-zinc-400 dark:hover:border-zinc-700 bg-white dark:bg-zinc-900 transition flex items-center justify-between group"
+        >
+          <div>
+            <span className="text-xs text-zinc-500 font-medium">Next in Setup</span>
+            <div className="font-semibold text-sm text-zinc-950 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
+              Detailed Installation & Framework Guides
+            </div>
+          </div>
+          <ArrowRight className="h-4 w-4 text-zinc-400 group-hover:text-orange-500 transition group-hover:translate-x-1" />
+        </Link>
       </div>
     </div>
   );
@@ -2955,6 +3097,12 @@ function DocsLayout({
     { id: 'installation', title: 'Installation' },
     { id: 'polyglot-usage', title: 'Multi-Framework Usage' },
     { id: 'props-reference', title: 'Props Table' },
+  ] : docSlug === 'introduction' ? [
+    { id: 'overview', title: 'Overview' },
+    { id: 'core-pillars', title: 'Core Pillars' },
+    { id: 'quick-start', title: 'Quick Start' },
+    { id: 'polyglot-ecosystem', title: 'Polyglot Generation' },
+    { id: 'next-steps', title: 'Next Steps' },
   ] : [
     { id: 'overview', title: 'Overview' },
   ];
@@ -3145,7 +3293,7 @@ function DocsLayout({
 
       {/* 2. Middle Main Documentation Area */}
       <main className="flex-1 min-w-0 space-y-8">
-        {docSlug === 'introduction' && <IntroductionDoc />}
+        {docSlug === 'introduction' && <IntroductionDoc activeTheme={activeTheme} />}
         {docSlug === 'comparison' && <ComparisonDoc activeTheme={activeTheme} />}
         {docSlug === 'installation' && <InstallationDoc />}
         {docSlug === 'theming' && <ThemingDoc />}
@@ -3337,16 +3485,7 @@ export function App() {
       />
       <Routes>
         <Route path="/" element={<LandingPage activeTheme={activeTheme} />} />
-        <Route 
-          path="/docs" 
-          element={
-            <DocsLayout 
-              activeTheme={activeTheme} 
-              mobileNavOpen={mobileNavOpen}
-              onCloseMobileNav={() => setMobileNavOpen(false)}
-            />
-          } 
-        />
+        <Route path="/docs" element={<Navigate to="/docs/introduction" replace />} />
         <Route 
           path="/docs/:docSlug" 
           element={
